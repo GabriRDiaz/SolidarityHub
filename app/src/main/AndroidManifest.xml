@@ -13,6 +13,10 @@
         android:theme="@style/Theme.SolidarityHub"
         tools:targetApi="31">
         <activity
+            android:name=".GruposAyuda"
+            android:exported="false"
+            android:theme="@style/Theme.SolidarityHub" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
