@@ -1,15 +1,12 @@
-package com.upv.SolldarityHub
+package com.upv.solidarityHub
 
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.upv.SolldarityHub.databinding.ActivityRegistroBinding
+import com.upv.solidarityHub.databinding.ActivityRegistroBinding
 
-class registro : AppCompatActivity() {
+class Registro : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityRegistroBinding

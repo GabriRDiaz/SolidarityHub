@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.upv.SolldarityHub"
+    namespace = "com.upv.solidarityHub"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.upv.SolldarityHub"
+        applicationId = "com.upv.solidarityHub"
         minSdk = 27
         targetSdk = 35
         versionCode = 1
