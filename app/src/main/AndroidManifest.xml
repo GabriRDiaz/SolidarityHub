@@ -29,9 +29,8 @@
             android:value="YOUR_API_KEY" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".registro"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.SolidarityHub">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,6 +38,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SolidarityHub"></activity>
     </application>
 
 </manifest>
