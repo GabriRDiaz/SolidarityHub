@@ -1,4 +1,4 @@
-package com.upv.SolldarityHub
+package com.upv.solidarityHub
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.upv.SolldarityHub.ui.theme.SolidarityHubTheme
+import com.upv.solidarityHub.ui.theme.SolidarityHubTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package com.upv.SolldarityHub
+package com.upv.solidarityHub
 
 import org.junit.Test
 

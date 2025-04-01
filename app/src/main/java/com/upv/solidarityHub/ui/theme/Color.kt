@@ -1,4 +1,4 @@
-package com.upv.SolldarityHub.ui.theme
+package com.upv.solidarityHub.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,4 +1,4 @@
-package com.upv.SolldarityHub.ui.theme
+package com.upv.solidarityHub.ui.theme.ui.theme
 
 import android.app.Activity
 import android.os.Build
