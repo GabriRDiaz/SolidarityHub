@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,7 +18,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SolidarityHub"
         tools:targetApi="31">
-
+        <activity
+            android:name=".MapaGenerico"
+            android:exported="false" />
+        <activity
+            android:name=".ui.theme.MainActivity"
+            android:exported="false"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.SolidarityHub" />
+        <activity
+            android:name=".ui.theme.MapaGenerico"
+            android:exported="false"
+            android:theme="@style/Theme.SolidarityHub" />
+        <activity
+            android:name=".solAyuda"
+            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -43,7 +62,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SolidarityHub"></activity>
+            android:theme="@style/Theme.SolidarityHub" />
     </application>
 
 </manifest>

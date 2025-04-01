@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "SolidarityHub"
 include(":app")
+include(":mylibrary")
