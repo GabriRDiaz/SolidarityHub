@@ -32,6 +32,10 @@
             android:exported="true"
             android:theme="@style/Theme.SolidarityHub" />
         <activity
+            android:name=".RegistroGrupoVoluntarios"
+            android:exported="false"
+            android:theme="@style/Theme.SolidarityHub" />
+        <activity
             android:name=".solAyuda"
             android:exported="false" />
         <!--
