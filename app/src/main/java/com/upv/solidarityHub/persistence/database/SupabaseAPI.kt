@@ -23,7 +23,7 @@ class SupabaseAPI : DatabaseAPI {
     public override fun initializeDatabase() {
 
         if ( supabase != null) {
-            supabase = createSupabaseClient(supabaseUrl, supabaseKey) {    install(Postgrest)}
+            supabase = createSupabaseClient(supabaseUrl, supabaseKey) {install(Postgrest)}
         }
 
     }

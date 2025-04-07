@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.androidx.activity)
     implementation(libs.play.services.location)
+    implementation(libs.androidx.navigation.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
