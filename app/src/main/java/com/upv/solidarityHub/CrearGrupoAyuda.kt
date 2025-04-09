@@ -6,18 +6,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.AppBarConfiguration
 //import androidx.navigation.ui.navigateUp
 //import androidx.navigation.ui.setupActionBarWithNavController
-//import com.upv.solidarityHub.databinding.ActivityRegistroGrupoVoluntariosBinding
-import com.upv.solidarityHub.databinding.ContentRegistroGrupoVoluntariosBinding
+//import com.upv.solidarityHub.databinding.ActivityCrearGrupoAyudaBinding
+import com.upv.solidarityHub.databinding.ContentCrearGrupoAyudaBinding
 
-class RegistroGrupoVoluntarios : AppCompatActivity() {
+class CrearGrupoAyuda : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ContentRegistroGrupoVoluntariosBinding
+    private lateinit var binding: ContentCrearGrupoAyudaBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ContentRegistroGrupoVoluntariosBinding.inflate(layoutInflater)
+        binding = ContentCrearGrupoAyudaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         //setSupportActionBar(binding.toolbar)

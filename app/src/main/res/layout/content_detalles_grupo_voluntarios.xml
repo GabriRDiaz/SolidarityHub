@@ -132,7 +132,7 @@
         android:layout_marginTop="40dp"
         android:maxWidth="250dp"
         android:maxHeight="300dp"
-        android:minHeight="250dp"
+        android:minHeight="220dp"
         android:text="Decsripcion del grupo"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@id/textView18"

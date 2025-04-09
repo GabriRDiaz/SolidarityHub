@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.0.0"
+    id("kotlin-parcelize")
 
 }
 
@@ -48,11 +49,15 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.material)
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.material3:material3")
+    //implementation(libs.androidx.ui)
+    //implementation(libs.androidx.ui.graphics)
+    //implementation(libs.androidx.ui.tooling.preview)
+    //implementation(libs.androidx.material3)
+    //implementation(libs.material)
+
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -69,6 +74,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlin:kotlin-parcelize-runtime:2.0")
 
     //SUPABASE
     implementation(platform("io.github.jan-tennert.supabase:bom:3.1.3"))
