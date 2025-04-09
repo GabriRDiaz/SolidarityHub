@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
 import org.osmdroid.config.Configuration.*
@@ -25,9 +26,10 @@ class MapaGenerico : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map : MapView
     private lateinit var mapController: MapController
-    private lateinit var overlayBeacons: ArrayList<OverlayItem>
-    private lateinit var overlayBeaconsItemized: ItemizedOverlay<OverlayItem>
-    private lateinit var buttonAddBeacon: ImageButton
+    private lateinit var overlayBalizas: ArrayList<OverlayItem>
+    private lateinit var overlayBalizasItemized: ItemizedOverlay<OverlayItem>
+    private lateinit var buttonAddBaliza: ImageButton
+    private lateinit var supabaseAPI: SupabaseAPI
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -41,27 +43,19 @@ class MapaGenerico : AppCompatActivity() {
         //Inicializar mapa
         loadMap()
         var beaconTest: OverlayItem = OverlayItem("Punto","Punto",GeoPoint(39.4703606,-0.3836834))
-        addBeacon(beaconTest)
-
+        addBaliza(beaconTest)
+        
 
 
     }
     override fun onResume() {
         super.onResume()
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
-        map.onResume() //needed for compass, my location overlays, v6.0.0 and up
+        map.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        //this will refresh the osmdroid configuration on resuming.
-        //if you make changes to the configuration, use
-        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        //Configuration.getInstance().save(this, prefs);
-        map.onPause()  //needed for compass, my location overlays, v6.0.0 and up
+        map.onPause()
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -80,11 +74,11 @@ class MapaGenerico : AppCompatActivity() {
     }
     fun loadMap(){
         map = findViewById<MapView>(R.id.mapView)
-        overlayBeacons = ArrayList<OverlayItem>()
+        overlayBalizas = ArrayList<OverlayItem>()
         mapController = map.controller as MapController
-        buttonAddBeacon = findViewById(R.id.button5)
-        buttonAddBeacon.setOnClickListener {
-            showAddBeaconDialog()
+        buttonAddBaliza = findViewById(R.id.button5)
+        buttonAddBaliza.setOnClickListener {
+            showAddBalizaDialog()
         }
         updateOverlay()
         map.setTileSource(TileSourceFactory.MAPNIK)
@@ -93,17 +87,18 @@ class MapaGenerico : AppCompatActivity() {
         mapController.setCenter(GeoPoint(39.4703606,-0.3836834))
 
     }
-    fun addBeacon(beacon:OverlayItem){
-        overlayBeacons.apply {
+    fun addBaliza(baliza:OverlayItem){
+        overlayBalizas.apply {
             add(
-                beacon
+                baliza
             )
         }
         updateOverlay()
     }
     fun updateOverlay(){
+            val balizas = supabaseAPI.getAllBalizas()
         map.overlays.clear()
-        overlayBeaconsItemized = ItemizedIconOverlay(overlayBeacons, object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
+        overlayBalizasItemized = ItemizedIconOverlay(overlayBalizas, object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
             override fun onItemSingleTapUp(index: Int, item: OverlayItem?): Boolean {
                 item?.let {
                     AlertDialog.Builder(this@MapaGenerico)
@@ -119,10 +114,10 @@ class MapaGenerico : AppCompatActivity() {
                 return false
             }
         }, applicationContext)
-        map.overlays.add(overlayBeaconsItemized)
+        map.overlays.add(overlayBalizasItemized)
         map.invalidate()
     }
-    private fun showAddBeaconDialog() {
+    private fun showAddBalizaDialog() {
         val layout = LinearLayout(this)
         layout.orientation = LinearLayout.VERTICAL
         val nameEditText = EditText(this)

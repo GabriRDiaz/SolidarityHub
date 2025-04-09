@@ -1,5 +1,6 @@
 package com.upv.solidarityHub.persistence.database
 
+import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.Usuario
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -39,6 +40,24 @@ class SupabaseAPI : DatabaseAPI {
         return usuario;
     }
 
+    public override suspend fun getBalizaById(id: String): Baliza? {
+        initializeDatabase()
+        val baliza =
+            supabase?.from("Balizas")?.select() {
+                filter{
+                    eq("id", id)
+                } }?.decodeSingle<Baliza>()
+
+        return baliza;
+    }
+
+    public override suspend fun getAllBalizas(): List<Baliza>? {
+        initializeDatabase()
+        val balizas =
+            supabase?.from("Balizas")?.select {  }?.decodeList<Baliza>()
+
+        return balizas;
+    }
 
 
 
