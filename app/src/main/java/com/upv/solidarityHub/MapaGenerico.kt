@@ -1,10 +1,16 @@
 package com.upv.solidarityHub
 
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.ShapeDrawable
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.gms.location.*
@@ -15,7 +21,10 @@ import org.osmdroid.views.MapView
 import org.osmdroid.config.Configuration.*
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
-import org.osmdroid.views.overlay.mylocation.*
+import org.osmdroid.views.overlay.OverlayItem
+import org.osmdroid.views.overlay.*
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class MapaGenerico : AppCompatActivity() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
@@ -36,15 +45,34 @@ class MapaGenerico : AppCompatActivity() {
         map.setMultiTouchControls(true)
         mapController = map.controller as MapController
         mapController.setZoom(20.0)
-        var mylocation :MyLocationNewOverlay = MyLocationNewOverlay(GpsMyLocationProvider(applicationContext),map)
+        var mylocation : MyLocationNewOverlay = MyLocationNewOverlay(GpsMyLocationProvider(applicationContext),map)
         mylocation.enableMyLocation()
 
         //var puntero : GeoPoint = GeoPoint(mylocation.myLocation)
 
-        mapController.setCenter(GeoPoint(53,43))
+        mapController.setCenter(GeoPoint(39.4703606,-0.3836834))
         map.setTileSource(TileSourceFactory.MAPNIK)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        var overlay: OverlayItem = OverlayItem("Punto","Punto",GeoPoint(39.4703606,-0.3836834))
 
+        val drawable: Drawable? = ContextCompat.getDrawable(this, R.drawable.baseline_add_location_alt_24)
+        val items = ArrayList<OverlayItem>().apply {
+            add(
+                overlay
+            )
+        }
+        var overlayyy: ItemizedOverlay<OverlayItem> = ItemizedIconOverlay<OverlayItem>(items, object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
+            override fun onItemSingleTapUp(index: Int, item: OverlayItem?): Boolean {
+                Toast.makeText(this@MapaGenerico, "Pulsaste: ${item?.title}", Toast.LENGTH_SHORT).show()
+                return true
+            }
+
+            override fun onItemLongPress(index: Int, item: OverlayItem?): Boolean {
+                return false
+            }
+        },
+            applicationContext)
+        map.overlays.add(overlayyy)
     }
     override fun onResume() {
         super.onResume()
