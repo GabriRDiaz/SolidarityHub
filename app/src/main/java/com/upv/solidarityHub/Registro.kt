@@ -1,10 +1,12 @@
 package com.upv.solidarityHub
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.DatePicker
@@ -19,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.upv.solidarityHub.databinding.ActivityRegistroBinding
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.persistence.database.DatabaseAPI
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -47,7 +50,7 @@ class Registro : AppCompatActivity() {
     private lateinit var suggestionAdapter: SuggestionAdapter
     private lateinit var showPassButton: Button
     private lateinit var showRepPassButton: Button
-
+    private lateinit var registrarseButton:Button
 
 
     private lateinit var nombreField: EditText
@@ -59,9 +62,12 @@ class Registro : AppCompatActivity() {
     private lateinit var errorCorreo: TextView
     private lateinit var errorContrasena: TextView
     private lateinit var errorRepContrasena:TextView
-    private lateinit var registrarseButton:Button
 
 
+
+    private val db:SupabaseAPI = SupabaseAPI()
+
+    private lateinit var municipios: Array<String?>
     private var searchSuggestions = arrayOfNulls<String>(FileReader.numMunicipios)
 
 
@@ -78,8 +84,9 @@ class Registro : AppCompatActivity() {
 
         initializeFields()
         initializeButtons()
-        initializeListeners()
         initializeSearchView()
+        initializeListeners()
+
 
 
         findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {
@@ -87,7 +94,6 @@ class Registro : AppCompatActivity() {
             newFragment.show(supportFragmentManager, "datePicker")
         }
         //TODO: IMPLEMENTAR LAS LLAMADAS A LA DB EN UN PROXY
-        var db = SupabaseAPI()
         Log.d("DEBUG", "Trying to access database" +db.toString())
         var usuario: Usuario? = null
         runBlocking {
@@ -103,6 +109,9 @@ class Registro : AppCompatActivity() {
 
 
 
+
+
+        suggestionAdapter.updateSuggestions(listOf("Municipio"))
     }
 
     class DatePickerFragment(parent: Registro) : DialogFragment(), DatePickerDialog.OnDateSetListener {
@@ -152,6 +161,7 @@ class Registro : AppCompatActivity() {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initializeListeners() {
         findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {
             val newFragment = DatePickerFragment(this)
@@ -159,82 +169,153 @@ class Registro : AppCompatActivity() {
         }
 
         correoField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if(checkCorreoValidity()) {errorCorreo.visibility = View.INVISIBLE}
+            if (checkCorreoValidity()) {
+                errorCorreo.visibility = View.INVISIBLE
+            }
             checkAllFields()
-            true
+            false
         })
 
         correoField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
-                if(!checkCorreoValidity()) {errorCorreo.visibility = View.VISIBLE}
+                if (!checkCorreoValidity()) {
+                    errorCorreo.visibility = View.VISIBLE
+                }
             }
             checkAllFields()
         }
 
         contrasenaField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if(checkContrasenaValidity()) {errorContrasena.visibility = View.INVISIBLE}
+            if (checkContrasenaValidity()) {
+                errorContrasena.visibility = View.INVISIBLE
+            }
             checkAllFields()
-            true
+            false
         })
 
         contrasenaField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
-                if(!checkContrasenaValidity()) {errorContrasena.visibility = View.VISIBLE}
+                if (!checkContrasenaValidity()) {
+                    errorContrasena.visibility = View.VISIBLE
+                }
             }
             checkAllFields()
         }
 
         repContrasenaField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if(checkRepContrasenaValidity()) {errorRepContrasena.visibility = View.INVISIBLE}
+            if (checkRepContrasenaValidity()) {
+                errorRepContrasena.visibility = View.INVISIBLE
+            }
             checkAllFields()
-            true
+            false
         })
 
         repContrasenaField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
-                if(!checkRepContrasenaValidity()) {errorRepContrasena.visibility = View.VISIBLE}
+                if (!checkRepContrasenaValidity()) {
+                    errorRepContrasena.visibility = View.VISIBLE
+                }
             }
             checkAllFields()
         }
 
         nombreField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if(checkNameValidity()) {checkAllFields()}
+            if (checkNameValidity()) {
+                checkAllFields()
+            }
             false
         })
 
         nombreField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
-                if(!checkNameValidity()) {checkAllFields()}
+                if (!checkNameValidity()) {
+                    checkAllFields()
+                }
             }
 
         }
 
         apellidosField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if(checkApellidosValidity()) {checkAllFields()}
-            true
+            if (checkApellidosValidity()) {
+                checkAllFields()
+            }
+            false
         })
 
         apellidosField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
-                if(!checkApellidosValidity()) {checkAllFields()}
+                if (!checkApellidosValidity()) {
+                    checkAllFields()
+                }
             }
 
         }
 
         buscadorMunicipio.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if(checkMunicipioValidity()) {checkAllFields()}
-            true
+            if (checkMunicipioValidity()) {
+                checkAllFields()
+            }
+            false
         })
 
         buscadorMunicipio.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
-                if(!checkMunicipioValidity()) {checkAllFields()}
+                if (!checkMunicipioValidity()) {
+                    checkAllFields()
+                }
             }
 
         }
 
-    }
 
+        showPassButton.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_UP -> {
+                    contrasenaField.inputType =
+                        android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    true
+                }
+
+                MotionEvent.ACTION_DOWN -> {
+                    contrasenaField.inputType =
+                        android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        showRepPassButton.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_UP -> {
+                    repContrasenaField.inputType =
+                        android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    true
+                }
+
+                MotionEvent.ACTION_DOWN -> {
+                    repContrasenaField.inputType =
+                        android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    true
+                }
+
+                else -> false
+            }
+
+
+        }
+
+        registrarseButton.setOnClickListener {
+            runBlocking {
+                val deferred1 = async {
+                    db.registerUsuario(correoField.text.toString(),nombreField.text.toString(),apellidosField.text.toString(),contrasenaField.text.toString(),displayNacimiento.text.toString(),buscadorMunicipio.query.toString())
+
+                }
+                deferred1.await()
+            }
+        }
+    }
 
 
     private fun initializeSearchView() {
@@ -243,17 +324,18 @@ class Registro : AppCompatActivity() {
         suggestionAdapter = SuggestionAdapter(emptyList()) { suggestion ->
             // Set the SearchView text to the clicked suggestion
             buscadorMunicipio.setQuery(suggestion, true)
+            checkAllFields()
             // Optionally, you can also clear the suggestions
             suggestionAdapter.updateSuggestions(emptyList())
         }
-        suggestionAdapter.updateSuggestions(listOf("Municipio"))
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = suggestionAdapter
 
 
         try {
             val inputStream = assets.open("municipios")
-            searchSuggestions = FileReader.readMunicipiosToArray(inputStream)
+            municipios = FileReader.readMunicipiosToArray(inputStream)
+            searchSuggestions = municipios
 
             // Read from inputStream
         } catch (e: IOException) {
@@ -298,11 +380,11 @@ class Registro : AppCompatActivity() {
     }
 
     private fun checkRepContrasenaValidity(): Boolean {
-        return contrasenaField.text.equals(repContrasenaField.text)
+        return contrasenaField.text.toString().equals(repContrasenaField.text.toString())
     }
 
     private fun checkMunicipioValidity(): Boolean {
-        return searchSuggestions.size == 1
+        return municipios.contains(buscadorMunicipio.query.toString())
     }
 
     private fun checkAllFields(): Boolean {

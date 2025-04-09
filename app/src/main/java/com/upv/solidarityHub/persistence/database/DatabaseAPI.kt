@@ -7,4 +7,6 @@ interface DatabaseAPI {
     fun initializeDatabase()
 
     public suspend fun getUsuarioByCorreo(correo: String): Usuario?
+
+    public suspend fun registerUsuario(correo: String, nombre: String, apellidos: String, password: String, nacimiento:String, municipio: String):Boolean
 }
