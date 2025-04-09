@@ -7,112 +7,127 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <TextView
-        android:id="@+id/etiquetaNombre"
+        android:id="@+id/etiquetaTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="48dp"
         android:text="SolidarityHub"
         android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.572"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TableLayout
-        android:layout_width="339dp"
-        android:layout_height="359dp"
+        android:layout_width="325dp"
+        android:layout_height="597dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etiquetaNombre">
+        app:layout_constraintTop_toBottomOf="@+id/etiquetaTitulo">
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="15dp"
-            android:layout_marginVertical="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="5dp"
             android:gravity="center|left"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingVertical="-20dp"
+            android:paddingTop="-20dp">
+
+            <TextView
+                android:id="@+id/etiquetaNombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre"
+                android:textColor="#353535"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/inputNombre"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="p.e: Ignacio"
+                android:inputType="text"
+                android:maxWidth="40dp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="5dp"
+            android:gravity="center|left"
+            android:paddingVertical="-50dp"
+            android:paddingTop="-20dp">
 
             <TextView
                 android:id="@+id/etiquetaApellidos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nombre" />
+                android:text="Apellidos"
+                android:textStyle="bold" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="200dp"
+            <EditText
+                android:id="@+id/inputApellidos"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:ems="10"
+                android:hint="p.e: Pascual Utiel"
+                android:inputType="text" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/nombreInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:gravity="center|left" />
-            </com.google.android.material.textfield.TextInputLayout>
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginVertical="20dp"
+            android:layout_marginVertical="5dp">
+
+            <TextView
+                android:id="@+id/etiquetaCorreo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Correo"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/inputCorreo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="p.e: nacho@gmail.com"
+                android:inputType="textEmailAddress" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|top">
+
+            <TextView
+                android:id="@+id/errorCorreo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right|top"
+                android:text="correo inválido"
+                android:textColor="#FF0000"
+                android:textSize="11sp"
+                android:visibility="invisible" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:gravity="center|left">
 
             <TextView
-                android:id="@+id/etiquetaEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Apellidos" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="200dp"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/apellidosInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:gravity="center|left"
-                    android:hint="hjjyjy" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginVertical="20dp">
-
-            <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/etiquetaRepContrasena"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Correo" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/correoInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:gravity="center|left"
-                    android:hint="hint" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center|left"
-            android:layout_marginVertical="20dp"
-            android:gravity="center|left">
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fecha Nacimiento" />
+                android:text="Contraseña"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -120,13 +135,113 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/editTextDate"
-                    android:layout_width="177dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:width="155dp"
+                    android:id="@+id/inputContrasena"
+                    android:layout_width="182dp"
+                    android:layout_height="34dp"
                     android:ems="10"
-                    android:inputType="date" />
+                    android:inputType="textPassword" />
+
+                <Button
+                    android:id="@+id/showPassButton"
+                    android:layout_width="22dp"
+                    android:layout_height="34dp"
+                    android:text="Button" />
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|top">
+
+            <TextView
+                android:id="@+id/errorContrasena"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right|top"
+                android:text="min. 8 caract. y 1 num"
+                android:textColor="#FF0000"
+                android:textSize="11sp"
+                android:visibility="invisible" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:gravity="center|left">
+
+            <TextView
+                android:id="@+id/etiquetaContrasena"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rep. Contraseña"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/inputRepContrasena"
+                    android:layout_width="182dp"
+                    android:layout_height="34dp"
+                    android:ems="10"
+                    android:inputType="textPassword" />
+
+                <Button
+                    android:id="@+id/showRepPassButton"
+                    android:layout_width="22dp"
+                    android:layout_height="34dp"
+                    android:text="Button" />
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|top">
+
+            <TextView
+                android:id="@+id/errorRepContrasena"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right|top"
+                android:text="No coinciden"
+                android:textColor="#FF0000"
+                android:textSize="11sp"
+                android:visibility="invisible" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|left"
+            android:layout_marginVertical="5dp"
+            android:gravity="center|left">
+
+            <TextView
+                android:id="@+id/etiquetaFecha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha Nacimiento"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/displayNacimiento"
+                    android:layout_width="180dp"
+                    android:layout_height="38dp"
+                    android:paddingVertical="12dp"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
 
                 <Button
                     android:id="@+id/fechaPickerButton"
@@ -137,6 +252,62 @@
                     android:text="Button" />
             </LinearLayout>
 
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|top|left"
+            android:layout_marginTop="5dp"
+            android:gravity="center|top|left">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerMunicipio"
+                android:layout_width="56dp"
+                android:layout_height="86dp" />
+
+            <SearchView
+                android:id="@+id/buscadorMunicipio"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content">
+
+            </SearchView>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="40dp">
+
+            <EditText
+                android:id="@+id/editTextText"
+                android:layout_width="102dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Name" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="117dp"
+                android:layout_height="32dp"
+                android:text="Button" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/registrarseButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Registrarse" />
         </TableRow>
     </TableLayout>
 

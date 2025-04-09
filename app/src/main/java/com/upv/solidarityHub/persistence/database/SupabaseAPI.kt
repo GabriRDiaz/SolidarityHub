@@ -22,7 +22,7 @@ class SupabaseAPI : DatabaseAPI {
 
     public override fun initializeDatabase() {
 
-        if ( supabase != null) {
+        if ( supabase == null) {
             supabase = createSupabaseClient(supabaseUrl, supabaseKey) {install(Postgrest)}
         }
 
@@ -31,7 +31,7 @@ class SupabaseAPI : DatabaseAPI {
     public override suspend fun getUsuarioByCorreo(correo: String): Usuario? {
         initializeDatabase()
         val usuario =
-            supabase?.from("cities")?.select(columns = Columns.list("name", "country_id")) {
+            supabase?.from("Usuario")?.select() {
             filter{
                 eq("correo", correo)
             } }?.decodeSingle<Usuario>()
