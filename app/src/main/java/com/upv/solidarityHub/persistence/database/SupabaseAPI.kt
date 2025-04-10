@@ -4,6 +4,7 @@ import android.util.Log
 import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.model.DatabaseHabilidad
+import com.upv.solidarityHub.persistence.model.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.model.Habilidad
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -102,4 +103,24 @@ class SupabaseAPI : DatabaseAPI {
            Log.d("DEBUG",e.toString()); return false}
     }
 
+
+    public override suspend fun getGrupoById(id: Int): GrupoDeAyuda? {
+        initializeDatabase()
+        val grupo =
+            supabase?.from("GrupoDeAyuda")?.select() {
+                filter{
+                    eq("id", id)
+                } }?.decodeSingle<GrupoDeAyuda>()
+
+        return grupo;
+    }
+
+    public override suspend fun registrarGrupo(id: Int, descripcion: String, ubicacion: String, fecha_creacion: Date, sesion: String, tamanyo: String): Boolean {
+        initializeDatabase()
+        try{
+            val grupo = GrupoDeAyuda(id, descripcion, ubicacion, fecha_creacion, sesion, tamanyo)
+            supabase?.from("GrupoDeAyuda")?.insert(grupo)
+            return true
+        } catch(e:Exception) {return false}
+    }
 }

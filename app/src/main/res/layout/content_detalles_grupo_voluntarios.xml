@@ -86,8 +86,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView17" />
 
-    <EditText
-        android:id="@+id/editTextDate"
+    <TextView
+        android:id="@+id/textViewFecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -98,10 +98,10 @@
         android:text="28/03/2025"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@id/textView17"
-        app:layout_constraintTop_toBottomOf="@id/textView20" />
+        app:layout_constraintTop_toBottomOf="@id/textViewTamanyo" />
 
     <TextView
-        android:id="@+id/textView19"
+        android:id="@+id/textViewSesion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -113,7 +113,7 @@
         app:layout_constraintTop_toBottomOf="@id/textView11" />
 
     <TextView
-        android:id="@+id/textView20"
+        android:id="@+id/textViewTamanyo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -122,10 +122,10 @@
         android:text="X personas"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@id/textView13"
-        app:layout_constraintTop_toBottomOf="@id/textView19" />
+        app:layout_constraintTop_toBottomOf="@id/textViewSesion" />
 
     <TextView
-        android:id="@+id/textView21"
+        android:id="@+id/textViewDescripcion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -136,7 +136,7 @@
         android:text="Decsripcion del grupo"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@id/textView18"
-        app:layout_constraintTop_toBottomOf="@id/editTextDate"
+        app:layout_constraintTop_toBottomOf="@id/textViewFecha"
         tools:minWidth="250dp" />
 
     <Button
@@ -152,6 +152,6 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView21" />
+        app:layout_constraintTop_toBottomOf="@id/textViewDescripcion" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
