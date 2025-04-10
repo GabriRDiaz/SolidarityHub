@@ -1,6 +1,7 @@
 package com.upv.solidarityHub.persistence.database
 
 import com.upv.solidarityHub.persistence.Baliza
+import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.Usuario
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -74,6 +75,14 @@ class SupabaseAPI : DatabaseAPI {
          } catch(e:Exception) {return false}
     }
 
+    public override suspend fun getGrupoById(id: Int): GrupoDeAyuda? {
+        initializeDatabase()
+        val grupo =
+            supabase?.from("GrupoDeAyuda")?.select() {
+                filter{
+                    eq("id", id)
+                } }?.decodeSingle<GrupoDeAyuda>()
 
-
-}
+        return grupo;
+    }
+    }
