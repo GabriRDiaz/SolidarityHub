@@ -9,12 +9,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import com.upv.solidarityHub.databinding.ContentGruposAyuda2Binding
 //import com.upv.solidarityHub.databinding.ActivityGruposAyuda2Binding
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
+//import io.github.jan.supabase.SupabaseClient
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import android.widget.ArrayAdapter
 import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import android.content.Intent
+import io.github.jan.supabase.auth.auth
 
 class GruposAyuda : AppCompatActivity() {
 
@@ -52,6 +54,10 @@ class GruposAyuda : AppCompatActivity() {
             val intent = Intent(this, CrearGrupoAyuda::class.java)
             startActivity(intent)
         }
+
+        binding.botonVerGrupos.setOnClickListener {
+            mostrarGruposInscritos()
+        }
     }
 
     private fun obtenerGrupos() {
@@ -75,4 +81,31 @@ class GruposAyuda : AppCompatActivity() {
             }
         }
     }
+
+    // Función para mostrar los grupos en los que el usuario está inscrito
+    private fun mostrarGruposInscritos() {
+        lifecycleScope.launch {
+            db.initializeDatabase()
+            val usuarioId = db.supabase?.auth?.currentUserOrNull()?.id
+            if (usuarioId != null) {
+                val gruposInscritos = db.getGruposusuario(usuarioId)
+                if (gruposInscritos.isNullOrEmpty()) {
+                    Toast.makeText(this@GruposAyuda, "No estás inscrito en ningún grupo", Toast.LENGTH_SHORT).show()
+                } else {
+                    val nombresGruposInscritos =
+                        gruposInscritos.map { "Grupo ${it.id} - ${it.sesion}" }
+
+                    val adapter = ArrayAdapter(
+                        this@GruposAyuda,
+                        android.R.layout.simple_list_item_1,
+                        nombresGruposInscritos
+                    )
+
+                    binding.listaGruposAyuda.adapter = adapter
+                }
+            } else {
+                Toast.makeText(this@GruposAyuda, "No hay usuario logueado", Toast.LENGTH_SHORT).show()
+            }
+        }
+        }
 }

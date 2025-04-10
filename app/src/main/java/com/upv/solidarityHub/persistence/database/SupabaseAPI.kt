@@ -18,12 +18,13 @@ import kotlinx.serialization.Serializable
 import java.util.Date
 
 
-public var supabase: SupabaseClient? = null;
+//public var supabase: SupabaseClient? = null;
 private const val supabaseUrl = "https://jjmkaouvmwcakqusbabw.supabase.co"
 private const val supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpqbWthb3V2bXdjYWtxdXNiYWJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0Nzg0MTIsImV4cCI6MjA1NjA1NDQxMn0.FwI-6QCb12bth5DnIJUARbZ74LDbxZ7g7Hls7D9xJcE"
 
 class SupabaseAPI : DatabaseAPI {
 
+    public var supabase: SupabaseClient? = null;
 
 
     public override fun initializeDatabase() {
