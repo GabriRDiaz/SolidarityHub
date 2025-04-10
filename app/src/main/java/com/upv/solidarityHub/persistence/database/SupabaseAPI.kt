@@ -40,12 +40,12 @@ class SupabaseAPI : DatabaseAPI {
         return usuario;
     }
 
-    public override suspend fun getBalizaById(id: String): Baliza? {
+    public override suspend fun getBalizaByName(name: String): Baliza? {
         initializeDatabase()
         val baliza =
-            supabase?.from("Balizas")?.select() {
+            supabase?.from("Baliza")?.select() {
                 filter{
-                    eq("id", id)
+                    eq("nombre", name)
                 } }?.decodeSingle<Baliza>()
 
         return baliza;
@@ -53,12 +53,18 @@ class SupabaseAPI : DatabaseAPI {
 
     public override suspend fun getAllBalizas(): List<Baliza>? {
         initializeDatabase()
-        val balizas =
-            supabase?.from("Balizas")?.select {  }?.decodeList<Baliza>()
-
-        return balizas;
+        val baliza = supabase?.from("Baliza")?.select(Columns.ALL)?.decodeList<Baliza>()
+        return baliza;
     }
 
+    public override suspend fun addBaliza(id: Int, latitud: Double, longitud: Double, nombre: String, tipo: String, descripcion: String): Boolean {
+        initializeDatabase()
+        try{
+            val baliza =  Baliza(id,latitud,longitud,nombre,tipo,descripcion)
+            supabase?.from("Baliza")?.insert(baliza)
+            return true
+        } catch(e:Exception) {return false}
+    }
     public override suspend fun registerUsuario(correo: String, nombre: String, apellidos: String, password: String, nacimiento: String, municipio: String): Boolean {
         initializeDatabase()
         try{

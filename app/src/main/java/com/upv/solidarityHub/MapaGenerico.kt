@@ -12,7 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.upv.solidarityHub.persistence.Baliza
+import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
 import org.osmdroid.config.Configuration.*
@@ -29,7 +35,7 @@ class MapaGenerico : AppCompatActivity() {
     private lateinit var overlayBalizas: ArrayList<OverlayItem>
     private lateinit var overlayBalizasItemized: ItemizedOverlay<OverlayItem>
     private lateinit var buttonAddBaliza: ImageButton
-    private lateinit var supabaseAPI: SupabaseAPI
+    private var supabaseAPI: SupabaseAPI = SupabaseAPI()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,11 +48,6 @@ class MapaGenerico : AppCompatActivity() {
         }
         //Inicializar mapa
         loadMap()
-        var beaconTest: OverlayItem = OverlayItem("Punto","Punto",GeoPoint(39.4703606,-0.3836834))
-        addBaliza(beaconTest)
-        
-
-
     }
     override fun onResume() {
         super.onResume()
@@ -87,16 +88,34 @@ class MapaGenerico : AppCompatActivity() {
         mapController.setCenter(GeoPoint(39.4703606,-0.3836834))
 
     }
-    fun addBaliza(baliza:OverlayItem){
-        overlayBalizas.apply {
-            add(
-                baliza
-            )
+    fun addBaliza(baliza:Baliza?){
+        runBlocking {
+            val deferred1 = async {
+                baliza?.let { supabaseAPI.addBaliza(it.id,baliza.latitud,baliza.longitud,baliza.nombre,baliza.tipo,baliza.descripcion) }
+            }
+            deferred1.await()
         }
+
         updateOverlay()
     }
     fun updateOverlay(){
-            val balizas = supabaseAPI.getAllBalizas()
+        var balizas:List<Baliza>? = null
+        runBlocking {
+            val deferred1 = async {
+                balizas = supabaseAPI.getAllBalizas()}
+            deferred1.await()
+        }
+
+
+        balizas?.forEach { baliza ->
+            var balizaOverlay = OverlayItem(baliza.nombre + " (" + baliza.tipo + ") ",baliza.descripcion,GeoPoint(baliza.latitud,baliza.longitud))
+            overlayBalizas.apply {
+                add(
+                    balizaOverlay
+                )
+            }
+        }
+
         map.overlays.clear()
         overlayBalizasItemized = ItemizedIconOverlay(overlayBalizas, object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
             override fun onItemSingleTapUp(index: Int, item: OverlayItem?): Boolean {
@@ -123,19 +142,31 @@ class MapaGenerico : AppCompatActivity() {
         val nameEditText = EditText(this)
         nameEditText.hint = "Nombre de la baliza"
         layout.addView(nameEditText)
+        val tipoEditText = EditText(this)
+        tipoEditText.hint = "Tipo de la baliza"
+        layout.addView(tipoEditText)
         val descriptionEditText = EditText(this)
         descriptionEditText.hint = "Descripción de la baliza"
         layout.addView(descriptionEditText)
         val dialog = AlertDialog.Builder(this)
             .setTitle("Añadir baliza")
-            .setMessage("Ingresa el nombre y la descripción de la baliza")
+            .setMessage("Ingresa el nombre, el tipo y la descripción de la baliza")
             .setView(layout)
             .setPositiveButton("Aceptar") { _, _ ->
                 val name = nameEditText.text.toString()
+                val tipo = tipoEditText.text.toString()
                 val description = descriptionEditText.text.toString()
 
                 if (name.isNotEmpty() && description.isNotEmpty()) {
-                    // Aquí puedes hacer lo que desees con el nombre y la descripción.
+                    var balizas:List<Baliza>? = null
+                    runBlocking {
+                        val deferred1 = async {
+                            balizas = supabaseAPI.getAllBalizas()}
+                        deferred1.await()
+                    }
+                    var id = balizas?.size?.plus(1) as Int
+                    var baliza= Baliza(id,map.getMapCenter().latitude,map.getMapCenter().longitude,name,tipo,description)
+                    addBaliza(baliza)
                     Toast.makeText(this, "Localización añadida: $name - $description", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this, "Por favor, ingresa ambos campos.", Toast.LENGTH_SHORT).show()
