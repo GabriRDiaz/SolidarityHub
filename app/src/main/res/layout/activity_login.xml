@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <TextView
+        android:id="@+id/etiquetaTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:text="SolidarityHub"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TableLayout
+        android:layout_width="325dp"
+        android:layout_height="597dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etiquetaTitulo">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="5dp">
+
+            <TextView
+                android:id="@+id/etiquetaCorreo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Correo"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/loginInputCorreo"
+                android:layout_width="179dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="p.e: nacho@gmail.com"
+                android:inputType="textEmailAddress" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|top">
+
+            <TextView
+                android:id="@+id/errorCorreo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right|top"
+                android:text="correo inválido"
+                android:textColor="#FF0000"
+                android:textSize="11sp"
+                android:visibility="invisible" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:gravity="center|left">
+
+            <TextView
+                android:id="@+id/etiquetaRepContrasena"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Contraseña"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/loginInputContrasena"
+                    android:layout_width="167dp"
+                    android:layout_height="34dp"
+                    android:ems="10"
+                    android:inputType="textPassword" />
+
+                <Button
+                    android:id="@+id/loginShowPassButton"
+                    android:layout_width="22dp"
+                    android:layout_height="34dp"
+                    android:text="Button" />
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|top">
+
+            <TextView
+                android:id="@+id/errorContrasena"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right|top"
+                android:text="min. 8 caract. y 1 num"
+                android:textColor="#FF0000"
+                android:textSize="11sp"
+                android:visibility="invisible" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|top">
+
+            <TextView
+                android:id="@+id/errorRepContrasena"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right|top"
+                android:text="No coinciden"
+                android:textColor="#FF0000"
+                android:textSize="11sp"
+                android:visibility="invisible" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="40dp"
+            android:gravity="center|left">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No tiene cuenta?" />
+
+            <LinearLayout
+                android:layout_width="11dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/botonIrRegistrarse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Registrarse"
+                    android:textSize="8sp" />
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/logearseButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Iniciar Sesión" />
+        </TableRow>
+    </TableLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

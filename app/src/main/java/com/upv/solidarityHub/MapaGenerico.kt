@@ -12,12 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import com.upv.solidarityHub.persistence.Baliza
-import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
@@ -77,7 +74,7 @@ class MapaGenerico : AppCompatActivity() {
         map = findViewById<MapView>(R.id.mapView)
         overlayBalizas = ArrayList<OverlayItem>()
         mapController = map.controller as MapController
-        buttonAddBaliza = findViewById(R.id.button5)
+        buttonAddBaliza = findViewById(R.id.botonIrRegistrarse)
         buttonAddBaliza.setOnClickListener {
             showAddBalizaDialog()
         }

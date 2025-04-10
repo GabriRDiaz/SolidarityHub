@@ -15,8 +15,12 @@ fun AppNavigation() {
         composable("register") {
             context.startActivity(Intent(context, Registro::class.java))
         }
-        composable("skills_form") {
-            HabilidadesForm()
+//        composable("skills_form") {
+//            HabilidadesForm()
+//        }
+
+        composable("login") {
+            context.startActivity(Intent(context, Login::class.java))
         }
 
     }

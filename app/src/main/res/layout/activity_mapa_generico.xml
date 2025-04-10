@@ -22,7 +22,7 @@
 
     </org.osmdroid.views.MapView>
     <ImageButton
-        android:id="@+id/button5"
+        android:id="@+id/botonIrRegistrarse"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="@android:color/white"

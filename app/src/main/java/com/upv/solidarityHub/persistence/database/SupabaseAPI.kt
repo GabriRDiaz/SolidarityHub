@@ -1,7 +1,10 @@
 package com.upv.solidarityHub.persistence.database
 
+import android.util.Log
 import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.persistence.model.DatabaseHabilidad
+import com.upv.solidarityHub.persistence.model.Habilidad
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
@@ -40,6 +43,16 @@ class SupabaseAPI : DatabaseAPI {
         return usuario;
     }
 
+    public override suspend fun loginUsuario(correo: String, contrasena: String): Usuario? {
+        initializeDatabase()
+        var usuario = getUsuarioByCorreo(correo)
+        if(usuario != null) {
+            if(usuario.password.equals(contrasena)) return usuario
+        }
+
+        return null
+    }
+
     public override suspend fun getBalizaByName(name: String): Baliza? {
         initializeDatabase()
         val baliza =
@@ -71,9 +84,22 @@ class SupabaseAPI : DatabaseAPI {
             val Usuario = Usuario(correo, nombre, apellidos, password, nacimiento, municipio)
             supabase?.from("Usuario")?.insert(Usuario)
             return true
-         } catch(e:Exception) {return false}
+         } catch(e:Exception) {
+             return false}
     }
 
+    public override suspend fun registrarHabilidades(habilidades:List<Habilidad>, usuario:Usuario): Boolean {
+        initializeDatabase()
+        try{
+            for( habilidad in habilidades) {
+                var dbHabilidad = DatabaseHabilidad(habilidad.nombre, usuario.correo, habilidad.competencia,habilidad.preferencia)
+                supabase?.from("Habilidad")?.insert(dbHabilidad)
+            }
 
+
+            return true
+        } catch(e:Exception) {
+           Log.d("DEBUG",e.toString()); return false}
+    }
 
 }

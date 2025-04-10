@@ -11,16 +11,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.persistence.database.DatabaseAPI
+import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.factory.habilidad.HabilidadFactoryProvider
 import com.upv.solidarityHub.persistence.model.Habilidad
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 
 @Composable
-fun HabilidadesForm() {
+fun HabilidadesForm(usuario: Usuario) {
 
     var selectedSkill by remember { mutableStateOf("") }
     var competencia by remember { mutableStateOf(0f) }
     var preferencia by remember { mutableStateOf(0f) }
     var skillList by remember { mutableStateOf(listOf<Habilidad>()) }
+    var db: DatabaseAPI = SupabaseAPI()
 
     val context = LocalContext.current
 
@@ -128,6 +134,13 @@ fun HabilidadesForm() {
 
                     Button(onClick = {
                         Toast.makeText(context, "Habilidades guardadas", Toast.LENGTH_SHORT).show()
+                        runBlocking {
+                            val deferred1 = async {
+                                db.registrarHabilidades(skillList, usuario)
+                            }
+                            deferred1.await()
+                        }
+
                     }) {
                         Text("Finalizar")
                     }

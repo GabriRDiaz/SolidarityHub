@@ -68,6 +68,9 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

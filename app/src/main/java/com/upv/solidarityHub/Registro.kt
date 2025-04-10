@@ -3,6 +3,7 @@ package com.upv.solidarityHub
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -51,6 +52,7 @@ class Registro : AppCompatActivity() {
     private lateinit var showPassButton: Button
     private lateinit var showRepPassButton: Button
     private lateinit var registrarseButton:Button
+    private lateinit var botonIrLogearse:Button
 
 
     private lateinit var nombreField: EditText
@@ -158,11 +160,14 @@ class Registro : AppCompatActivity() {
         showPassButton = findViewById(R.id.showPassButton)
         showRepPassButton = findViewById(R.id.showRepPassButton)
         registrarseButton = findViewById(R.id.registrarseButton)
+        botonIrLogearse = findViewById(R.id.botonIrLogearse)
 
     }
 
     @SuppressLint("ClickableViewAccessibility")
+    //TODO: Refactorizar esto
     private fun initializeListeners() {
+
         findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {
             val newFragment = DatePickerFragment(this)
             newFragment.show(supportFragmentManager, "datePicker")
@@ -307,13 +312,28 @@ class Registro : AppCompatActivity() {
         }
 
         registrarseButton.setOnClickListener {
+            var successfullRegistry = false
             runBlocking {
                 val deferred1 = async {
-                    db.registerUsuario(correoField.text.toString(),nombreField.text.toString(),apellidosField.text.toString(),contrasenaField.text.toString(),displayNacimiento.text.toString(),buscadorMunicipio.query.toString())
+                    successfullRegistry = db.registerUsuario(correoField.text.toString(),nombreField.text.toString(),apellidosField.text.toString(),contrasenaField.text.toString(),displayNacimiento.text.toString(),buscadorMunicipio.query.toString())
 
                 }
                 deferred1.await()
             }
+            //TODO: Mala solución, solo apta para pruebas iniciales. Refactorizar más adelante
+            if (successfullRegistry) {
+                runBlocking {
+                    val deferred1 = async {
+                        db.getUsuarioByCorreo(correoField.text.toString())
+                            ?.let { it1 -> goToHabilidades(it1) }
+                    }
+                    deferred1.await()
+                }
+            }
+        }
+
+        botonIrLogearse.setOnClickListener {
+            goToLogin()
         }
     }
 
@@ -355,6 +375,24 @@ class Registro : AppCompatActivity() {
         })
 
     }
+
+    fun goToLogin() {
+        val intent = Intent(this, Login::class.java)
+        startActivity(intent)
+    }
+
+    fun goToHabilidades(usuario:Usuario) {
+        // Create an Intent to start HabilidadesActivity
+        val intent = Intent(this, HabilidadesActivity()::class.java)
+        intent.putExtra("usuario", usuario)
+
+        // Assuming you have a Usuario object to pass
+        //val usuario = Usuario(/* initialize your Usuario object here */)
+        //intent.putExtra("usuario", usuario) // Pass the Usuario object
+
+        startActivity(intent) // Start the new activity
+    }
+
     private fun checkCorreoValidity(): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(correoField.text).matches()
     }
