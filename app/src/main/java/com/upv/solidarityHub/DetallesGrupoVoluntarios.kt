@@ -65,5 +65,9 @@ class DetallesGrupoVoluntarios : AppCompatActivity() {
 
             binding.textViewDescripcion.text = grupo.descripcion
         }
+
+        binding.botonVolver.setOnClickListener {
+            finish()
+        }
     }
 }
