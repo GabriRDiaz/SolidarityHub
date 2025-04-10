@@ -18,6 +18,9 @@
         android:theme="@style/Theme.SolidarityHub"
         tools:targetApi="31">
         <activity
+            android:name=".StopGap"
+            android:exported="false" />
+        <activity
             android:name=".Login"
             android:exported="true" />
         <activity
@@ -50,10 +53,11 @@
             android:exported="true"
             android:theme="@style/Theme.SolidarityHub" />
         <activity
-            android:name=".solAyuda"
+            android:name=".SolAyuda"
             android:exported="false" />
-        <activity android:name=".HabilidadesActivity"
-            tools:ignore="Instantiatable"></activity>
+        <activity
+            android:name=".HabilidadesActivity"
+            tools:ignore="Instantiatable" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 

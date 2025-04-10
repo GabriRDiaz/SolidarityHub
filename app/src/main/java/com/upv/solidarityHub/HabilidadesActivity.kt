@@ -1,8 +1,10 @@
 package com.upv.solidarityHub
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.content.ContextCompat
 import com.upv.solidarityHub.persistence.Usuario
 
 class HabilidadesActivity() : ComponentActivity() {
@@ -11,7 +13,12 @@ class HabilidadesActivity() : ComponentActivity() {
         usr = intent.getParcelableExtra<Usuario>("usuario")!!
         super.onCreate(savedInstanceState)
         setContent {
-                HabilidadesForm(usr)
+                HabilidadesForm(usr,this)
         }
+    }
+
+    fun goToStopGap() {
+        val intent = Intent(this, StopGap::class.java)
+        startActivity(intent)
     }
 }

@@ -12,22 +12,22 @@ import com.upv.solidarityHub.persistence.Usuario
 fun AppNavigation() {
     val navController = rememberNavController()
     val context = LocalContext.current
-    NavHost(navController = navController, startDestination = "SolAyuda") {
+    NavHost(navController = navController, startDestination = "register") {
         composable("register") {
             context.startActivity(Intent(context, Registro::class.java))
         }
-        composable("skills_form") {
-            HabilidadesForm(
-                Usuario(
-                "test@mail.com",
-                "test",
-                "test",
-                "abc123.",
-                "04122001",
-                "Viveiro"
-            )
-            )
-        }
+//        composable("skills_form") {
+//            HabilidadesForm(
+//                Usuario(
+//                "test@mail.com",
+//                "test",
+//                "test",
+//                "abc123.",
+//                "04122001",
+//                "Viveiro"
+//            )
+//            )
+//        }
 
         composable("login") {
             context.startActivity(Intent(context, Login::class.java))

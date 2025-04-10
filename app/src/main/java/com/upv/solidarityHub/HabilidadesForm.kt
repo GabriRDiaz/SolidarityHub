@@ -1,5 +1,6 @@
 package com.upv.solidarityHub
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.DatabaseAPI
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
@@ -20,7 +22,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
 @Composable
-fun HabilidadesForm(usuario: Usuario) {
+fun HabilidadesForm(usuario: Usuario, parent: HabilidadesActivity) {
 
     var selectedSkill by remember { mutableStateOf("") }
     var competencia by remember { mutableStateOf(0f) }
@@ -140,7 +142,7 @@ fun HabilidadesForm(usuario: Usuario) {
                             }
                             deferred1.await()
                         }
-
+                        parent.goToStopGap()
                     }) {
                         Text("Finalizar")
                     }
@@ -197,3 +199,5 @@ fun SkillDropdown(
 fun removeSkillIfExists(skillToRemove: String, skillList : List<Habilidad>): List<Habilidad> {
     return skillList.filterNot { it.nombre == skillToRemove }
 }
+
+
