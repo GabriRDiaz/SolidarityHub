@@ -1,9 +1,12 @@
 package com.upv.solidarityHub.persistence.database
 
+import android.util.Log
 import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.FormaParte
+import com.upv.solidarityHub.persistence.model.DatabaseHabilidad
+import com.upv.solidarityHub.persistence.model.Habilidad
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
@@ -128,5 +131,72 @@ class SupabaseAPI : DatabaseAPI {
             ?.decodeList<GrupoDeAyuda>()
 
         return grupos
+
+
     }
+
+    public override suspend fun loginUsuario(correo: String, contrasena: String): Usuario? {
+
+
+        initializeDatabase()
+
+
+        var usuario = getUsuarioByCorreo(correo)
+
+
+        if (usuario != null) {
+
+
+            if (usuario.password.equals(contrasena)) return usuario
+
+
+        }
+        return null
     }
+        public override suspend fun registrarHabilidades(habilidades:List<Habilidad>, usuario:Usuario): Boolean {
+
+
+
+            initializeDatabase()
+
+
+            try{
+
+
+                for( habilidad in habilidades) {
+
+
+                    var dbHabilidad = DatabaseHabilidad(habilidad.nombre, usuario.correo, habilidad.competencia,habilidad.preferencia)
+
+
+                    supabase?.from("Habilidad")?.insert(dbHabilidad)
+
+
+                }
+
+
+
+
+
+
+
+
+                return true
+
+
+            } catch(e:Exception) {
+
+
+                Log.d("DEBUG",e.toString()); return false}
+
+
+
+
+
+
+
+
+    }
+
+
+}
