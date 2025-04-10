@@ -36,7 +36,7 @@ class CrearGrupoAyuda : AppCompatActivity() {
 
             if (descripcion.isNotEmpty() && ubicacion.isNotEmpty() && sesion.isNotEmpty()) {
                 lifecycleScope.launch {
-                    val id = Random.nextInt(1000, 9999) // Id aleatorio, ajusta si es necesario
+                    val id = Random.nextInt(0, 9999) // Id aleatorio
                     val success = db.registrarGrupo(
                         id = id,
                         descripcion = descripcion,
