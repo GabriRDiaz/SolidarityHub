@@ -12,16 +12,19 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val context = LocalContext.current
     NavHost(navController = navController, startDestination = "register") {
-        composable("register") {
-            context.startActivity(Intent(context, Registro::class.java))
-        }
+        //composable("register") {
+            //context.startActivity(Intent(context, Registro::class.java))
+        //}
 //        composable("skills_form") {
 //            HabilidadesForm()
 //        }
 
-        composable("login") {
-            context.startActivity(Intent(context, Login::class.java))
-        }
+        //composable("login") {
+            //context.startActivity(Intent(context, Login::class.java))
+        //}
 
+        composable("SolAyuda"){
+            context.startActivity(Intent(context, solAyuda::class.java))
+        }
     }
 }
