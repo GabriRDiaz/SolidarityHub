@@ -24,7 +24,7 @@ fun AppNavigation() {
         }
 
         composable("SolAyuda"){
-            context.startActivity(Intent(context, solAyuda::class.java))
+            context.startActivity(Intent(context, SolAyuda::class.java))
         }
 
         composable("MapaGenerico") {

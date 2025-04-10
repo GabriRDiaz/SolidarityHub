@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".solAyuda">
+    tools:context=".SolAyuda">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,12 +15,6 @@
         android:paddingVertical="10dp"
         tools:layout_editor_absoluteX="-117dp"
         tools:layout_editor_absoluteY="0dp">
-
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
 
         <TextView
             android:id="@+id/textView"
@@ -42,6 +36,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputTitle"
                 android:layout_width="371dp"
                 android:layout_height="48dp"
                 android:hint="Ej: Limpieza de casa" />
@@ -59,6 +54,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textInputDescription"
                 android:layout_width="371dp"
                 android:layout_height="117dp"
                 android:hint="Ej: Necesito ayuda para limpiar el jardín" />
@@ -73,7 +69,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/CatSpinner"
             style="@android:style/Widget.Material.Light.Spinner.Underlined"
             android:layout_width="match_parent"
             android:layout_height="48dp" />
@@ -86,25 +82,26 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="77dp"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="170dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="48dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="Seleccione una ubicación en el mapa"
-                android:paddingHorizontal="50dp"
-                app:icon="@drawable/baseline_add_location_alt_24" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/RecyclerViewLocations"
+                    android:layout_width="262dp"
+                    android:layout_height="match_parent">
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+                <SearchView
+                    android:id="@+id/SearchViewLocations"
+                    android:layout_width="112dp"
+                    android:layout_height="match_parent" />
+            </TableRow>
 
         </LinearLayout>
 
@@ -126,11 +123,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="Seleccione la fecha"
+                android:onClick="calendarClicked"
                 app:icon="@drawable/baseline_calendar_month_24"
                 app:iconTint="#FFFFFF" />
 
             <Spinner
-                android:id="@+id/spinner2"
+                android:id="@+id/HourSpinner"
                 android:layout_width="214dp"
                 android:layout_height="48dp"
                 android:paddingHorizontal="50dp" />
@@ -145,7 +143,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <Spinner
-            android:id="@+id/spinner3"
+            android:id="@+id/SizeSpinner"
             android:layout_width="match_parent"
             android:layout_height="48dp" />
 
@@ -159,9 +157,10 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/buttonOK"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
+                android:onClick="createRequest"
                 android:paddingVertical="0dp"
                 android:text="Aceptar" />
 
