@@ -13,5 +13,5 @@ data class GrupoDeAyuda(
     val ubicacion: String,
     val fecha_creacion: String,
     val sesion: String,
-    val tamanyo: String
+    val tamanyo: Int
 )

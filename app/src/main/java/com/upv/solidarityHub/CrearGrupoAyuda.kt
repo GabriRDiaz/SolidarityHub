@@ -32,7 +32,7 @@ class CrearGrupoAyuda : AppCompatActivity() {
             val descripcion = binding.root.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.textoDescripcion)?.text.toString()
             val ubicacion = binding.root.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.textoMunicipio)?.text.toString()
             val sesion = binding.root.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.textoSesion)?.text.toString()
-            val tamanyo = "1" // Por defecto
+            val tamanyo = 1 // Por defecto
 
             if (descripcion.isNotEmpty() && ubicacion.isNotEmpty() && sesion.isNotEmpty()) {
                 lifecycleScope.launch {

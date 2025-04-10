@@ -109,10 +109,10 @@ class SupabaseAPI : DatabaseAPI {
         return grupo;
     }
 
-    public override suspend fun registrarGrupo(id: Int, descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: String): Boolean {
+    public override suspend fun registrarGrupo(id: Int, descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: Int): Boolean {
         initializeDatabase()
         try{
-            val grupo = GrupoDeAyuda(id, descripcion, ubicacion, fecha_creacion.toString(), sesion, tamanyo)
+            val grupo = GrupoDeAyuda(id, descripcion, ubicacion, fecha_creacion, sesion, tamanyo)
             supabase?.from("GrupoDeAyuda")?.insert(grupo)
             return true
         } catch(e:Exception) {return false}
