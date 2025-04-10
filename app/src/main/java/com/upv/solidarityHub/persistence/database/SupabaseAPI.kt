@@ -59,6 +59,14 @@ class SupabaseAPI : DatabaseAPI {
         return balizas;
     }
 
+    public override suspend fun registerUsuario(correo: String, nombre: String, apellidos: String, password: String, nacimiento: String, municipio: String): Boolean {
+        initializeDatabase()
+        try{
+            val Usuario = Usuario(correo, nombre, apellidos, password, nacimiento, municipio)
+            supabase?.from("Usuario")?.insert(Usuario)
+            return true
+         } catch(e:Exception) {return false}
+    }
 
 
 

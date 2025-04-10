@@ -238,7 +238,7 @@
                 <TextView
                     android:id="@+id/displayNacimiento"
                     android:layout_width="180dp"
-                    android:layout_height="38dp"
+                    android:layout_height="match_parent"
                     android:paddingVertical="12dp"
                     android:textAlignment="center"
                     android:textSize="18sp" />

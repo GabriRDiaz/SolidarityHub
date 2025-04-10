@@ -10,4 +10,5 @@ interface DatabaseAPI {
     public suspend fun getUsuarioByCorreo(correo: String): Usuario?
     public suspend fun getBalizaById(id: String): Baliza?
     public suspend fun getAllBalizas(): List<Baliza>?
+    public suspend fun registerUsuario(correo: String, nombre: String, apellidos: String, password: String, nacimiento:String, municipio: String):Boolean
 }
