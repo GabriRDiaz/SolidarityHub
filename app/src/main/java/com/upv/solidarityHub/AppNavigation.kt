@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.upv.solidarityHub.persistence.Usuario
 
 @Composable
 fun AppNavigation() {
@@ -15,9 +16,18 @@ fun AppNavigation() {
         composable("register") {
             context.startActivity(Intent(context, Registro::class.java))
         }
-        //composable("skills_form") {
-        //    HabilidadesForm()
-        //}
+        composable("skills_form") {
+            HabilidadesForm(
+                Usuario(
+                "test@mail.com",
+                "test",
+                "test",
+                "abc123.",
+                "04122001",
+                "Viveiro"
+            )
+            )
+        }
 
         composable("login") {
             context.startActivity(Intent(context, Login::class.java))

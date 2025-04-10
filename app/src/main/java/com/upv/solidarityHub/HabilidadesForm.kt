@@ -78,8 +78,8 @@ fun HabilidadesForm(usuario: Usuario) {
                     onClick = {
                         if (selectedSkill.isNotEmpty()) {
                             skillList = removeSkillIfExists(selectedSkill, skillList);
-                            val factory = HabilidadFactoryProvider.getFactory(selectedSkill)
-                            val habilidad = factory.createHabilidad(competencia.toInt(), preferencia.toInt())
+                            val factory = HabilidadFactoryProvider.getFactory()
+                            val habilidad = factory.createHabilidad(selectedSkill,competencia.toInt(), preferencia.toInt())
                             skillList = skillList + habilidad
                         }
                     },
