@@ -41,7 +41,7 @@ class CrearGrupoAyuda : AppCompatActivity() {
                         id = id,
                         descripcion = descripcion,
                         ubicacion = ubicacion,
-                        fecha_creacion = Date(),
+                        fecha_creacion = Date().toString(),
                         sesion = sesion,
                         tamanyo = tamanyo
                     )
