@@ -11,20 +11,36 @@ import androidx.navigation.compose.rememberNavController
 fun AppNavigation() {
     val navController = rememberNavController()
     val context = LocalContext.current
-    NavHost(navController = navController, startDestination = "register") {
-        //composable("register") {
-            //context.startActivity(Intent(context, Registro::class.java))
+    NavHost(navController = navController, startDestination = "SolAyuda") {
+        composable("register") {
+            context.startActivity(Intent(context, Registro::class.java))
+        }
+        //composable("skills_form") {
+        //    HabilidadesForm()
         //}
-//        composable("skills_form") {
-//            HabilidadesForm()
-//        }
 
-        //composable("login") {
-            //context.startActivity(Intent(context, Login::class.java))
-        //}
+        composable("login") {
+            context.startActivity(Intent(context, Login::class.java))
+        }
 
         composable("SolAyuda"){
             context.startActivity(Intent(context, solAyuda::class.java))
+        }
+
+        composable("MapaGenerico") {
+            context.startActivity(Intent(context, MapaGenerico::class.java))
+        }
+
+        composable("CrearGrupoAyuda") {
+            context.startActivity(Intent(context, CrearGrupoAyuda::class.java))
+        }
+
+        composable("DetallesGrupoVoluntarios") {
+            context.startActivity(Intent(context, DetallesGrupoVoluntarios::class.java))
+        }
+
+        composable("GruposAyuda") {
+            context.startActivity(Intent(context, GruposAyuda::class.java))
         }
     }
 }
