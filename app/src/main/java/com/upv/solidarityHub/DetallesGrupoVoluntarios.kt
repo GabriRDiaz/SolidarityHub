@@ -57,11 +57,12 @@ class DetallesGrupoVoluntarios : AppCompatActivity() {
             binding.textoNombreGrupo.text = "Grupo ${grupo.id}"
             binding.textView11.text = "Ubicación: ${grupo.ubicacion}"
             binding.textViewSesion.text = grupo.sesion
-            binding.textViewTamanyo.text = "Tamaño: ${grupo.tamanyo}"
+            binding.textViewTamanyo.text = "${grupo.tamanyo} personas"
             // Formatear la fecha y mostrarla en el TextView
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-            val formattedDate = dateFormat.format(grupo.fecha_creacion)
-            binding.textViewFecha.text = formattedDate
+            //val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+            //val formattedDate = dateFormat.format(grupo.fecha_creacion)
+            //binding.textViewFecha.text = formattedDate
+            binding.textViewFecha.text= grupo.fecha_creacion
 
             binding.textViewDescripcion.text = grupo.descripcion
         }

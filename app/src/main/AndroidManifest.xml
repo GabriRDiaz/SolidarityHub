@@ -22,11 +22,11 @@
             android:exported="true" />
         <activity
             android:name=".CrearGrupoAyuda"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/Theme.SolidarityHub" />
         <activity
             android:name=".GruposAyuda"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/Theme.SolidarityHub" />
         <activity
             android:name=".MainActivity"
@@ -47,7 +47,7 @@
             android:theme="@style/Theme.SolidarityHub" />
         <activity
             android:name=".DetallesGrupoVoluntarios"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/Theme.SolidarityHub" />
         <activity
             android:name=".solAyuda"
