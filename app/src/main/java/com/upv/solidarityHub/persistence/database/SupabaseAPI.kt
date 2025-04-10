@@ -2,20 +2,25 @@ package com.upv.solidarityHub.persistence.database
 
 import android.util.Log
 import com.upv.solidarityHub.persistence.Baliza
-import com.upv.solidarityHub.persistence.GrupoDeAyuda
-import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.FormaParte
+import com.upv.solidarityHub.persistence.GrupoDeAyuda
+import com.upv.solidarityHub.persistence.SolicitudAyuda
+import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.model.DatabaseHabilidad
 import com.upv.solidarityHub.persistence.model.Habilidad
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
-import kotlinx.serialization.Contextual
+import io.github.jan.supabase.postgrest.query.Order
+import io.ktor.http.cio.Request
 import kotlinx.serialization.Serializable
-import java.util.Date
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonPrimitive
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 
 //public var supabase: SupabaseClient? = null;
@@ -26,6 +31,19 @@ class SupabaseAPI : DatabaseAPI {
 
     public var supabase: SupabaseClient? = null;
 
+    @Serializable
+    data class reqDB(
+        val id: Int?,
+        val created_at: String? = null,
+        val titulo : String,
+        val descripcion : String,
+        val categoria : String,
+        val ubicacion : String,
+        val generado_por: String? = null,
+        val Fecha : String,
+        val horario : String,
+        val envergadura: String
+        )
 
     public override fun initializeDatabase() {
 
@@ -135,6 +153,39 @@ class SupabaseAPI : DatabaseAPI {
 
 
     }
+
+    public override suspend fun registrarReq(req : SolicitudAyuda): Boolean {
+        initializeDatabase()
+        try{
+            val isoFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
+            val isoDate = isoFormat.format(req.fecha.time)
+            val reqDB =reqDB(getLastReqId()?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,null,isoDate,req.horario,req.tamanyo)
+            supabase?.from("Solicituddeayuda")?.insert(reqDB)
+            System.out.println("Todo bien")
+            return true
+        } catch(e:Exception) {
+            Log.d("DEBUG",e.toString())
+            return false
+        }
+    }
+
+    public override suspend fun getLastReqId(): Int? {
+        initializeDatabase()
+        return try {
+            supabase
+                ?.from("Solicituddeayuda")
+                ?.select(Columns.list("id")){
+                    order(column = "id", order = Order.DESCENDING)
+                    limit(1)
+                }
+                ?.decodeSingle<JsonObject>()  // Decode as single object
+                ?.get("id")?.jsonPrimitive?.int
+        } catch (e: Exception) {
+            null  // Return null if there's any error or no records
+        }
+    }
+
+
 
     public override suspend fun loginUsuario(correo: String, contrasena: String): Usuario? {
 

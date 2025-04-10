@@ -3,6 +3,7 @@ package com.upv.solidarityHub.persistence.database
 import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.GrupoDeAyuda
+import com.upv.solidarityHub.persistence.SolicitudAyuda
 import com.upv.solidarityHub.persistence.model.Habilidad
 import java.util.Date
 
@@ -21,4 +22,6 @@ interface DatabaseAPI {
     public suspend fun getGruposusuario(usuario: String): List<GrupoDeAyuda>?
     public suspend fun loginUsuario(correo: String, contrasena: String): Usuario?
     public suspend fun registrarHabilidades(habilidades:List<Habilidad>, usuario:Usuario): Boolean
+    public suspend fun registrarReq(req : SolicitudAyuda): Boolean
+    public suspend fun getLastReqId(): Int?
 }

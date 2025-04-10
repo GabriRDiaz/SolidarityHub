@@ -15,14 +15,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.upv.solidarityHub.persistence.FileReader
-import com.upv.solidarityHub.persistence.solicitudAyuda
+import com.upv.solidarityHub.persistence.SolicitudAyuda
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import com.upv.solidarityHub.databinding.ActivitySolAyudaBinding
+import kotlinx.coroutines.launch
+
 
 class SolAyuda : AppCompatActivity() {
     lateinit var okButton : Button
@@ -40,6 +44,7 @@ class SolAyuda : AppCompatActivity() {
     lateinit var townRecycler : RecyclerView
     private lateinit var suggestionAdapter: SuggestionAdapter
 
+    private lateinit var binding: ActivitySolAyudaBinding
 
 
     val formatter = SimpleDateFormat("dd/MM/yyyy")
@@ -56,24 +61,28 @@ class SolAyuda : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_sol_ayuda)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+
+        binding = ActivitySolAyudaBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        okButton = findViewById<Button>(R.id.buttonOK)
 
-        inputTextTitle = findViewById<TextInputEditText>(R.id.textInputTitle)
-        inputTextDesc = findViewById<TextInputEditText>(R.id.textInputDescription)
+        okButton = binding.buttonOK
 
-        catSpinner = findViewById<Spinner>(R.id.CatSpinner)
-        hourSpinner = findViewById<Spinner>(R.id.HourSpinner)
-        sizeSpinner = findViewById<Spinner>(R.id.SizeSpinner)
+        inputTextTitle = binding.textInputTitle
+        inputTextDesc = binding.textInputDescription
 
-        townSearcher = findViewById<SearchView>(R.id.SearchViewLocations)
-        townRecycler = findViewById<RecyclerView>(R.id.RecyclerViewLocations)
+        catSpinner = binding.CatSpinner
+        hourSpinner = binding.HourSpinner
+        sizeSpinner = binding.SizeSpinner
+
+        townSearcher = binding.SearchViewLocations
+        townRecycler = binding.RecyclerViewLocations
 
 
         okButton.isEnabled = false
@@ -110,69 +119,77 @@ class SolAyuda : AppCompatActivity() {
         )
         adapterCat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        catSpinner.adapter = adapterCat
+        binding.CatSpinner.adapter = adapterCat
+
 
         val adapterHour = ArrayAdapter(
             this, android.R.layout.simple_spinner_item, hours
         )
         adapterHour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        hourSpinner.adapter = adapterHour
+        binding.HourSpinner.adapter = adapterHour
 
         val adapterSize = ArrayAdapter(
             this, android.R.layout.simple_spinner_item, groupSize
         )
         adapterSize.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        sizeSpinner.adapter = adapterSize
+        binding.SizeSpinner.adapter = adapterSize
 
-        townSearcher.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+        binding.SearchViewLocations.setOnKeyListener { v, keyCode, event ->
             if (checkValidTown()) {
                 buttonConditions()
             }
             false
-        })
+        }
 
-        townSearcher.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
-            if (!hasFocus) {
-                if (!checkValidTown()) {
-                    buttonConditions()
-                }
+        binding.SearchViewLocations.setOnFocusChangeListener { view, hasFocus ->
+            if (!hasFocus && !checkValidTown()) {
+                buttonConditions()
             }
-
         }
 
         suggestionAdapter = SuggestionAdapter(emptyList()) { suggestion ->
-            // Set the SearchView text to the clicked suggestion
-            townSearcher.setQuery(suggestion, true)
+            binding.SearchViewLocations.setQuery(suggestion, true)
             buttonConditions()
-            // Optionally, you can also clear the suggestions
             suggestionAdapter.updateSuggestions(emptyList())
         }
-        townRecycler.layoutManager = LinearLayoutManager(this)
-        townRecycler.adapter = suggestionAdapter
 
-        try {
-            val inputStream = assets.open("municipios")
-             towns = FileReader.readMunicipiosToArray(inputStream)
-            searchSuggestions = towns
-
-            // Read from inputStream
-        } catch (e: IOException) {
-            Log.d("DEBUG","Failure to read file" + "   " + e.toString())
+        binding.RecyclerViewLocations.apply {
+            layoutManager = LinearLayoutManager(this@SolAyuda)
+            adapter = suggestionAdapter
         }
 
-        townSearcher.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
+        try {
+            towns = assets.open("municipios").use { FileReader.readMunicipiosToArray(it) }
+            searchSuggestions = towns
+        } catch (e: IOException) {
+            Log.e("SolAyuda", "Error loading towns", e)
+            towns = emptyArray()
+            searchSuggestions = emptyArray()
+        }
+
+        binding.SearchViewLocations.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val filteredSuggestions = searchSuggestions.filter { it!!.contains(newText ?: "", ignoreCase = true) }
-                suggestionAdapter.updateSuggestions(filteredSuggestions)
+                val filtered = searchSuggestions.filter {
+                    it?.contains(newText.orEmpty(), ignoreCase = true) ?: false
+                }
+                suggestionAdapter.updateSuggestions(filtered)
                 return true
             }
         })
+
+        binding.buttonOK.isEnabled = false
+
+        binding.buttonOK.setOnClickListener(){
+            lifecycleScope.launch {
+                createRequest()
+            }
+        }
+
+
 
 
     }
@@ -240,12 +257,11 @@ class SolAyuda : AppCompatActivity() {
     }
 
     private fun buttonConditions(){
-        okButton.isEnabled = !nullTitle() && !nullDesc() && validDate() && checkValidTown()
+        binding.buttonOK.isEnabled = !nullTitle() && !nullDesc() && validDate() && checkValidTown()
     }
 
-    fun createRequest(view: View){
-        val newReq : solicitudAyuda = solicitudAyuda(getTitleText(),getDesc(), catSpinner.selectedItem.toString(),townSearcher.query.toString(),getDate(), hourSpinner.selectedItem.toString(), sizeSpinner.selectedItem.toString())
-
+    suspend fun createRequest(){
+        val req = SolicitudAyuda.create(getTitleText(), getDesc(), catSpinner.selectedItem.toString(),townSearcher.query.toString(),getDate(), hourSpinner.selectedItem.toString(), sizeSpinner.selectedItem.toString())
     }
 
 }
