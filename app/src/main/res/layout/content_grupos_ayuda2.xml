@@ -11,7 +11,7 @@
         android:id="@+id/etiquetaGruposAyudaDisp2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="50dp"
         android:text="Grupos de Ayuda disponibles:"
         android:textSize="24sp"
@@ -19,51 +19,53 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
-        android:layout_width="300dp"
-        android:layout_height="550dp"
-        android:layout_marginEnd="60dp"
-        android:background="#AE157DE4"
+    <ListView
+        android:id="@+id/listaGruposAyuda"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etiquetaGruposAyudaDisp2">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <ListView
-                android:id="@+id/listaGruposAyuda"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintTop_toBottomOf="@id/etiquetaGruposAyudaDisp2" />
 
     <Button
         android:id="@+id/botonVerDetalles2"
-        tools:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="125dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="30dp"
         android:background="#050505"
         android:text="Ver detalles"
         android:textColor="#FDFDFD"
-        android:textSize="12sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/botonUnirse2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="25dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="30dp"
         android:background="#0B0B0B"
         android:text="Unirse"
         android:textColor="#FDFDFD"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/botonVerDetalles2" />
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/botonVerDetalles2" />
+
+    <Button
+        android:id="@+id/botonCrearGrupo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="30dp"
+        android:text="Crear Grupo"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/botonUnirse2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

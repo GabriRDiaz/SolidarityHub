@@ -86,7 +86,7 @@ dependencies {
 
     //SUPABASE
     implementation(platform("io.github.jan-tennert.supabase:bom:3.1.3"))
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:3.1.3")
     implementation("io.ktor:ktor-client-android:3.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json:1.8.0")
