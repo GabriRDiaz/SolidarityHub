@@ -58,26 +58,26 @@ class GruposAyuda : AppCompatActivity() {
         binding.botonVerGrupos.setOnClickListener {
             mostrarGruposInscritos()
         }
+
+        binding.listaGruposAyuda.setOnItemClickListener { _, _, position, _ ->
+            grupoSeleccionado = listaGrupos.getOrNull(position)
+        }
     }
 
     private fun obtenerGrupos() {
         lifecycleScope.launch {
-            val grupos = db.getAllGrupos() // Método que obtiene todos los grupos de la base de datos
-            if (grupos.isNullOrEmpty()) {
-                Toast.makeText(this@GruposAyuda, "No hay grupos disponibles", Toast.LENGTH_SHORT).show()
-            } else {
-                // Crear una lista con solo los nombres de los grupos para mostrar
-                val nombresGrupos = grupos.map { "Grupo ${it.id} - ${it.sesion}" }
-
-                // Crear un ArrayAdapter para mostrar los nombres de los grupos
-                val adapter = ArrayAdapter(
-                    this@GruposAyuda, // Contexto
-                    android.R.layout.simple_list_item_1, // Layout simple de una línea
-                    nombresGrupos // Lista de nombres de los grupos
-                )
-
-                // Asignar el adaptador al ListView
-                binding.listaGruposAyuda.adapter = adapter
+            try {
+                val grupos = db.getAllGrupos()
+                if (grupos.isNullOrEmpty()) {
+                    Toast.makeText(this@GruposAyuda, "No hay grupos disponibles", Toast.LENGTH_SHORT).show()
+                } else {
+                    listaGrupos = grupos
+                    val nombresGrupos = grupos.map { "Grupo ${it.id} - ${it.sesion}" }
+                    val adapter = ArrayAdapter(this@GruposAyuda, android.R.layout.simple_list_item_1, nombresGrupos)
+                    binding.listaGruposAyuda.adapter = adapter
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@GruposAyuda, "Error al obtener grupos: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -85,26 +85,24 @@ class GruposAyuda : AppCompatActivity() {
     // Función para mostrar los grupos en los que el usuario está inscrito
     private fun mostrarGruposInscritos() {
         lifecycleScope.launch {
-            db.initializeDatabase()
-            val usuarioId = db.supabase?.auth?.currentUserOrNull()?.id
-            if (usuarioId != null) {
-                val gruposInscritos = db.getGruposusuario(usuarioId)
-                if (gruposInscritos.isNullOrEmpty()) {
-                    Toast.makeText(this@GruposAyuda, "No estás inscrito en ningún grupo", Toast.LENGTH_SHORT).show()
+            try {
+                db.initializeDatabase()
+                val usuarioId = db.supabase?.auth?.currentUserOrNull()?.id
+                if (usuarioId != null) {
+                    val gruposInscritos = db.getGruposusuario(usuarioId)
+                    if (gruposInscritos.isNullOrEmpty()) {
+                        Toast.makeText(this@GruposAyuda, "No estás inscrito en ningún grupo", Toast.LENGTH_SHORT).show()
+                    } else {
+                        listaGrupos = gruposInscritos
+                        val nombres = gruposInscritos.map { "Grupo ${it.id} - ${it.sesion}" }
+                        val adapter = ArrayAdapter(this@GruposAyuda, android.R.layout.simple_list_item_1, nombres)
+                        binding.listaGruposAyuda.adapter = adapter
+                    }
                 } else {
-                    val nombresGruposInscritos =
-                        gruposInscritos.map { "Grupo ${it.id} - ${it.sesion}" }
-
-                    val adapter = ArrayAdapter(
-                        this@GruposAyuda,
-                        android.R.layout.simple_list_item_1,
-                        nombresGruposInscritos
-                    )
-
-                    binding.listaGruposAyuda.adapter = adapter
+                    Toast.makeText(this@GruposAyuda, "No hay usuario logueado", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this@GruposAyuda, "No hay usuario logueado", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@GruposAyuda, "Error al cargar tus grupos: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
         }

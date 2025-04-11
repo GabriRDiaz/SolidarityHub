@@ -29,14 +29,19 @@ class CrearGrupoAyuda : AppCompatActivity() {
 
         //setSupportActionBar(binding.toolbar)
         binding.botonAceptar.setOnClickListener {
-            val descripcion = binding.root.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.textoDescripcion)?.text.toString()
-            val ubicacion = binding.root.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.textoMunicipio)?.text.toString()
-            val sesion = binding.root.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.textoSesion)?.text.toString()
-            val tamanyo = 1 // Por defecto
+            val descripcion = binding.textoDescripcion.text?.toString()?.trim() ?: ""
+            val ubicacion = binding.textoMunicipio.text?.toString()?.trim() ?: ""
+            val sesion = binding.textoSesion.text?.toString()?.trim() ?: ""
+            val tamanyo = 1
 
-            if (descripcion.isNotEmpty() && ubicacion.isNotEmpty() && sesion.isNotEmpty()) {
-                lifecycleScope.launch {
-                    val id = Random.nextInt(0, 9999) // Id aleatorio
+            if (descripcion.isEmpty() || ubicacion.isEmpty() || sesion.isEmpty()) {
+                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch {
+                try {
+                    val id = Random.nextInt(0, 9999)
                     val success = db.registrarGrupo(
                         id = id,
                         descripcion = descripcion,
@@ -45,15 +50,16 @@ class CrearGrupoAyuda : AppCompatActivity() {
                         sesion = sesion,
                         tamanyo = tamanyo
                     )
+
                     if (success) {
                         Toast.makeText(this@CrearGrupoAyuda, "Grupo creado correctamente", Toast.LENGTH_LONG).show()
-                        finish() // cerrar la actividad
+                        finish()
                     } else {
                         Toast.makeText(this@CrearGrupoAyuda, "Error al crear el grupo", Toast.LENGTH_LONG).show()
                     }
+                } catch (e: Exception) {
+                    Toast.makeText(this@CrearGrupoAyuda, "Excepción: ${e.message}", Toast.LENGTH_LONG).show()
                 }
-            } else {
-                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
 

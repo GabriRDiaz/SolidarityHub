@@ -35,7 +35,7 @@ class DetallesGrupoVoluntarios : AppCompatActivity() {
         //setSupportActionBar(binding.toolbar)
         //var bd= SupabaseAPI()
         //val grupo = intent.getParcelableExtra<GrupoDeAyuda>("GrupoDeAyuda") ?: return
-        val grupoId = intent.getIntExtra("grupoId", -1)
+        val grupoId = intent.getIntExtra("idGrupo", -1)
         if (grupoId == -1) {
             Toast.makeText(this, "ID del grupo no válido", Toast.LENGTH_SHORT).show()
             finish()
@@ -43,28 +43,23 @@ class DetallesGrupoVoluntarios : AppCompatActivity() {
         }
         // Cargar el grupo desde Supabase
         lifecycleScope.launch {
+            try{
             val grupo = db.getGrupoById(grupoId)
             if (grupo == null) {
-                Toast.makeText(
-                    this@DetallesGrupoVoluntarios,
-                    "Grupo no encontrado",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@DetallesGrupoVoluntarios, "Grupo no encontrado", Toast.LENGTH_SHORT).show()
                 finish()
-                return@launch
+            } else {
+                binding.textoNombreGrupo.text = "Grupo ${grupo.id}"
+                binding.textView11.text = "Ubicación: ${grupo.ubicacion}"
+                binding.textViewSesion.text = grupo.sesion
+                binding.textViewTamanyo.text = "${grupo.tamanyo} personas"
+                binding.textViewFecha.text = grupo.fecha_creacion
+                binding.textViewDescripcion.text = grupo.descripcion
             }
-            // Mostrar datos del grupo en la UI
-            binding.textoNombreGrupo.text = "Grupo ${grupo.id}"
-            binding.textView11.text = "Ubicación: ${grupo.ubicacion}"
-            binding.textViewSesion.text = grupo.sesion
-            binding.textViewTamanyo.text = "${grupo.tamanyo} personas"
-            // Formatear la fecha y mostrarla en el TextView
-            //val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-            //val formattedDate = dateFormat.format(grupo.fecha_creacion)
-            //binding.textViewFecha.text = formattedDate
-            binding.textViewFecha.text= grupo.fecha_creacion
-
-            binding.textViewDescripcion.text = grupo.descripcion
+        } catch (e: Exception) {
+            Toast.makeText(this@DetallesGrupoVoluntarios, "Error al cargar el grupo: ${e.message}", Toast.LENGTH_LONG).show()
+            finish()
+        }
         }
 
         binding.botonVolver.setOnClickListener {
