@@ -358,10 +358,8 @@ class Registro : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerMunicipio)
 
         suggestionAdapter = SuggestionAdapter(emptyList()) { suggestion ->
-            // Set the SearchView text to the clicked suggestion
             buscadorMunicipio.setQuery(suggestion, true)
             checkAllFields()
-            // Optionally, you can also clear the suggestions
             suggestionAdapter.updateSuggestions(emptyList())
         }
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -373,7 +371,7 @@ class Registro : AppCompatActivity() {
             municipios = FileReader.readMunicipiosToArray(inputStream)
             searchSuggestions = municipios
 
-            // Read from inputStream
+
         } catch (e: IOException) {
             Log.d("DEBUG","Failure to read file" + "   " + e.toString())
         }
@@ -398,15 +396,11 @@ class Registro : AppCompatActivity() {
     }
 
     fun goToHabilidades(usuario:Usuario) {
-        // Create an Intent to start HabilidadesActivity
         val intent = Intent(this, HabilidadesActivity()::class.java)
         intent.putExtra("usuario", usuario)
 
-        // Assuming you have a Usuario object to pass
-        //val usuario = Usuario(/* initialize your Usuario object here */)
-        //intent.putExtra("usuario", usuario) // Pass the Usuario object
 
-        startActivity(intent) // Start the new activity
+        startActivity(intent)
     }
 
     private fun checkCorreoValidity(): Boolean {
