@@ -35,7 +35,7 @@ class DetallesGrupoVoluntarios : AppCompatActivity() {
         //setSupportActionBar(binding.toolbar)
         //var bd= SupabaseAPI()
         //val grupo = intent.getParcelableExtra<GrupoDeAyuda>("GrupoDeAyuda") ?: return
-        val grupoId = intent.getIntExtra("idGrupo", -1)
+        val grupoId = intent.getIntExtra("grupoId", -1)
         if (grupoId == -1) {
             Toast.makeText(this, "ID del grupo no válido", Toast.LENGTH_SHORT).show()
             finish()
