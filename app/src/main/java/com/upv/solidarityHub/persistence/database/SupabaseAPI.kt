@@ -127,21 +127,17 @@ class SupabaseAPI : DatabaseAPI {
     public override suspend fun getGruposusuario(usuario: String): List<GrupoDeAyuda>? {
         initializeDatabase()
 
-        // Obtener las relaciones entre el usuario y los grupos
         val relaciones = supabase?.from("FormaParte")
             ?.select()
             { filter { eq("user", usuario) } }
             ?.decodeList<FormaParte>() ?: return emptyList()
 
-        // Obtener los ids de los grupos
         val idsGrupo = relaciones.map { it.grupo }
 
-        // Obtener los grupos utilizando los ids de los grupos encontrados
         val grupos = supabase?.from("GrupoDeAyuda")
             ?.select()
             {
                 filter {
-                    // Usamos 'or' para aplicar el filtro a cada id
                     idsGrupo.forEach { grupoId ->
                         or { eq("id", grupoId) }
                     }
