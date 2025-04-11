@@ -91,23 +91,19 @@ class GruposAyuda() : AppCompatActivity() {
             if (grupos.isNullOrEmpty()) {
                 Toast.makeText(this@GruposAyuda, "No hay grupos disponibles", Toast.LENGTH_SHORT).show()
             } else {
-                // Crear una lista con solo los nombres de los grupos para mostrar
                 val nombresGrupos = grupos.map { "Grupo ${it.id} - ${it.sesion}" }
 
-                // Crear un ArrayAdapter para mostrar los nombres de los grupos
                 val adapter = ArrayAdapter(
                     this@GruposAyuda, // Contexto
                     android.R.layout.simple_list_item_1, // Layout simple de una línea
                     nombresGrupos // Lista de nombres de los grupos
                 )
 
-                // Asignar el adaptador al ListView
                 binding.listaGruposAyuda.adapter = adapter
             }
         }
     }
 
-    // Función para mostrar los grupos en los que el usuario está inscrito
     private fun mostrarGruposInscritos() {
         lifecycleScope.launch {
             db.initializeDatabase()

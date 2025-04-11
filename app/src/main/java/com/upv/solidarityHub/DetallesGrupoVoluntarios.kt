@@ -15,9 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import com.upv.solidarityHub.databinding.ContentDetallesGrupoVoluntariosBinding
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import java.text.SimpleDateFormat
-//import io.github.jan.supabase.SupabaseClient
-//import io.github.jan.supabase.SupabaseClientBuilder
-//import java.util.Date
+
 
 class DetallesGrupoVoluntarios : AppCompatActivity() {
 
@@ -33,15 +31,12 @@ class DetallesGrupoVoluntarios : AppCompatActivity() {
         setContentView(binding.root)
 
         //setSupportActionBar(binding.toolbar)
-        //var bd= SupabaseAPI()
-        //val grupo = intent.getParcelableExtra<GrupoDeAyuda>("GrupoDeAyuda") ?: return
         val grupoId = intent.getIntExtra("grupoId", -1)
         if (grupoId == -1) {
             Toast.makeText(this, "ID del grupo no válido", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
-        // Cargar el grupo desde Supabase
         lifecycleScope.launch {
             try{
             val grupo = db.getGrupoById(grupoId)
