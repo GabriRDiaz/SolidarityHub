@@ -35,9 +35,6 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-       // setSupportActionBar(binding.toolbar)
-
         initializeFields()
         initializeButtons()
         initializeListeners()
@@ -59,7 +56,6 @@ class Login : AppCompatActivity() {
     private fun initializeListeners() {
         inputCorreo.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
             if (checkCorreoValidity()) {
-                //errorCorreo.visibility = View.INVISIBLE
             }
             checkAllFields()
             false
@@ -68,7 +64,6 @@ class Login : AppCompatActivity() {
         inputCorreo.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
                 if (!checkCorreoValidity()) {
-                    //errorCorreo.visibility = View.VISIBLE
                 }
             }
             checkAllFields()
@@ -76,7 +71,6 @@ class Login : AppCompatActivity() {
 
         inputContrasena.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
             if (checkContrasenaValidity()) {
-                //errorContrasena.visibility = View.INVISIBLE
             }
             checkAllFields()
             false
@@ -85,7 +79,6 @@ class Login : AppCompatActivity() {
         inputContrasena.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
             if (!hasFocus) {
                 if (!checkContrasenaValidity()) {
-                    //errorContrasena.visibility = View.VISIBLE
                 }
             }
             checkAllFields()
@@ -167,14 +160,9 @@ class Login : AppCompatActivity() {
     }
 
     fun goToHabilidades(usuario:Usuario) {
-        // Create an Intent to start HabilidadesActivity
         val intent = Intent(this, HabilidadesActivity()::class.java)
         intent.putExtra("usuario", usuario)
 
-        // Assuming you have a Usuario object to pass
-        //val usuario = Usuario(/* initialize your Usuario object here */)
-        //intent.putExtra("usuario", usuario) // Pass the Usuario object
-
-        startActivity(intent) // Start the new activity
+        startActivity(intent)
     }
 }

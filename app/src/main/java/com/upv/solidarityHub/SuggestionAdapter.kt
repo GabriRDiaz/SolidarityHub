@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class SuggestionAdapter(
     private var suggestions: List<String>,
-    private val onSuggestionClick: (String) -> Unit // Add a click listener
+    private val onSuggestionClick: (String) -> Unit
 ) : RecyclerView.Adapter<SuggestionAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -24,7 +24,7 @@ class SuggestionAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.textView.text = suggestions[position]
         holder.itemView.setOnClickListener {
-            onSuggestionClick(suggestions[position]) // Trigger the click listener
+            onSuggestionClick(suggestions[position])
         }
     }
 
