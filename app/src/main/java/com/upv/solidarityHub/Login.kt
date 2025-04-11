@@ -125,7 +125,7 @@ class Login : AppCompatActivity() {
                 }
 
                 if(usuario != null) {Toast.makeText(getApplicationContext(), usuario!!.correo.toString() + "  " + usuario!!.nombre.toString(), Toast.LENGTH_SHORT).show()
-                    goToHabilidades(usuario!!)
+                    goToStopGap(usuario!!)
                 } else {Toast.makeText(getApplicationContext(), "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()}
 
             } catch (e:NoSuchElementException) {
@@ -157,6 +157,12 @@ class Login : AppCompatActivity() {
 
     fun goToRegister() {
         val intent = Intent(this, Registro::class.java)
+        startActivity(intent)
+    }
+
+    fun goToStopGap(usr:Usuario) {
+        val intent = Intent(this, StopGap::class.java)
+        intent.putExtra("usuario", usr)
         startActivity(intent)
     }
 

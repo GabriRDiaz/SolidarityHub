@@ -16,17 +16,27 @@ import kotlinx.coroutines.launch
 import android.widget.ArrayAdapter
 import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import android.content.Intent
+import android.util.Log
+import android.widget.ListView
+import androidx.compose.ui.text.font.FontLoadingStrategy.Companion.Blocking
+import com.upv.solidarityHub.persistence.Usuario
 import io.github.jan.supabase.auth.auth
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import java.lang.Integer.parseInt
 
-class GruposAyuda : AppCompatActivity() {
+class GruposAyuda() : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ContentGruposAyuda2Binding
     private val db: SupabaseAPI = SupabaseAPI()
     private var listaGrupos: List<GrupoDeAyuda> = listOf()
     private var grupoSeleccionado: GrupoDeAyuda? = null
+    private lateinit var usuario: Usuario
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        usuario = intent.getParcelableExtra<Usuario>("usuario")!!
+
         super.onCreate(savedInstanceState)
 
         binding = ContentGruposAyuda2Binding.inflate(layoutInflater)
@@ -37,16 +47,16 @@ class GruposAyuda : AppCompatActivity() {
 
         binding.botonVerDetalles2.setOnClickListener {
             grupoSeleccionado?.let {
+                Log.d("DEBUG", grupoSeleccionado!!.id.toString())
                 val intent = Intent(this, DetallesGrupoVoluntarios::class.java)
-                intent.putExtra("idGrupo", it.id)
+                intent.putExtra("grupoId", grupoSeleccionado!!.id)
                 startActivity(intent)
             } ?: Toast.makeText(this, "Selecciona un grupo primero", Toast.LENGTH_SHORT).show()
         }
 
         binding.botonUnirse2.setOnClickListener {
             grupoSeleccionado?.let {
-                Toast.makeText(this, "Te has unido al grupo ${it.id}", Toast.LENGTH_SHORT).show()
-                // Aquí podrías llamar a tu función en Supabase para unirte de verdad
+                Toast.makeText(this, "Te has unido al grupo ${grupoSeleccionado!!.id}", Toast.LENGTH_SHORT).show()
             } ?: Toast.makeText(this, "Selecciona un grupo primero", Toast.LENGTH_SHORT).show()
         }
 
@@ -58,6 +68,21 @@ class GruposAyuda : AppCompatActivity() {
         binding.botonVerGrupos.setOnClickListener {
             mostrarGruposInscritos()
         }
+
+        findViewById<ListView>(R.id.listaGruposAyuda).setOnItemClickListener { _, _, position, _ ->
+            //TODO: SOLUCIÓN MUY ESTÚPIDA PARA SALIR DEL PASO POR AHORA, REFACTORIZAR!!!!
+            var grupo = binding.listaGruposAyuda.adapter.getItem(position)
+            runBlocking {
+                val deferred1 = async {
+                    Log.d("DEBUG",parseInt((grupo as String).substring(6,7)).toString())
+                    grupoSeleccionado = db.getGrupoById(parseInt((grupo as String).substring(6,7)))
+
+                }
+                deferred1.await()
+            }
+
+        }
+
     }
 
     private fun obtenerGrupos() {
@@ -86,7 +111,7 @@ class GruposAyuda : AppCompatActivity() {
     private fun mostrarGruposInscritos() {
         lifecycleScope.launch {
             db.initializeDatabase()
-            val usuarioId = db.supabase?.auth?.currentUserOrNull()?.id
+            val usuarioId = usuario.correo
             if (usuarioId != null) {
                 val gruposInscritos = db.getGruposusuario(usuarioId)
                 if (gruposInscritos.isNullOrEmpty()) {

@@ -130,11 +130,11 @@ class SupabaseAPI : DatabaseAPI {
         // Obtener las relaciones entre el usuario y los grupos
         val relaciones = supabase?.from("FormaParte")
             ?.select()
-            { filter { eq("usuario_id", usuario) } }
+            { filter { eq("user", usuario) } }
             ?.decodeList<FormaParte>() ?: return emptyList()
 
         // Obtener los ids de los grupos
-        val idsGrupo = relaciones.map { it.grupo_id }
+        val idsGrupo = relaciones.map { it.grupo }
 
         // Obtener los grupos utilizando los ids de los grupos encontrados
         val grupos = supabase?.from("GrupoDeAyuda")

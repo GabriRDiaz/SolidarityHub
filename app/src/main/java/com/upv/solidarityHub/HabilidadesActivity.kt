@@ -19,6 +19,7 @@ class HabilidadesActivity() : ComponentActivity() {
 
     fun goToStopGap() {
         val intent = Intent(this, StopGap::class.java)
+        intent.putExtra("usuario", usr)
         startActivity(intent)
     }
 }

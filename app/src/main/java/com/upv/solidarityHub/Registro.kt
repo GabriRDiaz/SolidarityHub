@@ -14,6 +14,7 @@ import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -313,23 +314,38 @@ class Registro : AppCompatActivity() {
 
         registrarseButton.setOnClickListener {
             var successfullRegistry = false
+            var foundExistingUser = true
             runBlocking {
                 val deferred1 = async {
-                    successfullRegistry = db.registerUsuario(correoField.text.toString(),nombreField.text.toString(),apellidosField.text.toString(),contrasenaField.text.toString(),displayNacimiento.text.toString(),buscadorMunicipio.query.toString())
+                    try{
+                        db.getUsuarioByCorreo(correoField.text.toString())
+                    } catch (e:NoSuchElementException) {
+                        foundExistingUser = false
+                        successfullRegistry = db.registerUsuario(correoField.text.toString(),nombreField.text.toString(),apellidosField.text.toString(),contrasenaField.text.toString(),displayNacimiento.text.toString(),buscadorMunicipio.query.toString())
+                        if (successfullRegistry) {
+
+                                val deferred1 = async {
+                                    db.getUsuarioByCorreo(correoField.text.toString())
+                                        ?.let { it1 -> goToHabilidades(it1) }
+                                }
+
+                        } else {
+
+                        }
+                    } catch (e:Exception) {
+                        Toast.makeText(getApplicationContext(),"Hubo un error, porfavor inténtelo más tarde", Toast.LENGTH_SHORT).show()
+
+                    }
+
+                    if(foundExistingUser) Toast.makeText(getApplicationContext(),"Usuario con ese correo ya existe", Toast.LENGTH_SHORT).show()
+
+
 
                 }
                 deferred1.await()
             }
             //TODO: Mala solución, solo apta para pruebas iniciales. Refactorizar más adelante
-            if (successfullRegistry) {
-                runBlocking {
-                    val deferred1 = async {
-                        db.getUsuarioByCorreo(correoField.text.toString())
-                            ?.let { it1 -> goToHabilidades(it1) }
-                    }
-                    deferred1.await()
-                }
-            }
+
         }
 
         botonIrLogearse.setOnClickListener {

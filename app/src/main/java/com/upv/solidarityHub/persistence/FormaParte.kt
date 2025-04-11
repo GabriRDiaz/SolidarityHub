@@ -1,6 +1,7 @@
 package com.upv.solidarityHub.persistence
 
+import kotlinx.serialization.Serializable
 import java.util.Date
-
-data class FormaParte(val usuario_id: String, val grupo_id:Int, val fecha: Date) {
+@Serializable
+data class FormaParte(val user: String, val grupo:Int, val fecha: String) {
 }
