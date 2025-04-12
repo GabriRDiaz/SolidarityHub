@@ -22,8 +22,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.SolicitudAyuda
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import com.upv.solidarityHub.databinding.ActivitySolAyudaBinding
 import kotlinx.coroutines.launch
 
@@ -34,11 +32,10 @@ class SolAyuda : AppCompatActivity() {
     lateinit var inputTextTitle : TextInputEditText
     lateinit var inputTextDesc : TextInputEditText
 
-    lateinit var selectedDate : Calendar
-
     lateinit var catSpinner : Spinner
     lateinit var hourSpinner : Spinner
     lateinit var sizeSpinner : Spinner
+    lateinit var urgSpinner: Spinner
 
     lateinit var townSearcher : SearchView
     lateinit var townRecycler : RecyclerView
@@ -46,14 +43,13 @@ class SolAyuda : AppCompatActivity() {
 
     private lateinit var binding: ActivitySolAyudaBinding
 
-
-    val formatter = SimpleDateFormat("dd/MM/yyyy")
-
     val categories = arrayOf("Limpieza", "Recogida de comida", "Reconstrucción", "Primeros auxilios", "Artículos para bebés", "Asistencia a mayores", "Asistencia a discapacitados", "Artículos de primera necesidad", "Otros", "Transporte", "Cocina", "Mascotas")
 
     val hours = arrayOf("Manaña Temprana (6:00 - 9:00)", "Mañana (9:00 - 12:00)", "Mediodía (12:00 - 15:00)", "Tarde (15:00 - 18:00)", "Noche Temprana (18:00 - 21:00)", "Noche (21:00 - 00:00)", "Madrugada (00:00 - 6:00)")
 
     val groupSize = arrayOf("Pequeña (5 voluntarios máx.)", "Media (15 voluntarios máx.)", "Grande (15+ voluntarios)")
+
+    val urgenciaList = arrayOf("Baja", "Media", "Alta")
 
     private lateinit var towns: Array<String?>
     private var searchSuggestions = arrayOfNulls<String>(FileReader.numMunicipios)
@@ -80,6 +76,7 @@ class SolAyuda : AppCompatActivity() {
         catSpinner = binding.CatSpinner
         hourSpinner = binding.HourSpinner
         sizeSpinner = binding.SizeSpinner
+        urgSpinner = binding.spinnerUrg
 
         townSearcher = binding.SearchViewLocations
         townRecycler = binding.RecyclerViewLocations
@@ -135,6 +132,13 @@ class SolAyuda : AppCompatActivity() {
         adapterSize.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         binding.SizeSpinner.adapter = adapterSize
+
+        val adapterUrg = ArrayAdapter(
+            this, android.R.layout.simple_spinner_item, urgenciaList
+        )
+        adapterUrg.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        binding.spinnerUrg.adapter = adapterUrg
 
         binding.SearchViewLocations.setOnKeyListener { v, keyCode, event ->
             if (checkValidTown()) {
@@ -194,50 +198,12 @@ class SolAyuda : AppCompatActivity() {
 
     }
 
-    fun calendarClicked(view : View){
-
-        val calendar = if (validDate()){
-            selectedDate.clone() as Calendar
-        }
-        else{
-            Calendar.getInstance()
-        }
-
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-
-
-        val datePickerDialog: DatePickerDialog = DatePickerDialog(
-            this,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                // Handle date selection
-                selectedDate = Calendar.getInstance().apply {
-                    set(Calendar.YEAR,selectedYear)
-                    set(Calendar.MONTH, selectedMonth)
-                    set(Calendar.DAY_OF_MONTH, selectedDay)
-                }
-                val formattedDate = formatter.format(selectedDate.time)
-                Toast.makeText(this, "Fecha seleccionada: $formattedDate", Toast.LENGTH_LONG).show()
-                buttonConditions()
-            },
-            year, month, dayOfMonth
-        )
-        datePickerDialog.show()
-
-
-    }
-
     private fun getTitleText(): String{
         return inputTextTitle.text.toString()
     }
 
     private fun getDesc():String {
         return inputTextDesc.text.toString()
-    }
-
-    private fun getDate():Calendar{
-        return selectedDate
     }
 
     private fun nullTitle(): Boolean {
@@ -248,20 +214,16 @@ class SolAyuda : AppCompatActivity() {
         return getDesc().equals("")
     }
 
-    private fun validDate():Boolean{
-        return ::selectedDate.isInitialized
-    }
-
     private fun checkValidTown(): Boolean {
         return towns.contains(townSearcher.query.toString())
     }
 
     private fun buttonConditions(){
-        binding.buttonOK.isEnabled = !nullTitle() && !nullDesc() && validDate() && checkValidTown()
+        binding.buttonOK.isEnabled = !nullTitle() && !nullDesc() && checkValidTown()
     }
 
     suspend fun createRequest(){
-        val req = SolicitudAyuda.create(getTitleText(), getDesc(), catSpinner.selectedItem.toString(),townSearcher.query.toString(),getDate(), hourSpinner.selectedItem.toString(), sizeSpinner.selectedItem.toString())
+        val req = SolicitudAyuda.create(getTitleText(), getDesc(), catSpinner.selectedItem.toString(),townSearcher.query.toString(), hourSpinner.selectedItem.toString(), sizeSpinner.selectedItem.toString(), urgSpinner.selectedItem.toString())
     }
 
 }

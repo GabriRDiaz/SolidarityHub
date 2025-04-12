@@ -40,10 +40,10 @@ class SupabaseAPI : DatabaseAPI {
         val categoria : String,
         val ubicacion : String,
         val generado_por: String? = null,
-        val Fecha : String,
         val horario : String,
-        val envergadura: String
-        )
+        val envergadura: String,
+        val urgencia: String
+    )
 
     public override fun initializeDatabase() {
 
@@ -157,9 +157,7 @@ class SupabaseAPI : DatabaseAPI {
     public override suspend fun registrarReq(req : SolicitudAyuda): Boolean {
         initializeDatabase()
         try{
-            val isoFormat: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd")
-            val isoDate = isoFormat.format(req.fecha.time)
-            val reqDB =reqDB(getLastReqId()?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,null,isoDate,req.horario,req.tamanyo)
+            val reqDB =reqDB(getLastReqId()?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,null,req.horario,req.tamanyo, req.urgencia)
             supabase?.from("Solicituddeayuda")?.insert(reqDB)
             System.out.println("Todo bien")
             return true

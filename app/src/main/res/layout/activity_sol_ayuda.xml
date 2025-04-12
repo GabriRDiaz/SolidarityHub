@@ -109,7 +109,7 @@
             android:id="@+id/textView15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Fecha y Horario"
+            android:text="Horario (orientativo) y urgencia"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <LinearLayout
@@ -117,21 +117,17 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/button8"
-                android:layout_width="48dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:contentDescription="Seleccione la fecha"
-                android:onClick="calendarClicked"
-                app:icon="@drawable/baseline_calendar_month_24"
-                app:iconTint="#FFFFFF" />
-
             <Spinner
                 android:id="@+id/HourSpinner"
                 android:layout_width="214dp"
                 android:layout_height="48dp"
                 android:paddingHorizontal="50dp" />
+
+            <Spinner
+                android:id="@+id/spinnerUrg"
+                android:layout_width="173dp"
+                android:layout_height="48dp"
+                android:layout_weight="1" />
 
         </LinearLayout>
 
