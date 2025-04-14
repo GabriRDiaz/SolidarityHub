@@ -67,7 +67,47 @@ class SolAyuda : AppCompatActivity() {
             insets
         }
 
+        findComponents()
 
+        setListeners()
+
+        setSpinners()
+
+        setLocationUI()
+
+        binding.buttonOK.isEnabled = false
+
+    }
+
+    private fun getTitleText(): String{
+        return inputTextTitle.text.toString()
+    }
+
+    private fun getDesc():String {
+        return inputTextDesc.text.toString()
+    }
+
+    private fun nullTitle(): Boolean {
+        return getTitleText().equals("")
+    }
+
+    private fun nullDesc():Boolean{
+        return getDesc().equals("")
+    }
+
+    private fun checkValidTown(): Boolean {
+        return towns.contains(townSearcher.query.toString())
+    }
+
+    private fun buttonConditions(){
+        binding.buttonOK.isEnabled = !nullTitle() && !nullDesc() && checkValidTown()
+    }
+
+    suspend fun createRequest(){
+        val req = SolicitudAyuda.create(getTitleText(), getDesc(), catSpinner.selectedItem.toString(),townSearcher.query.toString(), hourSpinner.selectedItem.toString(), sizeSpinner.selectedItem.toString(), urgSpinner.selectedItem.toString())
+    }
+
+    private fun findComponents(){
         okButton = binding.buttonOK
 
         inputTextTitle = binding.textInputTitle
@@ -81,9 +121,9 @@ class SolAyuda : AppCompatActivity() {
         townSearcher = binding.SearchViewLocations
         townRecycler = binding.RecyclerViewLocations
 
+    }
 
-        okButton.isEnabled = false
-
+    private fun setListeners(){
         inputTextTitle.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -111,13 +151,21 @@ class SolAyuda : AppCompatActivity() {
             }
         })
 
+        binding.buttonOK.setOnClickListener(){
+            lifecycleScope.launch {
+                createRequest()
+            }
+        }
+
+    }
+
+    private fun setSpinners(){
         val adapterCat = ArrayAdapter(
             this, android.R.layout.simple_spinner_item, categories
         )
         adapterCat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         binding.CatSpinner.adapter = adapterCat
-
 
         val adapterHour = ArrayAdapter(
             this, android.R.layout.simple_spinner_item, hours
@@ -140,6 +188,10 @@ class SolAyuda : AppCompatActivity() {
 
         binding.spinnerUrg.adapter = adapterUrg
 
+
+    }
+
+    private fun setLocationUI(){
         binding.SearchViewLocations.setOnKeyListener { v, keyCode, event ->
             if (checkValidTown()) {
                 buttonConditions()
@@ -185,45 +237,6 @@ class SolAyuda : AppCompatActivity() {
             }
         })
 
-        binding.buttonOK.isEnabled = false
-
-        binding.buttonOK.setOnClickListener(){
-            lifecycleScope.launch {
-                createRequest()
-            }
-        }
-
-
-
 
     }
-
-    private fun getTitleText(): String{
-        return inputTextTitle.text.toString()
-    }
-
-    private fun getDesc():String {
-        return inputTextDesc.text.toString()
-    }
-
-    private fun nullTitle(): Boolean {
-        return getTitleText().equals("")
-    }
-
-    private fun nullDesc():Boolean{
-        return getDesc().equals("")
-    }
-
-    private fun checkValidTown(): Boolean {
-        return towns.contains(townSearcher.query.toString())
-    }
-
-    private fun buttonConditions(){
-        binding.buttonOK.isEnabled = !nullTitle() && !nullDesc() && checkValidTown()
-    }
-
-    suspend fun createRequest(){
-        val req = SolicitudAyuda.create(getTitleText(), getDesc(), catSpinner.selectedItem.toString(),townSearcher.query.toString(), hourSpinner.selectedItem.toString(), sizeSpinner.selectedItem.toString(), urgSpinner.selectedItem.toString())
-    }
-
 }
