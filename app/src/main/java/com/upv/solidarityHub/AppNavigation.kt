@@ -1,8 +1,11 @@
 package com.upv.solidarityHub
 
 import android.content.Intent
+import android.view.LayoutInflater
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -34,23 +37,63 @@ fun AppNavigation() {
         }
 
         composable("SolAyuda"){
-            context.startActivity(Intent(context, SolAyuda::class.java))
+            AndroidView(factory = { context ->
+                val view = LayoutInflater.from(context).
+                inflate(R.layout.fragment_host_sol_ayuda,null,false)
+
+                val fragment = SolAyudaFragment()
+                (context as? AppCompatActivity)?.supportFragmentManager?.
+                        beginTransaction()?.replace(R.id.fragment_container_view, fragment)?.addToBackStack(null)?.commit()
+                view
+            })
         }
 
         composable("MapaGenerico") {
-            context.startActivity(Intent(context, MapaGenerico::class.java))
+            AndroidView(factory = { context ->
+                val view = LayoutInflater.from(context).
+                inflate(R.layout.fragment_host_mapa_generico,null,false)
+
+                val fragment = SolAyudaFragment()
+                (context as? AppCompatActivity)?.supportFragmentManager?.
+                beginTransaction()?.replace(R.id.fragment_container_view, fragment)?.addToBackStack(null)?.commit()
+                view
+            })
         }
 
         composable("CrearGrupoAyuda") {
-            context.startActivity(Intent(context, CrearGrupoAyuda::class.java))
+            AndroidView(factory = { context ->
+                val view = LayoutInflater.from(context).
+                inflate(R.layout.fragment_crear_grupo_ayuda,null,false)
+
+                val fragment = CrearGrupoAyudaFragment()
+                (context as? AppCompatActivity)?.supportFragmentManager?.
+                beginTransaction()?.replace(R.id.fragment_container_view, fragment)?.addToBackStack(null)?.commit()
+                view
+            })
         }
 
         composable("DetallesGrupoVoluntarios") {
-            context.startActivity(Intent(context, DetallesGrupoVoluntarios::class.java))
+            AndroidView(factory = { context ->
+                val view = LayoutInflater.from(context).
+                inflate(R.layout.fragment_detalles_grupo_voluntarios,null,false)
+
+                val fragment = DetallesGrupoVoluntariosFragment()
+                (context as? AppCompatActivity)?.supportFragmentManager?.
+                beginTransaction()?.replace(R.id.fragment_container_view, fragment)?.addToBackStack(null)?.commit()
+                view
+            })
         }
 
         composable("GruposAyuda") {
-            context.startActivity(Intent(context, GruposAyuda::class.java))
+            AndroidView(factory = { context ->
+                val view = LayoutInflater.from(context).
+                inflate(R.layout.fragment_grupos_ayuda2,null,false)
+
+                val fragment = GruposAyudaFragment()
+                (context as? AppCompatActivity)?.supportFragmentManager?.
+                beginTransaction()?.replace(R.id.fragment_container_view, fragment)?.addToBackStack(null)?.commit()
+                view
+            })
         }
     }
 }

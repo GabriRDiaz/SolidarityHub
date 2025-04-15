@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".GruposAyuda" >
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -20,7 +19,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <include
-        layout="@layout/content_grupos_ayuda2"
-        android:layout_width="match_parent"
+        layout="@layout/content_detalles_grupo_voluntarios"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,6 +1,6 @@
 package com.upv.solidarityHub
 
-import android.app.DatePickerDialog
+import android.R
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,7 +22,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.SolicitudAyuda
 import java.io.IOException
-import com.upv.solidarityHub.databinding.ActivitySolAyudaBinding
+import com.upv.solidarityHub.databinding.FragmentSolAyudaBinding
 import kotlinx.coroutines.launch
 
 
@@ -41,7 +41,7 @@ class SolAyuda : AppCompatActivity() {
     lateinit var townRecycler : RecyclerView
     private lateinit var suggestionAdapter: SuggestionAdapter
 
-    private lateinit var binding: ActivitySolAyudaBinding
+    private lateinit var binding: FragmentSolAyudaBinding
 
     val categories = arrayOf("Limpieza", "Recogida de comida", "Reconstrucción", "Primeros auxilios", "Artículos para bebés", "Asistencia a mayores", "Asistencia a discapacitados", "Artículos de primera necesidad", "Otros", "Transporte", "Cocina", "Mascotas")
 
@@ -58,7 +58,7 @@ class SolAyuda : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        binding = ActivitySolAyudaBinding.inflate(layoutInflater)
+        binding = FragmentSolAyudaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
@@ -161,30 +161,30 @@ class SolAyuda : AppCompatActivity() {
 
     private fun setSpinners(){
         val adapterCat = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, categories
+            this, R.layout.simple_spinner_item, categories
         )
-        adapterCat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterCat.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
 
         binding.CatSpinner.adapter = adapterCat
 
         val adapterHour = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, hours
+            this, R.layout.simple_spinner_item, hours
         )
-        adapterHour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterHour.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
 
         binding.HourSpinner.adapter = adapterHour
 
         val adapterSize = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, groupSize
+            this, R.layout.simple_spinner_item, groupSize
         )
-        adapterSize.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterSize.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
 
         binding.SizeSpinner.adapter = adapterSize
 
         val adapterUrg = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, urgenciaList
+            this, R.layout.simple_spinner_item, urgenciaList
         )
-        adapterUrg.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterUrg.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
 
         binding.spinnerUrg.adapter = adapterUrg
 
