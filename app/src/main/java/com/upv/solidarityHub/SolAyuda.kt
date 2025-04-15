@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 
 class SolAyuda : AppCompatActivity() {
     lateinit var okButton : Button
+    lateinit var cancelButton : Button
 
     lateinit var inputTextTitle : TextInputEditText
     lateinit var inputTextDesc : TextInputEditText
@@ -109,6 +110,7 @@ class SolAyuda : AppCompatActivity() {
 
     private fun findComponents(){
         okButton = binding.buttonOK
+        cancelButton = binding.buttonCancelar
 
         inputTextTitle = binding.textInputTitle
         inputTextDesc = binding.textInputDescription
@@ -154,6 +156,14 @@ class SolAyuda : AppCompatActivity() {
         binding.buttonOK.setOnClickListener(){
             lifecycleScope.launch {
                 createRequest()
+                Toast.makeText(this@SolAyuda,"Se ha registrado la solicitud",Toast.LENGTH_LONG).show()
+                finish()
+            }
+        }
+
+        binding.buttonCancelar.setOnClickListener(){
+            lifecycleScope.launch {
+                finish()
             }
         }
 
