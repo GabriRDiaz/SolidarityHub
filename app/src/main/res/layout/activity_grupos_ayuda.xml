@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:background="#FAF7F7"
     android:fitsSystemWindows="true"
-    app:layout_constraintEnd_toEndOf="parent"
-    tools:context=".GruposAyuda">
+    app:layout_constraintEnd_toEndOf="parent">
 
     <TextView
         android:id="@+id/etiquetaGruposAyudaDisp"

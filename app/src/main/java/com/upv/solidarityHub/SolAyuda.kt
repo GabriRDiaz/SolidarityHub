@@ -1,6 +1,6 @@
 package com.upv.solidarityHub
 
-import android.app.DatePickerDialog
+import android.R
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,38 +22,35 @@ import com.google.android.material.textfield.TextInputEditText
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.SolicitudAyuda
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import com.upv.solidarityHub.databinding.ActivitySolAyudaBinding
+import com.upv.solidarityHub.databinding.FragmentSolAyudaBinding
 import kotlinx.coroutines.launch
 
 
 class SolAyuda : AppCompatActivity() {
     lateinit var okButton : Button
+    lateinit var cancelButton : Button
 
     lateinit var inputTextTitle : TextInputEditText
     lateinit var inputTextDesc : TextInputEditText
 
-    lateinit var selectedDate : Calendar
-
     lateinit var catSpinner : Spinner
     lateinit var hourSpinner : Spinner
     lateinit var sizeSpinner : Spinner
+    lateinit var urgSpinner: Spinner
 
     lateinit var townSearcher : SearchView
     lateinit var townRecycler : RecyclerView
     private lateinit var suggestionAdapter: SuggestionAdapter
 
-    private lateinit var binding: ActivitySolAyudaBinding
-
-
-    val formatter = SimpleDateFormat("dd/MM/yyyy")
+    private lateinit var binding: FragmentSolAyudaBinding
 
     val categories = arrayOf("Limpieza", "Recogida de comida", "Reconstrucción", "Primeros auxilios", "Artículos para bebés", "Asistencia a mayores", "Asistencia a discapacitados", "Artículos de primera necesidad", "Otros", "Transporte", "Cocina", "Mascotas")
 
     val hours = arrayOf("Manaña Temprana (6:00 - 9:00)", "Mañana (9:00 - 12:00)", "Mediodía (12:00 - 15:00)", "Tarde (15:00 - 18:00)", "Noche Temprana (18:00 - 21:00)", "Noche (21:00 - 00:00)", "Madrugada (00:00 - 6:00)")
 
     val groupSize = arrayOf("Pequeña (5 voluntarios máx.)", "Media (15 voluntarios máx.)", "Grande (15+ voluntarios)")
+
+    val urgenciaList = arrayOf("Baja", "Media", "Alta")
 
     private lateinit var towns: Array<String?>
     private var searchSuggestions = arrayOfNulls<String>(FileReader.numMunicipios)
@@ -62,7 +59,7 @@ class SolAyuda : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        binding = ActivitySolAyudaBinding.inflate(layoutInflater)
+        binding = FragmentSolAyudaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
@@ -71,8 +68,49 @@ class SolAyuda : AppCompatActivity() {
             insets
         }
 
+        findComponents()
 
+        setListeners()
+
+        setSpinners()
+
+        setLocationUI()
+
+        binding.buttonOK.isEnabled = false
+
+    }
+
+    private fun getTitleText(): String{
+        return inputTextTitle.text.toString()
+    }
+
+    private fun getDesc():String {
+        return inputTextDesc.text.toString()
+    }
+
+    private fun nullTitle(): Boolean {
+        return getTitleText().equals("")
+    }
+
+    private fun nullDesc():Boolean{
+        return getDesc().equals("")
+    }
+
+    private fun checkValidTown(): Boolean {
+        return towns.contains(townSearcher.query.toString())
+    }
+
+    private fun buttonConditions(){
+        binding.buttonOK.isEnabled = !nullTitle() && !nullDesc() && checkValidTown()
+    }
+
+    suspend fun createRequest(){
+        val req = SolicitudAyuda.create(getTitleText(), getDesc(), catSpinner.selectedItem.toString(),townSearcher.query.toString(), hourSpinner.selectedItem.toString(), sizeSpinner.selectedItem.toString(), urgSpinner.selectedItem.toString())
+    }
+
+    private fun findComponents(){
         okButton = binding.buttonOK
+        cancelButton = binding.buttonCancelar
 
         inputTextTitle = binding.textInputTitle
         inputTextDesc = binding.textInputDescription
@@ -80,13 +118,14 @@ class SolAyuda : AppCompatActivity() {
         catSpinner = binding.CatSpinner
         hourSpinner = binding.HourSpinner
         sizeSpinner = binding.SizeSpinner
+        urgSpinner = binding.spinnerUrg
 
         townSearcher = binding.SearchViewLocations
         townRecycler = binding.RecyclerViewLocations
 
+    }
 
-        okButton.isEnabled = false
-
+    private fun setListeners(){
         inputTextTitle.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -114,28 +153,55 @@ class SolAyuda : AppCompatActivity() {
             }
         })
 
+        binding.buttonOK.setOnClickListener(){
+            lifecycleScope.launch {
+                createRequest()
+                Toast.makeText(this@SolAyuda,"Se ha registrado la solicitud",Toast.LENGTH_LONG).show()
+                finish()
+            }
+        }
+
+        binding.buttonCancelar.setOnClickListener(){
+            lifecycleScope.launch {
+                finish()
+            }
+        }
+
+    }
+
+    private fun setSpinners(){
         val adapterCat = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, categories
+            this, R.layout.simple_spinner_item, categories
         )
-        adapterCat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterCat.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
 
         binding.CatSpinner.adapter = adapterCat
 
-
         val adapterHour = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, hours
+            this, R.layout.simple_spinner_item, hours
         )
-        adapterHour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterHour.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
 
         binding.HourSpinner.adapter = adapterHour
 
         val adapterSize = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item, groupSize
+            this, R.layout.simple_spinner_item, groupSize
         )
-        adapterSize.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapterSize.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
 
         binding.SizeSpinner.adapter = adapterSize
 
+        val adapterUrg = ArrayAdapter(
+            this, R.layout.simple_spinner_item, urgenciaList
+        )
+        adapterUrg.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+
+        binding.spinnerUrg.adapter = adapterUrg
+
+
+    }
+
+    private fun setLocationUI(){
         binding.SearchViewLocations.setOnKeyListener { v, keyCode, event ->
             if (checkValidTown()) {
                 buttonConditions()
@@ -181,87 +247,6 @@ class SolAyuda : AppCompatActivity() {
             }
         })
 
-        binding.buttonOK.isEnabled = false
-
-        binding.buttonOK.setOnClickListener(){
-            lifecycleScope.launch {
-                createRequest()
-            }
-        }
-
-
-
 
     }
-
-    fun calendarClicked(view : View){
-
-        val calendar = if (validDate()){
-            selectedDate.clone() as Calendar
-        }
-        else{
-            Calendar.getInstance()
-        }
-
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-
-
-        val datePickerDialog: DatePickerDialog = DatePickerDialog(
-            this,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                // Handle date selection
-                selectedDate = Calendar.getInstance().apply {
-                    set(Calendar.YEAR,selectedYear)
-                    set(Calendar.MONTH, selectedMonth)
-                    set(Calendar.DAY_OF_MONTH, selectedDay)
-                }
-                val formattedDate = formatter.format(selectedDate.time)
-                Toast.makeText(this, "Fecha seleccionada: $formattedDate", Toast.LENGTH_LONG).show()
-                buttonConditions()
-            },
-            year, month, dayOfMonth
-        )
-        datePickerDialog.show()
-
-
-    }
-
-    private fun getTitleText(): String{
-        return inputTextTitle.text.toString()
-    }
-
-    private fun getDesc():String {
-        return inputTextDesc.text.toString()
-    }
-
-    private fun getDate():Calendar{
-        return selectedDate
-    }
-
-    private fun nullTitle(): Boolean {
-        return getTitleText().equals("")
-    }
-
-    private fun nullDesc():Boolean{
-        return getDesc().equals("")
-    }
-
-    private fun validDate():Boolean{
-        return ::selectedDate.isInitialized
-    }
-
-    private fun checkValidTown(): Boolean {
-        return towns.contains(townSearcher.query.toString())
-    }
-
-    private fun buttonConditions(){
-        binding.buttonOK.isEnabled = !nullTitle() && !nullDesc() && validDate() && checkValidTown()
-    }
-
-    suspend fun createRequest(){
-        val req = SolicitudAyuda.create(getTitleText(), getDesc(), catSpinner.selectedItem.toString(),townSearcher.query.toString(),getDate(), hourSpinner.selectedItem.toString(), sizeSpinner.selectedItem.toString())
-    }
-
 }
