@@ -142,7 +142,7 @@ fun HabilidadesForm(usuario: Usuario, parent: HabilidadesActivity) {
                             }
                             deferred1.await()
                         }
-                        parent.goToStopGap()
+                        parent.goToMain()
                     }) {
                         Text("Finalizar")
                     }
