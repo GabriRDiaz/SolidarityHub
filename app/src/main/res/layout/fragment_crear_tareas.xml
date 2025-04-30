@@ -144,6 +144,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="Introduzca una fecha"
+                android:text="Fecha"
                 app:icon="@drawable/baseline_calendar_month_24" />
 
             <Space
@@ -157,6 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:contentDescription="Introduzca una ubicación"
+                android:text="Ubicación"
                 app:icon="@drawable/baseline_add_location_alt_24" />
 
         </LinearLayout>
