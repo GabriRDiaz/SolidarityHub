@@ -5,6 +5,8 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -20,6 +22,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.upv.solidarityHub.databinding.ActivityRegistroBinding
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.Usuario
@@ -38,14 +42,6 @@ class Registro : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityRegistroBinding
-    private var inputedNombre:String = ""
-    private var inputedCorreo:String = ""
-    private var inputedApellidos:String = ""
-    private var inputedPassword:String = ""
-    private var inputedMunicipio:String = ""
-    private var inputedNacimiento:String = ""
-
-
 
     private lateinit var buscadorMunicipio: SearchView
     private lateinit var recyclerView: RecyclerView
@@ -55,16 +51,12 @@ class Registro : AppCompatActivity() {
     private lateinit var registrarseButton:Button
     private lateinit var botonIrLogearse:Button
 
-
-    private lateinit var nombreField: EditText
-    private lateinit var apellidosField: EditText
-    private lateinit var correoField: EditText
+    private lateinit var nombreField: TextInputLayout
+    private lateinit var apellidosField: TextInputLayout
+    private lateinit var correoField: TextInputLayout
     private lateinit var displayNacimiento: TextView
-    private lateinit var contrasenaField: EditText
-    private lateinit var repContrasenaField: EditText
-    private lateinit var errorCorreo: TextView
-    private lateinit var errorContrasena: TextView
-    private lateinit var errorRepContrasena:TextView
+    private lateinit var contrasenaField: TextInputLayout
+    private lateinit var repContrasenaField: TextInputLayout
 
 
 
@@ -89,14 +81,12 @@ class Registro : AppCompatActivity() {
         initializeButtons()
         initializeSearchView()
         initializeListeners()
+        //nombreField.isErrorEnabled = true
+        //nombreField.editText!!.error = "Error test"
 
 
 
-        findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {
-            val newFragment = DatePickerFragment(this)
-            newFragment.show(supportFragmentManager, "datePicker")
-        }
-        //TODO: IMPLEMENTAR LAS LLAMADAS A LA DB EN UN PROXY
+
         Log.d("DEBUG", "Trying to access database" +db.toString())
         var usuario: Usuario? = null
         runBlocking {
@@ -146,11 +136,11 @@ class Registro : AppCompatActivity() {
         nombreField = findViewById(R.id.inputNombre)
         apellidosField = findViewById(R.id.inputApellidos)
         displayNacimiento = findViewById(R.id.displayNacimiento)
-        errorCorreo = findViewById(R.id.errorCorreo)
-        errorContrasena = findViewById(R.id.errorContrasena)
-        errorRepContrasena = findViewById(R.id.errorRepContrasena)
         contrasenaField = findViewById(R.id.inputContrasena)
+        contrasenaField.editText!!.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
         repContrasenaField = findViewById(R.id.inputRepContrasena)
+        repContrasenaField.editText!!.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+
         buscadorMunicipio = findViewById(R.id.buscadorMunicipio)
 
 
@@ -167,6 +157,7 @@ class Registro : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     //TODO: Refactorizar esto
+
     private fun initializeListeners() {
 
         findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {
@@ -174,87 +165,111 @@ class Registro : AppCompatActivity() {
             newFragment.show(supportFragmentManager, "datePicker")
         }
 
-        correoField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if (checkCorreoValidity()) {
-                errorCorreo.visibility = View.INVISIBLE
-            }
-            checkAllFields()
-            false
-        })
 
-        correoField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
-            if (!hasFocus) {
-                if (!checkCorreoValidity()) {
-                    errorCorreo.visibility = View.VISIBLE
-                }
-            }
-            checkAllFields()
+        findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {
+            val newFragment = DatePickerFragment(this)
+            newFragment.show(supportFragmentManager, "datePicker")
         }
 
-        contrasenaField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if (checkContrasenaValidity()) {
-                errorContrasena.visibility = View.INVISIBLE
+        correoField.editText!!.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+
+                if(checkCorreoValidity()){
+                    correoField.isErrorEnabled = false
+                } else checkAllFields()
             }
-            checkAllFields()
-            false
+
         })
 
-        contrasenaField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
-            if (!hasFocus) {
-                if (!checkContrasenaValidity()) {
-                    errorContrasena.visibility = View.VISIBLE
+        correoField.editText!!.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus) {
+                if(!checkCorreoValidity())  {
+                    correoField.isErrorEnabled = true
+                    correoField.editText!!.error = "Correo no válido"
+
                 }
             }
-            checkAllFields()
         }
 
-        repContrasenaField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if (checkRepContrasenaValidity()) {
-                errorRepContrasena.visibility = View.INVISIBLE
+        nombreField.editText!!.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+
+                if(!checkNameValidity()){
+                    nombreField.editText!!.error = "Por favor, añada su nombre"
+                } else checkAllFields()
             }
-            checkAllFields()
-            false
+
         })
 
-        repContrasenaField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
-            if (!hasFocus) {
-                if (!checkRepContrasenaValidity()) {
-                    errorRepContrasena.visibility = View.VISIBLE
-                }
+        apellidosField.editText!!.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+
+                if(!checkApellidosValidity()){
+                    apellidosField.editText!!.error = "Por favor, añada sus apellidos"
+                } else checkAllFields()
             }
-            checkAllFields()
+
+        })
+
+        contrasenaField.editText!!.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+
+                if(checkContrasenaValidity()){
+                    contrasenaField.isErrorEnabled = false
+                    //contrasenaField.editText!!.error = "Debe contener más de 8 carácteres y almenos un número"
+                } else checkAllFields()
+            }
+
+        })
+
+        contrasenaField.editText!!.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus) {
+              if(!checkContrasenaValidity())  {
+                  contrasenaField.isErrorEnabled = true
+                  contrasenaField.editText!!.error = "Debe contener más de 8 carácteres y almenos un número"
+
+              }
+            }
         }
 
-        nombreField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if (checkNameValidity()) {
-                checkAllFields()
+        repContrasenaField.editText!!.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+
+                if(checkRepContrasenaValidity()){
+                    repContrasenaField.isErrorEnabled = false
+                } else checkAllFields()
             }
-            false
+
         })
 
-        nombreField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
-            if (!hasFocus) {
-                if (!checkNameValidity()) {
-                    checkAllFields()
+        repContrasenaField.editText!!.setOnFocusChangeListener { v, hasFocus ->
+            if(!hasFocus) {
+                if(!checkRepContrasenaValidity())  {
+                    repContrasenaField.isErrorEnabled = true
+                    repContrasenaField.editText!!.error = "Las contraseñas no coinciden"
+
                 }
             }
-
-        }
-
-        apellidosField.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if (checkApellidosValidity()) {
-                checkAllFields()
-            }
-            false
-        })
-
-        apellidosField.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
-            if (!hasFocus) {
-                if (!checkApellidosValidity()) {
-                    checkAllFields()
-                }
-            }
-
         }
 
         buscadorMunicipio.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
@@ -275,15 +290,16 @@ class Registro : AppCompatActivity() {
 
 
         showPassButton.setOnTouchListener { view, motionEvent ->
+
             when (motionEvent.action) {
                 MotionEvent.ACTION_UP -> {
-                    contrasenaField.inputType =
+                    contrasenaField.editText!!.inputType =
                         android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
                     true
                 }
 
                 MotionEvent.ACTION_DOWN -> {
-                    contrasenaField.inputType =
+                    contrasenaField.editText!!.inputType =
                         android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                     true
                 }
@@ -293,15 +309,16 @@ class Registro : AppCompatActivity() {
         }
 
         showRepPassButton.setOnTouchListener { view, motionEvent ->
+
             when (motionEvent.action) {
                 MotionEvent.ACTION_UP -> {
-                    repContrasenaField.inputType =
+                    repContrasenaField.editText!!.inputType =
                         android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
                     true
                 }
 
                 MotionEvent.ACTION_DOWN -> {
-                    repContrasenaField.inputType =
+                    repContrasenaField.editText!!.inputType =
                         android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                     true
                 }
@@ -313,39 +330,13 @@ class Registro : AppCompatActivity() {
         }
 
         registrarseButton.setOnClickListener {
-            var successfullRegistry = false
-            var foundExistingUser = true
+
             runBlocking {
                 val deferred1 = async {
-                    try{
-                        db.getUsuarioByCorreo(correoField.text.toString())
-                    } catch (e:NoSuchElementException) {
-                        foundExistingUser = false
-                        successfullRegistry = db.registerUsuario(correoField.text.toString(),nombreField.text.toString(),apellidosField.text.toString(),contrasenaField.text.toString(),displayNacimiento.text.toString(),buscadorMunicipio.query.toString())
-                        if (successfullRegistry) {
-
-                                val deferred1 = async {
-                                    db.getUsuarioByCorreo(correoField.text.toString())
-                                        ?.let { it1 -> goToHabilidades(it1) }
-                                }
-
-                        } else {
-
-                        }
-                    } catch (e:Exception) {
-                        Toast.makeText(getApplicationContext(),"Hubo un error, porfavor inténtelo más tarde", Toast.LENGTH_SHORT).show()
-
-                    }
-
-                    if(foundExistingUser) Toast.makeText(getApplicationContext(),"Usuario con ese correo ya existe", Toast.LENGTH_SHORT).show()
-
-
-
+                registrarse()
                 }
                 deferred1.await()
             }
-            //TODO: Mala solución, solo apta para pruebas iniciales. Refactorizar más adelante
-
         }
 
         botonIrLogearse.setOnClickListener {
@@ -390,6 +381,43 @@ class Registro : AppCompatActivity() {
 
     }
 
+
+    suspend fun registrarse() {
+        var successfullRegistry = false
+        var foundExistingUser = true
+        try{
+            db.getUsuarioByCorreo(correoField.editText!!.text.toString())
+        } catch (e:NoSuchElementException) {
+            foundExistingUser = false
+
+            var correo = correoField.editText!!.text.toString()
+            var nombre = nombreField.editText!!.text.toString()
+            var apellidos = apellidosField.editText!!.text.toString()
+            var contrasena = contrasenaField.editText!!.text.toString()
+            var fecha_nacimiento = displayNacimiento.text.toString()
+            var municipio = buscadorMunicipio.query.toString()
+
+            successfullRegistry = db.registerUsuario(correo, nombre, apellidos, contrasena, fecha_nacimiento,municipio)
+            if (successfullRegistry) {
+                runBlocking {
+                    val deferred1 = async {
+                    db.getUsuarioByCorreo(correo)
+                        ?.let { it1 -> goToHabilidades(it1) }
+                    }
+                }
+
+
+            } else {
+
+            }
+        } catch (e:Exception) {
+            Toast.makeText(getApplicationContext(),"Hubo un error, porfavor inténtelo más tarde", Toast.LENGTH_SHORT).show()
+
+        }
+
+        if(foundExistingUser) Toast.makeText(getApplicationContext(),"Usuario con ese correo ya existe", Toast.LENGTH_SHORT).show()
+
+    }
     fun goToLogin() {
         val intent = Intent(this, Login::class.java)
         startActivity(intent)
@@ -404,15 +432,15 @@ class Registro : AppCompatActivity() {
     }
 
     private fun checkCorreoValidity(): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(correoField.text).matches()
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(correoField.editText!!.text.toString()).matches()
     }
 
     private fun checkNameValidity(): Boolean {
-        return !nombreField.text.equals("")
+        return nombreField.editText!!.text.toString() != ""
     }
 
     private fun checkApellidosValidity(): Boolean {
-        return !apellidosField.text.equals("")
+        return apellidosField.editText!!.text.toString() != ""
     }
 
     private fun checkFechaNacimientoValidity(): Boolean {
@@ -420,7 +448,7 @@ class Registro : AppCompatActivity() {
     }
 
     private fun checkContrasenaValidity(): Boolean {
-        val contrasena = contrasenaField.text
+        val contrasena = contrasenaField.editText!!.text.toString()
         if (contrasena.length < 8) {
             return false
         }
@@ -428,7 +456,10 @@ class Registro : AppCompatActivity() {
     }
 
     private fun checkRepContrasenaValidity(): Boolean {
-        return contrasenaField.text.toString().equals(repContrasenaField.text.toString())
+        var contrasena = contrasenaField.editText!!.text.toString()
+        var repetirContrasena = repContrasenaField.editText!!.text.toString()
+
+        return contrasena == repetirContrasena
     }
 
     private fun checkMunicipioValidity(): Boolean {

@@ -35,21 +35,22 @@
             android:paddingTop="-20dp">
 
             <TextView
-                android:id="@+id/etiquetaNombre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombre"
                 android:textColor="#353535"
                 android:textStyle="bold" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputNombre"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="p.e: Ignacio"
-                android:inputType="text"
-                android:maxWidth="40dp" />
+                android:layout_width="match_parent"
+                android:layout_height="55dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:hint="p.e: Ignacio" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </TableRow>
 
@@ -68,20 +69,24 @@
                 android:text="Apellidos"
                 android:textStyle="bold" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputApellidos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="p.e: Pascual Utiel"
-                android:inputType="text" />
+                android:layout_width="match_parent"
+                android:layout_height="55dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="180dp"
+                    android:layout_height="match_parent"
+                    android:hint="p.e: Pascual Utiel" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginVertical="5dp">
+            android:layout_marginVertical="5dp"
+            android:gravity="center|left">
 
             <TextView
                 android:id="@+id/etiquetaCorreo"
@@ -90,31 +95,23 @@
                 android:text="Correo"
                 android:textStyle="bold" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputCorreo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="p.e: nacho@gmail.com"
-                android:inputType="textEmailAddress" />
+                android:layout_width="match_parent"
+                android:layout_height="55dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:hint="nch@gmail.com" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center|top">
-
-            <TextView
-                android:id="@+id/errorCorreo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right|top"
-                android:text="correo inválido"
-                android:textColor="#FF0000"
-                android:textSize="11sp"
-                android:visibility="invisible" />
-        </TableRow>
+            android:gravity="center|top"/>
 
         <TableRow
             android:layout_width="match_parent"
@@ -130,16 +127,20 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="175dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputContrasena"
-                    android:layout_width="182dp"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPassword" />
+                    android:layout_width="180dp"
+                    android:layout_height="55dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="180dp"
+                        android:layout_height="wrap_content"
+                        android:hint="p.e: pascut19" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
                     android:id="@+id/showPassButton"
@@ -148,22 +149,6 @@
                     android:text="Button" />
             </LinearLayout>
 
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|top">
-
-            <TextView
-                android:id="@+id/errorContrasena"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right|top"
-                android:text="min. 8 caract. y 1 num"
-                android:textColor="#FF0000"
-                android:textSize="11sp"
-                android:visibility="invisible" />
         </TableRow>
 
         <TableRow
@@ -184,12 +169,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inputRepContrasena"
-                    android:layout_width="182dp"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPassword" />
+                    android:layout_width="180dp"
+                    android:layout_height="55dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
                     android:id="@+id/showRepPassButton"
@@ -198,22 +186,6 @@
                     android:text="Button" />
             </LinearLayout>
 
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|top">
-
-            <TextView
-                android:id="@+id/errorRepContrasena"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right|top"
-                android:text="No coinciden"
-                android:textColor="#FF0000"
-                android:textSize="11sp"
-                android:visibility="invisible" />
         </TableRow>
 
         <TableRow
