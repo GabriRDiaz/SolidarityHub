@@ -64,7 +64,7 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
     lateinit var cal : Calendar
     lateinit var coord: String
 
-    lateinit var req: taskReq
+    private var req: taskReq? = null
 
     val categories = arrayOf("Cualquiera","Limpieza", "Recogida de comida", "Reconstrucción", "Primeros auxilios", "Artículos para bebés", "Asistencia a mayores", "Asistencia a discapacitados", "Artículos de primera necesidad", "Otros", "Transporte", "Cocina", "Mascotas")
     val urgenciaList = arrayOf("Cualquiera","Baja", "Media", "Alta")
@@ -296,24 +296,21 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
 
         }
 
-        okButton.setOnClickListener{
-            lifecycleScope.launch{
+        okButton.setOnClickListener {
+            lifecycleScope.launch {
                 val r = createTaskReq()
                 if (r != null) {
-                    goToTemp()
-                }
-                else if(extractLatitude(coord) != null && extractLongitude(coord) != null){
+                    goToTemp(r)
+                } else if (extractLatitude(coord) != null && extractLongitude(coord) != null) {
                     Toast.makeText(requireContext(), "No se han encontrado solicitudes que cumplan los criterios", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    private fun goToTemp() {
-
+    private fun goToTemp(r: taskReq) {
         val bundle = Bundle()
-        bundle.putSerializable("list", ArrayList(req.taskIDList))
-
+        bundle.putSerializable("list", ArrayList(r.taskIDList))
         findNavController().navigate(R.id.action_crearTareasFragment_to_tempTaskFragment, bundle)
     }
 
@@ -496,8 +493,12 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
         long = extractLongitude(coord)
 
         if(lat != null && long != null){
-            req = taskReq.create(cat,town,priority,schedule,size,lat,long,cal, null)!!
-            return req
+            req = taskReq.create(cat,town,priority,schedule,size,lat,long,cal, null)
+            if(req != null){
+                return req
+
+            }
+            return null
         }
         else{
             Toast.makeText(requireContext(), "Formato de coordenadas incorrecto", Toast.LENGTH_SHORT).show()
