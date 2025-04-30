@@ -267,7 +267,7 @@ class SupabaseAPI : DatabaseAPI {
     public override suspend fun getHelpReqs(task: taskReq): List<reqDB>? {
         try{
             initializeDatabase()
-            val currentTasks = getTaskIDs()
+            val currentTasks = getTaskOGReqs()
             val helpReqs = supabase?.from("Solicituddeayuda")?.select(Columns.ALL){
                 filter{
                     if(task.cat != null) run {
@@ -291,8 +291,8 @@ class SupabaseAPI : DatabaseAPI {
                     }
 
                     if (currentTasks != null && currentTasks.isNotEmpty()) {
-                        currentTasks.forEach(){ taskID ->
-                            reqDB::id neq taskID
+                        currentTasks.forEach(){ taskOG ->
+                            reqDB::id neq taskOG
                         }
                     }
 
@@ -305,7 +305,6 @@ class SupabaseAPI : DatabaseAPI {
             if (helpReqs != null) {
                 return helpReqs.decodeList<reqDB>()
             }
-
             return null
         }
         catch(e: Exception){
@@ -320,16 +319,24 @@ class SupabaseAPI : DatabaseAPI {
         try{
             val date = task.calendarToDateString(task.date)
             val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,date)
-            supabase?.from("Task")?.insert(taskDB)
+
+            try{
+                supabase?.from("Task")?.insert(taskDB)
+            }
+            catch(e:Exception){
+                Log.d("DEBUG", "Error during operation: ${e.localizedMessage}")
+            }
             System.out.println("Todo bien")
             return taskDB
         } catch(e:Exception) {
-            Log.d("DEBUG",e.toString())
+            Log.d("DEBUG", "Error during operation: ${e.localizedMessage}")
+            e.printStackTrace()
             return null
         }
     }
 
     public override suspend fun helpReqsToTasks(task: taskReq): List<taskDB>?{
+
         val matchedReqs = getHelpReqs(task)
         val taskList = mutableListOf<taskDB>()
         if (matchedReqs != null && matchedReqs.isNotEmpty()) {
@@ -345,10 +352,12 @@ class SupabaseAPI : DatabaseAPI {
         return null
     }
 
-    public override suspend fun getTaskIDs(): List<Int>?{
+    public override suspend fun getTaskOGReqs(): List<Int>?{
         initializeDatabase()
-        val res = supabase?.from("Task")?.select(Columns.list("id"))?.decodeList<Int>()
-        return res;
+        val result = supabase?.from("Task")
+            ?.select(Columns.list("og_req"))
+            ?.decodeList<Map<String, Int>>()
+        return result?.mapNotNull { it["og_req"] }
     }
 
     public override suspend fun getAllUsers(): List<Usuario>?{

@@ -34,8 +34,8 @@ class taskReq private constructor(
             date : Calendar,
             taskIDList: List<Int>?
         ): taskReq? {
-            System.out.println("$cat, $town, $priority, $schedule, $size, $lat, $long, $date")
             val instance = taskReq(id = null, cat, town, priority,schedule,size,lat,long,date, null)
+            System.out.println("$cat, $town, $priority, $schedule, $size, $lat, $long, $date")
             val list = db.helpReqsToTasks(instance)
             if(list != null){
                 instance.taskIDList = getIDsFromTaskList(list)
