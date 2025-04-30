@@ -95,5 +95,29 @@ fun AppNavigation() {
                 view
             })
         }
+
+        composable("GruposAyuda") {
+            AndroidView(factory = { context ->
+                val view = LayoutInflater.from(context).
+                inflate(R.layout.fragment_grupos_ayuda2,null,false)
+
+                val fragment = GruposAyudaFragment()
+                (context as? AppCompatActivity)?.supportFragmentManager?.
+                beginTransaction()?.replace(R.id.fragment_container_view, fragment)?.addToBackStack(null)?.commit()
+                view
+            })
+        }
+
+        composable("tempScreen") {
+            AndroidView(factory = { context ->
+                val view = LayoutInflater.from(context).
+                inflate(R.layout.fragment_temp_task,null,false)
+
+                val fragment = tempTaskFragment()
+                (context as? AppCompatActivity)?.supportFragmentManager?.
+                beginTransaction()?.replace(R.id.fragment_container_view, fragment)?.addToBackStack(null)?.commit()
+                view
+            })
+        }
     }
 }

@@ -8,12 +8,14 @@ import com.upv.solidarityHub.persistence.SolicitudAyuda
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.model.DatabaseHabilidad
 import com.upv.solidarityHub.persistence.model.Habilidad
+import com.upv.solidarityHub.persistence.taskReq
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Order
+import io.github.jan.supabase.postgrest.query.filter.FilterOperation
 import io.ktor.http.cio.Request
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
@@ -43,6 +45,24 @@ class SupabaseAPI : DatabaseAPI {
         val horario : String,
         val envergadura: String,
         val urgencia: String
+    )
+
+    @Serializable
+    data class taskDB(
+        val id: Int?,
+        val created_at: String? = null,
+        val og_req : Int?,
+        val latitud: Double,
+        val longitud : Double,
+        val fecha : String,
+    )
+
+    @Serializable
+    data class assignedDB(
+        val id: Int?,
+        val created_at: String? = null,
+        val id_user : String?,
+        val id_task: Int?,
     )
 
     public override fun initializeDatabase() {
@@ -153,7 +173,7 @@ class SupabaseAPI : DatabaseAPI {
     public override suspend fun registrarReq(req : SolicitudAyuda): Boolean {
         initializeDatabase()
         try{
-            val reqDB =reqDB(getLastReqId()?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,null,req.horario,req.tamanyo, req.urgencia)
+            val reqDB =reqDB(getLastId("Solicituddeayuda")?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,null,req.horario,req.tamanyo, req.urgencia)
             supabase?.from("Solicituddeayuda")?.insert(reqDB)
             System.out.println("Todo bien")
             return true
@@ -163,11 +183,11 @@ class SupabaseAPI : DatabaseAPI {
         }
     }
 
-    public override suspend fun getLastReqId(): Int? {
+    public override suspend fun getLastId(table: String): Int? {
         initializeDatabase()
         return try {
             supabase
-                ?.from("Solicituddeayuda")
+                ?.from(table)
                 ?.select(Columns.list("id")){
                     order(column = "id", order = Order.DESCENDING)
                     limit(1)
@@ -175,7 +195,7 @@ class SupabaseAPI : DatabaseAPI {
                 ?.decodeSingle<JsonObject>()  // Decode as single object
                 ?.get("id")?.jsonPrimitive?.int
         } catch (e: Exception) {
-            null  // Return null if there's any error or no records
+            return -1  // Return null if there's any error or no records
         }
     }
 
@@ -243,6 +263,135 @@ class SupabaseAPI : DatabaseAPI {
 
 
     }
+
+    public override suspend fun getHelpReqs(task: taskReq): List<reqDB>? {
+        try{
+            initializeDatabase()
+            val currentTasks = getTaskIDs()
+            val helpReqs = supabase?.from("Solicituddeayuda")?.select(Columns.ALL){
+                filter{
+                    if(task.cat != null) run {
+                        reqDB::categoria eq task.cat
+                    }
+
+                    if(task.town != null) run {
+                        reqDB::ubicacion eq task.town
+                    }
+
+                    if(task.priority != null) run {
+                        reqDB::urgencia eq task.priority
+                    }
+
+                    if(task.schedule != null) run{
+                        reqDB::horario eq task.schedule
+                    }
+
+                    if(task.size != null) run{
+                        reqDB::envergadura eq task.size
+                    }
+
+                    if (currentTasks != null && currentTasks.isNotEmpty()) {
+                        currentTasks.forEach(){ taskID ->
+                            reqDB::id neq taskID
+                        }
+                    }
+
+
+                }
+
+
+            }
+
+            if (helpReqs != null) {
+                return helpReqs.decodeList<reqDB>()
+            }
+
+            return null
+        }
+        catch(e: Exception){
+            Log.d("DEBUG",e.toString())
+            return null
+        }
+
+    }
+
+    public override suspend fun registrarTask(task : taskReq, req : reqDB): taskDB? {
+        initializeDatabase()
+        try{
+            val date = task.calendarToDateString(task.date)
+            val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,date)
+            supabase?.from("Task")?.insert(taskDB)
+            System.out.println("Todo bien")
+            return taskDB
+        } catch(e:Exception) {
+            Log.d("DEBUG",e.toString())
+            return null
+        }
+    }
+
+    public override suspend fun helpReqsToTasks(task: taskReq): List<taskDB>?{
+        val matchedReqs = getHelpReqs(task)
+        val taskList = mutableListOf<taskDB>()
+        if (matchedReqs != null && matchedReqs.isNotEmpty()) {
+            matchedReqs.forEach { reqDB ->
+                val t = registrarTask(task,reqDB)
+                if (t != null) {
+                    taskList.add(t)
+                }
+            }
+            return taskList
+        }
+
+        return null
+    }
+
+    public override suspend fun getTaskIDs(): List<Int>?{
+        initializeDatabase()
+        val res = supabase?.from("Task")?.select(Columns.list("id"))?.decodeList<Int>()
+        return res;
+    }
+
+    public override suspend fun getAllUsers(): List<Usuario>?{
+        initializeDatabase()
+        val users = supabase?.from("Usuario")?.select(Columns.ALL)?.decodeList<Usuario>()
+        return users;
+    }
+
+    public override suspend fun createIsAssigned(idTask: Int, user: Usuario){
+        val res = assignedDB(getLastId("tieneAsignado")?.plus(1),null,user.correo,idTask)
+        supabase?.from("tieneAsignado")?.insert(res)
+    }
+
+    public override suspend fun getTaskById(id: Int): taskDB? {
+        initializeDatabase()
+        val task =
+            supabase?.from("Task")?.select() {
+                filter{
+                    eq("id", id)
+                } }?.decodeSingle<taskDB>()
+
+        return task;
+    }
+
+    public override suspend fun getHelpReqById(id: Int): reqDB? {
+        initializeDatabase()
+        val task =
+            supabase?.from("Solicituddeayuda")?.select() {
+                filter{
+                    eq("id", id)
+                } }?.decodeSingle<reqDB>()
+
+        return task;
+    }
+
+
+
+
+
+
+
+
+
 
 
 }

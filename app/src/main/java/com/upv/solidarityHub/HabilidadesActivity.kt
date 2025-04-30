@@ -22,4 +22,10 @@ class HabilidadesActivity() : ComponentActivity() {
         intent.putExtra("usuario", usr)
         startActivity(intent)
     }
+
+    fun goToMain() {
+        val intent = Intent(this, StopGap::class.java)
+        intent.putExtra("usuario", usr)
+        startActivity(intent)
+    }
 }

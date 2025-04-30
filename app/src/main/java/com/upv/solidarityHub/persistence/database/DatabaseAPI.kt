@@ -4,7 +4,10 @@ import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.SolicitudAyuda
+import com.upv.solidarityHub.persistence.database.SupabaseAPI.reqDB
+import com.upv.solidarityHub.persistence.database.SupabaseAPI.taskDB
 import com.upv.solidarityHub.persistence.model.Habilidad
+import com.upv.solidarityHub.persistence.taskReq
 import java.util.Date
 
 interface DatabaseAPI {
@@ -23,5 +26,13 @@ interface DatabaseAPI {
     public suspend fun loginUsuario(correo: String, contrasena: String): Usuario?
     public suspend fun registrarHabilidades(habilidades:List<Habilidad>, usuario:Usuario): Boolean
     public suspend fun registrarReq(req : SolicitudAyuda): Boolean
-    public suspend fun getLastReqId(): Int?
+    public suspend fun getLastId(table: String): Int?
+    public suspend fun getHelpReqs(task: taskReq) : List<SupabaseAPI.reqDB>?
+    public suspend fun registrarTask(task : taskReq, req: SupabaseAPI.reqDB): SupabaseAPI.taskDB?
+    public suspend fun helpReqsToTasks(task: taskReq): List<SupabaseAPI.taskDB>?
+    public suspend fun getTaskIDs(): List<Int>?
+    public suspend fun getAllUsers(): List<Usuario>?
+    public suspend fun createIsAssigned(idTask: Int, user: Usuario)
+    public suspend fun getTaskById(id: Int): taskDB?
+    public suspend fun getHelpReqById(id: Int): reqDB?
 }
