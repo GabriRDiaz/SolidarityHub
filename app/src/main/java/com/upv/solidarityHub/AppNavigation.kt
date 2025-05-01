@@ -9,7 +9,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.ui.registro.Registro
 
 @Composable
 fun AppNavigation() {

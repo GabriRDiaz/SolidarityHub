@@ -1,44 +1,38 @@
-package com.upv.solidarityHub
+package com.upv.solidarityHub.ui.registro
 
 import android.annotation.SuppressLint
-import android.app.DatePickerDialog
-import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
-import android.widget.DatePicker
-import android.widget.EditText
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.upv.solidarityHub.HabilidadesActivity
+import com.upv.solidarityHub.Login
+import com.upv.solidarityHub.R
+import com.upv.solidarityHub.utils.SuggestionAdapter
 import com.upv.solidarityHub.databinding.ActivityRegistroBinding
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.Usuario
-import com.upv.solidarityHub.persistence.database.DatabaseAPI
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
+import com.upv.solidarityHub.ui.components.DatePicker.DatePickerFragment
+import com.upv.solidarityHub.ui.components.DatePicker.DatePickerHandler
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import java.io.IOException
-import java.security.AccessController.getContext
-import java.util.Calendar
-//TODO: ARREGLO PARA SALIR DEL PASO, CORREGIR!!
 
 
-
-class Registro : AppCompatActivity() {
+class Registro : AppCompatActivity(), DatePickerHandler {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityRegistroBinding
@@ -81,8 +75,7 @@ class Registro : AppCompatActivity() {
         initializeButtons()
         initializeSearchView()
         initializeListeners()
-        //nombreField.isErrorEnabled = true
-        //nombreField.editText!!.error = "Error test"
+
 
 
 
@@ -107,26 +100,8 @@ class Registro : AppCompatActivity() {
         suggestionAdapter.updateSuggestions(listOf("Municipio"))
     }
 
-    class DatePickerFragment(parent: Registro) : DialogFragment(), DatePickerDialog.OnDateSetListener {
-        var padre:Registro = parent
-        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-            // Use the current date as the default date in the picker.
-            val c = Calendar.getInstance()
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH)
-            val day = c.get(Calendar.DAY_OF_MONTH)
 
-            // Create a new instance of DatePickerDialog and return it.
-            return DatePickerDialog(requireContext(), this, year, month, day)
-
-        }
-
-        override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
-            padre.setDate(year.toString() + "-" + month.toString() + "-" + day.toString())
-        }
-    }
-
-    public fun setDate(date:String) {
+    public override fun handleDate(date: String) {
         displayNacimiento.text = date
         checkAllFields()
     }
@@ -156,18 +131,17 @@ class Registro : AppCompatActivity() {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    //TODO: Refactorizar esto
 
     private fun initializeListeners() {
 
         findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {
-            val newFragment = DatePickerFragment(this)
+            val newFragment = DatePickerFragment()
             newFragment.show(supportFragmentManager, "datePicker")
         }
 
 
         findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {
-            val newFragment = DatePickerFragment(this)
+            val newFragment = DatePickerFragment()
             newFragment.show(supportFragmentManager, "datePicker")
         }
 

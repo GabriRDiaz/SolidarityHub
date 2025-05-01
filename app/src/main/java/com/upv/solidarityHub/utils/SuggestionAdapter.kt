@@ -1,4 +1,4 @@
-package com.upv.solidarityHub
+package com.upv.solidarityHub.utils
 
 // SuggestionAdapter.kt
 import android.view.LayoutInflater

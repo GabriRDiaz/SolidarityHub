@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.SearchView
@@ -23,6 +22,7 @@ import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.SolicitudAyuda
 import java.io.IOException
 import com.upv.solidarityHub.databinding.FragmentSolAyudaBinding
+import com.upv.solidarityHub.utils.SuggestionAdapter
 import kotlinx.coroutines.launch
 
 

@@ -2,20 +2,17 @@ package com.upv.solidarityHub
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
 import androidx.navigation.ui.AppBarConfiguration
 import com.upv.solidarityHub.databinding.ActivityLoginBinding
-import com.upv.solidarityHub.databinding.ActivityRegistroBinding
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
+import com.upv.solidarityHub.ui.registro.Registro
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 

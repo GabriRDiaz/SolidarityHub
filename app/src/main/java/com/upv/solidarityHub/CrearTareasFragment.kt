@@ -2,7 +2,6 @@ package com.upv.solidarityHub
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -18,12 +17,12 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.taskReq
+import com.upv.solidarityHub.utils.SuggestionAdapter
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Calendar

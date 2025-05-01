@@ -79,7 +79,7 @@
             android:value="YOUR_API_KEY" />
 
         <activity
-            android:name=".Registro"
+            android:name=".ui.registro.Registro"
             android:exported="true"
             android:theme="@style/Theme.SolidarityHub" />
     </application>
