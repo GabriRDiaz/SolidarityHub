@@ -41,7 +41,7 @@
         android:id="@+id/gruposAyudaFragment"
         android:name="com.upv.solidarityHub.GruposAyudaFragment"
         android:label="Grupos de Ayuda"
-        tools:layout="@layout/fragment_grupos_ayuda" >
+        tools:layout="@layout/fragment_grupos_ayuda2" >
         <action
             android:id="@+id/action_gruposAyudaFragment_to_misGruposFragment"
             app:destination="@id/misGruposFragment" />
