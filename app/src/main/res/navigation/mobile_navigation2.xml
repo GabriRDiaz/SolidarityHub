@@ -36,4 +36,20 @@
             app:destination="@+id/nav_slideshow" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/gruposAyudaFragment"
+        android:name="com.upv.solidarityHub.GruposAyudaFragment"
+        android:label="Grupos de Ayuda"
+        tools:layout="@layout/fragment_grupos_ayuda" >
+        <action
+            android:id="@+id/action_gruposAyudaFragment_to_misGruposFragment"
+            app:destination="@id/misGruposFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/misGruposFragment"
+        android:name="com.upv.solidarityHub.MisGruposFragment"
+        android:label="Mis Grupos"
+        tools:layout="@layout/fragment_mis_grupos" />
 </navigation>

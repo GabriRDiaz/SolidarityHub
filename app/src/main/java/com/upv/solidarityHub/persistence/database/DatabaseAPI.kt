@@ -35,4 +35,5 @@ interface DatabaseAPI {
     public suspend fun createIsAssigned(idTask: Int, user: Usuario)
     public suspend fun getTaskById(id: Int): taskDB?
     public suspend fun getHelpReqById(id: Int): reqDB?
+    public suspend fun unirseAGrupo(usuario: String, grupoId: Int): Boolean
 }

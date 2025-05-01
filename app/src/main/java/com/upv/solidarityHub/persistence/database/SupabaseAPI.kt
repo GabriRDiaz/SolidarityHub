@@ -393,6 +393,19 @@ class SupabaseAPI : DatabaseAPI {
         return task;
     }
 
+    public override suspend fun unirseAGrupo(usuario:String , grupoId:Int): Boolean {
+        return try {
+            val fechaActual = java.time.LocalDate.now().toString()
+            val relacion = FormaParte(user = usuario, grupo = grupoId, fecha = fechaActual)
+
+            supabase?.from("FormaParte")?.insert(relacion)
+            true
+        } catch (e: Exception) {
+            Log.e("SupabaseAPI", "Error al unirse al grupo", e)
+            false
+        }
+    }
+
 
 
 
