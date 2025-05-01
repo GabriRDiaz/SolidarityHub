@@ -30,7 +30,7 @@ interface DatabaseAPI {
     public suspend fun getHelpReqs(task: taskReq) : List<SupabaseAPI.reqDB>?
     public suspend fun registrarTask(task : taskReq, req: SupabaseAPI.reqDB): SupabaseAPI.taskDB?
     public suspend fun helpReqsToTasks(task: taskReq): List<SupabaseAPI.taskDB>?
-    public suspend fun getTaskIDs(): List<Int>?
+    public suspend fun getTaskOGReqs(): List<Int>?
     public suspend fun getAllUsers(): List<Usuario>?
     public suspend fun createIsAssigned(idTask: Int, user: Usuario)
     public suspend fun getTaskById(id: Int): taskDB?

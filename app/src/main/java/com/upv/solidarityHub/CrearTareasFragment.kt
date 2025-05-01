@@ -97,6 +97,8 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
 
         okButton.isEnabled = false
 
+        resetSpinners()
+
         return rootView
 
     }
@@ -452,6 +454,7 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
         var long : Double?
         var lat : Double?
 
+
         if(categorySelected()){
             cat = getCategory()
         }
@@ -504,6 +507,13 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
             return null
         }
 
+    }
+
+    private fun resetSpinners() {
+        catSpinner.setSelection(0) // Reset to "Cualquiera"
+        prioritySpinner.setSelection(0) // Reset to "Cualquiera"
+        sizeSpinner.setSelection(0) // Reset to "Cualquiera"
+        scheduleSpinner.setSelection(0) // Reset to "Cualquiera"
     }
 
 

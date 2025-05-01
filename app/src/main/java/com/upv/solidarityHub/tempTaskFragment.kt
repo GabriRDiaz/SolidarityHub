@@ -172,6 +172,7 @@ class tempTaskFragment : Fragment() {
         val users = getAllUsers()
 
         UserAdapter = users?.let { userAdapter(requireContext(), currentSize, it) { position, isSelected ->
+            buttonconditions()
         }}
 
         tempRecycler.adapter = UserAdapter
@@ -193,8 +194,10 @@ class tempTaskFragment : Fragment() {
 
                     val users = getAllUsers() ?: emptyList()
                     UserAdapter = userAdapter(requireContext(), currentSize, users) { position, isSelected ->
+                        buttonconditions()
                     }
                     tempRecycler.adapter = UserAdapter
+                    buttonconditions()
 
                 }
                 else{
@@ -203,6 +206,7 @@ class tempTaskFragment : Fragment() {
                 }
             }
         }
+         buttonOK.isEnabled = false
 
         textTask = rootView.findViewById(R.id.textTaskTemp)
 
@@ -238,6 +242,10 @@ class tempTaskFragment : Fragment() {
             "Grande (15+ voluntarios)" -> currentSize = 50
         }
 
+    }
+
+    private fun buttonconditions(){
+        buttonOK.isEnabled = UserAdapter?.getSelectedItems()?.isNotEmpty() ?: false
     }
 
     }
