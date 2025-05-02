@@ -2,7 +2,6 @@ package com.upv.solidarityHub
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +9,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -22,7 +18,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
-import org.osmdroid.config.Configuration.*
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.overlay.OverlayItem
@@ -35,7 +30,7 @@ class MapaGenerico : Fragment() {
     private lateinit var mapController: MapController
     private lateinit var overlayBalizas: ArrayList<OverlayItem>
     private lateinit var overlayBalizasItemized: ItemizedOverlay<OverlayItem>
-    private lateinit var buttonAddBaliza: ImageButton
+    private lateinit var buttonAddRecurso: ImageButton
     private var supabaseAPI: SupabaseAPI = SupabaseAPI()
 
     override fun onCreateView(
@@ -89,9 +84,9 @@ class MapaGenerico : Fragment() {
         map = view.findViewById(R.id.mapView)
         overlayBalizas = ArrayList()
         mapController = map.controller as MapController
-        buttonAddBaliza = view.findViewById(R.id.botonIrRegistrarse)
-        buttonAddBaliza.setOnClickListener {
-            showAddBalizaDialog()
+        buttonAddRecurso = view.findViewById(R.id.botonIrRegistrarse)
+        buttonAddRecurso.setOnClickListener {
+            showAddRecursoDialog()
         }
         updateOverlay()
         map.setTileSource(TileSourceFactory.MAPNIK)
@@ -144,25 +139,22 @@ class MapaGenerico : Fragment() {
         map.overlays.add(overlayBalizasItemized)
         map.invalidate()
     }
-    private fun showAddBalizaDialog() {
+    private fun showAddRecursoDialog() {
         val layout = LinearLayout(activity)
         layout.orientation = LinearLayout.VERTICAL
         val nameEditText = EditText(activity)
-        nameEditText.hint = "Nombre de la baliza"
+        nameEditText.hint = "Título del recurso"
         layout.addView(nameEditText)
-        val tipoEditText = EditText(activity)
-        tipoEditText.hint = "Tipo de la baliza"
-        layout.addView(tipoEditText)
         val descriptionEditText = EditText(activity)
-        descriptionEditText.hint = "Descripción de la baliza"
+        descriptionEditText.hint = "Descripción del recurso"
         layout.addView(descriptionEditText)
         val dialog = AlertDialog.Builder(activity)
-            .setTitle("Añadir baliza")
-            .setMessage("Ingresa el nombre, el tipo y la descripción de la baliza")
+            .setTitle("Añadir recurso")
+            .setMessage("Ingresa el título y la descripción del recurso")
             .setView(layout)
             .setPositiveButton("Aceptar") { _, _ ->
                 val name = nameEditText.text.toString()
-                val tipo = tipoEditText.text.toString()
+                val tipo = "Recurso"
                 val description = descriptionEditText.text.toString()
 
                 if (name.isNotEmpty() && description.isNotEmpty()) {
