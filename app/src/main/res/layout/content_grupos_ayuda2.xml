@@ -22,10 +22,10 @@
 
     <ListView
         android:id="@+id/listaGruposAyuda"
-        android:layout_width="match_parent"
+        android:layout_width="225dp"
         android:layout_height="525dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="150dp"
         android:layout_marginBottom="120dp"
         android:choiceMode="singleChoice"
         android:minHeight="250dp"
@@ -83,5 +83,41 @@
         app:layout_constraintEnd_toStartOf="@id/botonCrearGrupo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/botonVerDetalles2" />
+
+    <TextView
+        android:id="@+id/textFiltrarMunicipio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:text="Filtrar por municipio:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/listaGruposAyuda"
+        app:layout_constraintTop_toBottomOf="@id/etiquetaGruposAyudaDisp2" />
+
+    <Spinner
+        android:id="@+id/spinnerMunicipio"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/listaGruposAyuda"
+        app:layout_constraintTop_toBottomOf="@id/textFiltrarMunicipio" />
+
+    <Button
+        android:id="@+id/botonFiltrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:text="Filtrar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/listaGruposAyuda"
+        app:layout_constraintTop_toBottomOf="@id/spinnerMunicipio" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

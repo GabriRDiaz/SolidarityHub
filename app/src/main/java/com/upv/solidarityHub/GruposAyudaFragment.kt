@@ -96,18 +96,35 @@ class GruposAyudaFragment : Fragment() {
                 }
             }
         }
+
+        contentBinding.botonFiltrar.setOnClickListener {
+            val municipioSeleccionado = contentBinding.spinnerMunicipio.selectedItem as String
+            obtenerGrupos(municipioSeleccionado)
+        }
     }
 
-    private fun obtenerGrupos() {
+    private fun obtenerGrupos(municipioFiltro: String? = null) {
         lifecycleScope.launch {
             val grupos = db.getAllGrupos()
             if (grupos.isNullOrEmpty()) {
                 Toast.makeText(requireContext(), "No hay grupos disponibles", Toast.LENGTH_SHORT).show()
             } else {
+                val gruposFiltrados = if (municipioFiltro != null && municipioFiltro != "Todos") {
+                    grupos.filter { it.ubicacion == municipioFiltro }
+                } else {
+                    grupos
+                }
+
+                val municipiosUnicos = grupos.mapNotNull { it.ubicacion }.distinct().sorted()
+                val listaMunicipios = listOf("Todos") + municipiosUnicos
+                val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listaMunicipios)
+                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                contentBinding.spinnerMunicipio.adapter = spinnerAdapter
+
                 val adapter = object : ArrayAdapter<GrupoDeAyuda>(
                     requireContext(),
                     R.layout.item_grupo_ayuda,
-                    grupos
+                    gruposFiltrados
                 ) {
                     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                         val grupo = getItem(position)
@@ -121,9 +138,9 @@ class GruposAyudaFragment : Fragment() {
 
                         val isSelected = (parent as ListView).isItemChecked(position)
                         if (isSelected) {
-                            view.setBackgroundResource(android.R.color.darker_gray) // Resaltado cuando está seleccionado
+                            view.setBackgroundResource(android.R.color.darker_gray)
                         } else {
-                            view.setBackgroundResource(android.R.color.transparent) // Fondo normal
+                            view.setBackgroundResource(android.R.color.transparent)
                         }
 
                         return view
