@@ -6,6 +6,7 @@ import com.upv.solidarityHub.persistence.FormaParte
 import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.SolicitudAyuda
 import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.persistence.tieneAsignado
 import com.upv.solidarityHub.persistence.model.DatabaseHabilidad
 import com.upv.solidarityHub.persistence.model.Habilidad
 import com.upv.solidarityHub.persistence.taskReq
@@ -404,6 +405,24 @@ class SupabaseAPI : DatabaseAPI {
             Log.e("SupabaseAPI", "Error al unirse al grupo", e)
             false
         }
+    }
+
+    public override suspend fun getAsignacionesUsuario(userId: Int): List<tieneAsignado>? {
+        val response = supabase?.from("tiene_asignado")?.select(){
+            filter{
+                eq("id_user", userId)
+            }
+        }?.decodeList<tieneAsignado>()
+        return response
+    }
+
+    public override suspend fun eliminarAsignacion(id: Int) {
+        supabase?.from("tiene_asignado")
+            ?.delete {
+                filter {
+                    eq("id", id)
+                }
+            }
     }
 
 
