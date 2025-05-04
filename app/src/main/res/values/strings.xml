@@ -68,4 +68,11 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="title_mapa">title_mapa</string>
+    <string name="menu_mapa">menu_mapa</string>
+    <string name="menu_voluntarios">menu_voluntarios</string>
+    <string name="menu_afectados">menu_afectados</string>
+    <string name="Mapa">Mapa</string>
+    <string name="Voluntarios">Voluntarios</string>
+    <string name="Afectados">Afectados</string>
 </resources>

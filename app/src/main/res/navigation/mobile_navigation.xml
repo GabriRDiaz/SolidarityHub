@@ -8,18 +8,18 @@
     <fragment
         android:id="@+id/navigation_mapa"
         android:name="com.upv.solidarityHub.MapaGenerico"
-        android:label="@string/title_home" />
+        android:label="Mapa" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.upv.solidarityHub.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:label="Afectados"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.upv.solidarityHub.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:label="Voluntarios"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment

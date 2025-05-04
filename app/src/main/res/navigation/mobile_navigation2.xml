@@ -8,21 +8,25 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="com.upv.solidarityHub.MapaGenericoFragment"
-        android:label="@string/menu_home" />
+        android:label="Mapa"/>
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.upv.solidarityHub.GruposAyudaFragment"
-        android:label="@string/menu_gallery" />
+        android:name="com.upv.solidarityHub.volunteer_menu"
+        android:label="Menú de voluntarios">
+        <action
+            android:id="@+id/action_volunteermenu_to_gruposayudaFragment"
+            app:destination="@id/gruposAyudaFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.upv.solidarityHub.CrearTareasFragment"
-        android:label="@string/menu_slideshow">
+        android:name="com.upv.solidarityHub.affected_menu"
+        android:label="Menú de afectados">
 
         <action
-            android:id="@+id/action_crearTareasFragment_to_tempTaskFragment"
-            app:destination="@id/tempTaskFragment" />
+            android:id="@+id/action_affectedmenu_to_createreq"
+            app:destination="@+id/sol_ayuda_fragment" />
     </fragment>
 
     <fragment
@@ -33,7 +37,7 @@
 
         <action
             android:id="@+id/action_tempTaskFragment_to_crearTareasFragment"
-            app:destination="@+id/nav_slideshow" />
+            app:destination="@+id/CrearTareasFragment" />
 
     </fragment>
 
@@ -52,4 +56,39 @@
         android:name="com.upv.solidarityHub.MisGruposFragment"
         android:label="Mis Grupos"
         tools:layout="@layout/fragment_mis_grupos" />
+
+    <fragment
+        android:id="@+id/nav_admin"
+        android:name="com.upv.solidarityHub.admin_menu"
+        android:label="Menú de administradores" >
+        <action
+        android:id="@+id/action_adminMenu_to_CrearTareas"
+        app:destination="@id/CrearTareasFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/CrearTareasFragment"
+        android:name="com.upv.solidarityHub.CrearTareasFragment"
+        android:label="Creación de tareas">
+
+        <action
+            android:id="@+id/action_crearTareasFragment_to_tempTaskFragment"
+            app:destination="@id/tempTaskFragment" />
+
+        <action
+            android:id="@+id/action_crearTareasFragment_to_adminMenu"
+            app:destination="@id/nav_admin" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/sol_ayuda_fragment"
+        android:name="com.upv.solidarityHub.SolAyudaFragment"
+        android:label="Crear Solicitud de ayuda"
+        />
+
+
+
+
+
 </navigation>

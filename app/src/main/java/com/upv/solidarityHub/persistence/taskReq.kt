@@ -37,7 +37,7 @@ class taskReq private constructor(
             val instance = taskReq(id = null, cat, town, priority,schedule,size,lat,long,date, null)
             System.out.println("$cat, $town, $priority, $schedule, $size, $lat, $long, $date")
             val list = db.helpReqsToTasks(instance)
-            if(list != null){
+            if(list != null && list.isNotEmpty()){
                 instance.taskIDList = getIDsFromTaskList(list)
                 return instance
             }

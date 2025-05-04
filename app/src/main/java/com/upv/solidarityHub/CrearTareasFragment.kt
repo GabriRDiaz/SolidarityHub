@@ -307,6 +307,14 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
                 }
             }
         }
+
+        cancelButton.setOnClickListener {
+            goBackToMenu()
+        }
+    }
+
+    private fun goBackToMenu() {
+        findNavController().navigate(R.id.action_crearTareasFragment_to_adminMenu)
     }
 
     private fun goToTemp(r: taskReq) {

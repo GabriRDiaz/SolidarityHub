@@ -292,10 +292,13 @@ class SupabaseAPI : DatabaseAPI {
                     }
 
                     if (currentTasks != null && currentTasks.isNotEmpty()) {
-                        currentTasks.forEach(){ taskOG ->
-                            reqDB::id neq taskOG
-                        }
+                            and {
+                                currentTasks.forEach { taskOG ->
+                                    reqDB::id neq taskOG
+                                }
+                            }
                     }
+
 
 
                 }
