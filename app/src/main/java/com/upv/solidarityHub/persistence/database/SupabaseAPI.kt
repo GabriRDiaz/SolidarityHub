@@ -6,6 +6,7 @@ import com.upv.solidarityHub.persistence.FormaParte
 import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.SolicitudAyuda
 import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.persistence.tieneAsignado
 import com.upv.solidarityHub.persistence.model.DatabaseHabilidad
 import com.upv.solidarityHub.persistence.model.Desaparecido
 import com.upv.solidarityHub.persistence.model.Habilidad
@@ -292,10 +293,13 @@ class SupabaseAPI : DatabaseAPI {
                     }
 
                     if (currentTasks != null && currentTasks.isNotEmpty()) {
-                        currentTasks.forEach(){ taskOG ->
-                            reqDB::id neq taskOG
-                        }
+                            and {
+                                currentTasks.forEach { taskOG ->
+                                    reqDB::id neq taskOG
+                                }
+                            }
                     }
+
 
 
                 }
@@ -398,6 +402,37 @@ class SupabaseAPI : DatabaseAPI {
         initializeDatabase()
         supabase?.from("Desaparecido")?.insert(desaparecido)
 
+    }
+
+    public override suspend fun unirseAGrupo(usuario:String , grupoId:Int): Boolean {
+        return try {
+            val fechaActual = java.time.LocalDate.now().toString()
+            val relacion = FormaParte(user = usuario, grupo = grupoId, fecha = fechaActual)
+
+            supabase?.from("FormaParte")?.insert(relacion)
+            true
+        } catch (e: Exception) {
+            Log.e("SupabaseAPI", "Error al unirse al grupo", e)
+            false
+        }
+    }
+
+    public override suspend fun getAsignacionesUsuario(userId: Int): List<tieneAsignado>? {
+        val response = supabase?.from("tiene_asignado")?.select(){
+            filter{
+                eq("id_user", userId)
+            }
+        }?.decodeList<tieneAsignado>()
+        return response
+    }
+
+    public override suspend fun eliminarAsignacion(id: Int) {
+        supabase?.from("tiene_asignado")
+            ?.delete {
+                filter {
+                    eq("id", id)
+                }
+            }
     }
 
 

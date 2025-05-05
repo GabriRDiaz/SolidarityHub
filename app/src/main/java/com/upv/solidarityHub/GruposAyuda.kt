@@ -47,10 +47,14 @@ class GruposAyuda() : AppCompatActivity() {
 
         binding.botonVerDetalles2.setOnClickListener {
             grupoSeleccionado?.let {
-                Log.d("DEBUG", grupoSeleccionado!!.id.toString())
-                val intent = Intent(this, DetallesGrupoVoluntarios::class.java)
-                intent.putExtra("grupoId", grupoSeleccionado!!.id)
-                startActivity(intent)
+                lifecycleScope.launch {
+                    val resultado = db.unirseAGrupo(usuario.correo, it.id)
+                    if (resultado) {
+                        Toast.makeText(this@GruposAyuda, "Te has unido al grupo ${it.id}", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@GruposAyuda, "Error al unirte al grupo", Toast.LENGTH_SHORT).show()
+                    }
+                }
             } ?: Toast.makeText(this, "Selecciona un grupo primero", Toast.LENGTH_SHORT).show()
         }
 

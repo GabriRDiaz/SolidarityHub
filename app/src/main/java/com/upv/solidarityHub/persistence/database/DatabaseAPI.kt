@@ -4,6 +4,7 @@ import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.SolicitudAyuda
+import com.upv.solidarityHub.persistence.tieneAsignado
 import com.upv.solidarityHub.persistence.database.SupabaseAPI.reqDB
 import com.upv.solidarityHub.persistence.database.SupabaseAPI.taskDB
 import com.upv.solidarityHub.persistence.model.Desaparecido
@@ -37,4 +38,7 @@ interface DatabaseAPI {
     public suspend fun getTaskById(id: Int): taskDB?
     public suspend fun getHelpReqById(id: Int): reqDB?
     public suspend fun registerDesaparecido(desaparecido: Desaparecido)
+    public suspend fun unirseAGrupo(usuario: String, grupoId: Int): Boolean
+    public suspend fun getAsignacionesUsuario(userId: Int): List<tieneAsignado>?
+    public suspend fun eliminarAsignacion(id: Int)
 }

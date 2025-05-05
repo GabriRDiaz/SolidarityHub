@@ -5,18 +5,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.navigation.fragment.findNavController
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
+private lateinit var groupsButton: Button
+
 /**
  * A simple [Fragment] subclass.
- * Use the [Notificacion.newInstance] factory method to
+ * Use the [volunteer_menu.newInstance] factory method to
  * create an instance of this fragment.
  */
-class Notificacion : Fragment() {
+class volunteer_menu : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -33,8 +37,26 @@ class Notificacion : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notificacion, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_volunteer_menu, container, false)
+
+        findComponents(rootView)
+
+        setListeners()
+
+        return rootView
+    }
+
+    private fun setListeners() {
+        groupsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_volunteermenu_to_gruposayudaFragment)
+        }
+    }
+
+    private fun findComponents(rootView: View?) {
+        if (rootView != null) {
+            groupsButton = rootView.findViewById(R.id.menuGroupsButton)
+        }
+
     }
 
     companion object {
@@ -44,12 +66,12 @@ class Notificacion : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment Notificacion.
+         * @return A new instance of fragment volunteer_menu.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            Notificacion().apply {
+            volunteer_menu().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
