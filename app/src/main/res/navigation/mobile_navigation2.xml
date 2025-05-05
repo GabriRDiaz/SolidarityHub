@@ -27,6 +27,11 @@
         <action
             android:id="@+id/action_affectedmenu_to_createreq"
             app:destination="@+id/sol_ayuda_fragment" />
+
+        <action
+            android:id="@+id/action_affectedmenu_to_registrarDesaparecido"
+            app:destination="@+id/RegistrarDesaparecidoFragment" />
+
     </fragment>
 
     <fragment
@@ -85,6 +90,12 @@
         android:id="@+id/sol_ayuda_fragment"
         android:name="com.upv.solidarityHub.SolAyudaFragment"
         android:label="Crear Solicitud de ayuda"
+        />
+
+    <fragment
+        android:id="@+id/RegistrarDesaparecidoFragment"
+        android:name="com.upv.solidarityHub.ui.registrarDesaparecido.RegistrarDesaparecidoFragment"
+        android:label="Registrar desaparecido"
         />
 
 
