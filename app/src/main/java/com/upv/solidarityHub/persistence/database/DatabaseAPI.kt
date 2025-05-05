@@ -6,6 +6,7 @@ import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.SolicitudAyuda
 import com.upv.solidarityHub.persistence.database.SupabaseAPI.reqDB
 import com.upv.solidarityHub.persistence.database.SupabaseAPI.taskDB
+import com.upv.solidarityHub.persistence.model.Desaparecido
 import com.upv.solidarityHub.persistence.model.Habilidad
 import com.upv.solidarityHub.persistence.taskReq
 import java.util.Date
@@ -35,4 +36,5 @@ interface DatabaseAPI {
     public suspend fun createIsAssigned(idTask: Int, user: Usuario)
     public suspend fun getTaskById(id: Int): taskDB?
     public suspend fun getHelpReqById(id: Int): reqDB?
+    public suspend fun registerDesaparecido(desaparecido: Desaparecido)
 }

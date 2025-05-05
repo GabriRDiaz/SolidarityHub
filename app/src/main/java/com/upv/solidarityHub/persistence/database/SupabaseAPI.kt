@@ -7,6 +7,7 @@ import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.SolicitudAyuda
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.model.DatabaseHabilidad
+import com.upv.solidarityHub.persistence.model.Desaparecido
 import com.upv.solidarityHub.persistence.model.Habilidad
 import com.upv.solidarityHub.persistence.taskReq
 import io.github.jan.supabase.SupabaseClient
@@ -391,6 +392,12 @@ class SupabaseAPI : DatabaseAPI {
                 } }?.decodeSingle<reqDB>()
 
         return task;
+    }
+
+    public override suspend fun registerDesaparecido(desaparecido: Desaparecido) {
+        initializeDatabase()
+        supabase?.from("Desaparecido")?.insert(desaparecido)
+
     }
 
 

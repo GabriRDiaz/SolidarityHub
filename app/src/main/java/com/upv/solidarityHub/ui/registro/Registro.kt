@@ -76,30 +76,8 @@ class Registro : AppCompatActivity(), DatePickerHandler {
         initializeSearchView()
         initializeListeners()
 
-
-
-
-
-        Log.d("DEBUG", "Trying to access database" +db.toString())
-        var usuario: Usuario? = null
-        runBlocking {
-            val deferred1 = async {
-                usuario = db.getUsuarioByCorreo("xuli@gmail.com") }
-            deferred1.await()
-            }
-        if (usuario != null) {
-            Log.d("DEBUG", "Success!!! ")
-            Log.d("DEBUG", usuario!!.correo + usuario!!.nombre)
-        }
-
-
-
-
-
-
         suggestionAdapter.updateSuggestions(listOf("Municipio"))
     }
-
 
     public override fun handleDate(date: String) {
         displayNacimiento.text = date
@@ -118,8 +96,6 @@ class Registro : AppCompatActivity(), DatePickerHandler {
 
         buscadorMunicipio = findViewById(R.id.buscadorMunicipio)
 
-
-
     }
 
     private fun initializeButtons() {
@@ -131,7 +107,6 @@ class Registro : AppCompatActivity(), DatePickerHandler {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-
     private fun initializeListeners() {
 
         findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {

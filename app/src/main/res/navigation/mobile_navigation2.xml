@@ -7,8 +7,9 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.upv.solidarityHub.MapaGenericoFragment"
-        android:label="@string/menu_home" />
+        android:name="com.upv.solidarityHub.ui.registrarDesaparecido.RegistrarDesaparecidoFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_registrar_desaparecido" />
 
     <fragment
         android:id="@+id/nav_gallery"
