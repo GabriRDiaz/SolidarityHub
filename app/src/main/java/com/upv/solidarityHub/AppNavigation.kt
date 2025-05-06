@@ -9,6 +9,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.upv.solidarityHub.ui.login.Login
 import com.upv.solidarityHub.ui.registro.Registro
 
 @Composable
