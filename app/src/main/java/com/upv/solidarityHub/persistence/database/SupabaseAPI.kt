@@ -97,6 +97,15 @@ class SupabaseAPI : DatabaseAPI {
         return baliza;
     }
 
+    public override suspend fun deleteBaliza(name: String): Boolean {
+        initializeDatabase()
+        supabase?.from("Baliza")?.delete {
+            filter {
+                eq("nombre", name)
+            }
+        }
+        return true
+    }
     public override suspend fun getAllBalizas(): List<Baliza>? {
         initializeDatabase()
         val baliza = supabase?.from("Baliza")?.select(Columns.ALL)?.decodeList<Baliza>()

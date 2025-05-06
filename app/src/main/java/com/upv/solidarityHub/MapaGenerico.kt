@@ -2,6 +2,7 @@ package com.upv.solidarityHub
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
 import org.osmdroid.util.GeoPoint
@@ -81,18 +83,24 @@ class MapaGenerico : Fragment() {
     }
 
     private fun loadMap(view: View) {
-        map = view.findViewById(R.id.mapView)
-        overlayBalizas = ArrayList()
-        mapController = map.controller as MapController
-        buttonAddRecurso = view.findViewById(R.id.botonIrRegistrarse)
-        buttonAddRecurso.setOnClickListener {
-            showAddRecursoDialog()
+        try {
+            map = view.findViewById(R.id.mapView)
+            overlayBalizas = ArrayList()
+            mapController = map.controller as MapController
+            buttonAddRecurso = view.findViewById(R.id.botonIrRegistrarse)
+            buttonAddRecurso.setOnClickListener {
+                showAddRecursoDialog()
+            }
+            updateOverlay()
+            map.setTileSource(TileSourceFactory.MAPNIK)
+            map.setMultiTouchControls(true)
+            mapController.setZoom(20.0)
+            mapController.setCenter(GeoPoint(39.4703606, -0.3836834))
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Error en loadMap: ${e.message}", Toast.LENGTH_LONG).show()
         }
-        updateOverlay()
-        map.setTileSource(TileSourceFactory.MAPNIK)
-        map.setMultiTouchControls(true)
-        mapController.setZoom(20.0)
-        mapController.setCenter(GeoPoint(39.4703606, -0.3836834))
     }
 
     private fun addBaliza(baliza: Baliza?) {

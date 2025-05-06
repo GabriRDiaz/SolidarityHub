@@ -1,6 +1,7 @@
 package com.upv.solidarityHub
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
@@ -49,11 +50,12 @@ fun AppNavigation() {
         }
 
         composable("MapaGenerico") {
+
             AndroidView(factory = { context ->
                 val view = LayoutInflater.from(context).
                 inflate(R.layout.fragment_host_mapa_generico,null,false)
 
-                val fragment = SolAyudaFragment()
+                val fragment = MapaGenerico()
                 (context as? AppCompatActivity)?.supportFragmentManager?.
                 beginTransaction()?.replace(R.id.fragment_container_view, fragment)?.addToBackStack(null)?.commit()
                 view
