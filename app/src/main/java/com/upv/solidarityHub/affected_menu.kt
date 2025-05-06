@@ -14,6 +14,8 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 private lateinit var reqButton: Button
+private lateinit var missingButton: Button
+
 
 /**
  * A simple [Fragment] subclass.
@@ -46,6 +48,7 @@ class affected_menu : Fragment() {
     private fun findComponents(rootView: View?) {
         if (rootView != null) {
             reqButton = rootView.findViewById(R.id.menuhelpReqButton)
+            missingButton = rootView.findViewById(R.id.menuMissingButton)
         }
 
     }
@@ -53,6 +56,10 @@ class affected_menu : Fragment() {
     private fun setListeners(){
         reqButton.setOnClickListener {
             findNavController().navigate(R.id.action_affectedmenu_to_createreq)
+        }
+
+        missingButton.setOnClickListener {
+            findNavController().navigate(R.id.action_affectedmenu_to_registrarDesaparecido)
         }
 
     }

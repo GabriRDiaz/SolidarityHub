@@ -97,6 +97,15 @@ class SupabaseAPI : DatabaseAPI {
         return baliza;
     }
 
+    public override suspend fun deleteBaliza(name: String): Boolean {
+        initializeDatabase()
+        supabase?.from("Baliza")?.delete {
+            filter {
+                eq("nombre", name)
+            }
+        }
+        return true
+    }
     public override suspend fun getAllBalizas(): List<Baliza>? {
         initializeDatabase()
         val baliza = supabase?.from("Baliza")?.select(Columns.ALL)?.decodeList<Baliza>()
@@ -417,10 +426,10 @@ class SupabaseAPI : DatabaseAPI {
         }
     }
 
-    public override suspend fun getAsignacionesUsuario(userId: Int): List<tieneAsignado>? {
+    public override suspend fun getAsignacionesUsuario(userId: String): List<tieneAsignado>? {
         val response = supabase?.from("tiene_asignado")?.select(){
             filter{
-                eq("id_user", userId)
+                eq("correo", userId)
             }
         }?.decodeList<tieneAsignado>()
         return response
