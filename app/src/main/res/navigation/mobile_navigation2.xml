@@ -98,6 +98,28 @@
         android:label="Registrar desaparecido"
         />
 
+    <fragment
+        android:id="@+id/misNotificacionesFragment"
+        android:name="com.upv.solidarityHub.MisNotificacionesFragment"
+        android:label="Mis Notificaciones"
+        tools:layout="@layout/fragment_mis_notificaciones" >
+        <action
+            android:id="@+id/action_misNotisFragment_to_notiFragment"
+            app:destination="@id/notificacionFragment" >
+            <argument
+                android:name="taskId"
+                app:argType="integer" />
+            <argument
+                android:name="asignacionId"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/notificacionFragment"
+        android:name="com.upv.solidarityHub.NotificacionFragment"
+        android:label="Notificaciones"
+        tools:layout="@layout/fragment_notificacion" />
 
 
 

@@ -40,6 +40,6 @@ interface DatabaseAPI {
     public suspend fun getHelpReqById(id: Int): reqDB?
     public suspend fun registerDesaparecido(desaparecido: Desaparecido)
     public suspend fun unirseAGrupo(usuario: String, grupoId: Int): Boolean
-    public suspend fun getAsignacionesUsuario(userId: Int): List<tieneAsignado>?
+    public suspend fun getAsignacionesUsuario(userId: String): List<tieneAsignado>?
     public suspend fun eliminarAsignacion(id: Int)
 }

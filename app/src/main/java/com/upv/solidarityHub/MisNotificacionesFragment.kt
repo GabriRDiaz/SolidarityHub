@@ -1,15 +1,22 @@
 package com.upv.solidarityHub
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ListView
+import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.upv.solidarityHub.persistence.database.SupabaseAPI
+import com.upv.solidarityHub.persistence.taskReq
+import com.upv.solidarityHub.persistence.tieneAsignado
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -17,43 +24,74 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class MisNotificacionesFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var listaNotis: ListView
+    private lateinit var botonVolver: Button
+    private lateinit var botonVerNoti: Button
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var notificaciones: List<Pair<tieneAsignado, SupabaseAPI.taskDB>> = listOf()
+    private var selectedPos = -1
+    private val supabaseAPI = SupabaseAPI()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mis_notificaciones, container, false)
-    }
+    ): View {
+        val view = inflater.inflate(R.layout.fragment_mis_notificaciones, container, false)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MisNotificacionesFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MisNotificacionesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+        listaNotis = view.findViewById(R.id.listaNotis)
+        botonVolver = view.findViewById(R.id.botonVolverNotis)
+        botonVerNoti = view.findViewById(R.id.botonVerNoti)
+
+        val sharedPref = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val userId = sharedPref.getString("user_email", null)
+        if (userId == null) {
+            // No hay usuario logeado, manejar este caso
+            findNavController().navigate(R.id.nav_gallery)
+            return view
+        }
+
+        lifecycleScope.launch {
+            val asignaciones = supabaseAPI.getAsignacionesUsuario(userId) ?: emptyList()
+            val tareas = asignaciones.mapNotNull {
+                val task = supabaseAPI.getTaskById(it.id_task)
+                val req = task?.og_req?.let { reqId -> supabaseAPI.getHelpReqById(reqId) }
+                if (task != null && req != null) Triple(it, task, req) else null
             }
+
+            val adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_list_item_single_choice,
+                tareas.map { "Tarea: ${it.third.titulo} en ${it.third.ubicacion}" } // Usamos ubicacion en lugar de municipio
+            )
+            listaNotis.choiceMode = ListView.CHOICE_MODE_SINGLE
+            listaNotis.adapter = adapter
+        }
+
+        listaNotis.setOnItemClickListener { _, _, position, _ ->
+            selectedPos = position
+        }
+
+        botonVerNoti.setOnClickListener {
+            if (selectedPos >= 0) {
+                val (asignacion, tarea) = notificaciones[selectedPos]
+
+                // Navegar pasando los parámetros
+                findNavController().navigate(
+                    R.id.action_misNotisFragment_to_notiFragment,
+                    bundleOf(
+                        "taskId" to tarea.id,
+                        "asignacionId" to asignacion.id
+                    )
+                )
+            } else {
+                Toast.makeText(requireContext(), "Selecciona una notificación", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        botonVolver.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        return view
     }
 }

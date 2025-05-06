@@ -426,10 +426,10 @@ class SupabaseAPI : DatabaseAPI {
         }
     }
 
-    public override suspend fun getAsignacionesUsuario(userId: Int): List<tieneAsignado>? {
+    public override suspend fun getAsignacionesUsuario(userId: String): List<tieneAsignado>? {
         val response = supabase?.from("tiene_asignado")?.select(){
             filter{
-                eq("id_user", userId)
+                eq("correo", userId)
             }
         }?.decodeList<tieneAsignado>()
         return response
