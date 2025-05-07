@@ -56,7 +56,7 @@ class Registro : AppCompatActivity(), DatePickerHandler {
     private lateinit var viewModel: RegistroViewModel
 
 
-    //TODO: LLAMAR A LA BD DEBERÍA NO SER NECESARIO, O LO HACE EL VIEWMODEL O SE OBTIENE EL USUARIO USANDO UN MÉTODO GLOBAL LOCAL
+    //TODO LLAMAR A LA BD DEBERÍA NO SER NECESARIO, O LO HACE EL VIEWMODEL O SE OBTIENE EL USUARIO USANDO UN MÉTODO GLOBAL LOCAL
     private val db:SupabaseAPI = SupabaseAPI()
 
     private var searchSuggestions = arrayOfNulls<String>(FileReader.numMunicipios)

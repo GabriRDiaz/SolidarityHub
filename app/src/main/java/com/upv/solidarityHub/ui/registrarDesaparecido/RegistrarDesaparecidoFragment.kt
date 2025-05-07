@@ -153,20 +153,22 @@ class RegistrarDesaparecidoFragment : Fragment() {
         })
 
         buttonConfirmar.setOnClickListener {
-            viewModel.registrarDesaparecido()
+            if(viewModel.registrarDesaparecido()) {
+                Toast.makeText(activity, "Registrado con éxito", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
 
     private fun initializeObservers() {
         viewModel.nombreIsValid.observe(viewLifecycleOwner, Observer { newNombreIsValid ->
-            inputNombre.editText!!.error = "Por favor introduzca un Nombre"
+            inputNombre.editText!!.error = "Por favor introduzca un Nombre válido"
             inputNombre.isErrorEnabled = !newNombreIsValid
             if (newNombreIsValid) inputNombre.editText!!.error = null
         })
 
         viewModel.apellidosIsValid.observe(viewLifecycleOwner, Observer { newApellidosIsValid ->
-            inputApellidos.editText!!.error = "Por favor introduzca los Apellidos"
+            inputApellidos.editText!!.error = "Por favor introduzca Apellidos válidos"
             inputApellidos.isErrorEnabled = !newApellidosIsValid
             if (newApellidosIsValid) inputApellidos.editText!!.error = null
         })
