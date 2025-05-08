@@ -17,6 +17,10 @@
         <action
             android:id="@+id/action_volunteermenu_to_gruposayudaFragment"
             app:destination="@id/gruposAyudaFragment" />
+
+        <action
+            android:id="@+id/action_volunteermenu_to_notificationsFragment"
+            app:destination="@id/misNotificacionesFragment" />
     </fragment>
 
     <fragment
