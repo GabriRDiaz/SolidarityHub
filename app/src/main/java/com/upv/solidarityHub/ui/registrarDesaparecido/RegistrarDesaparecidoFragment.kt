@@ -14,15 +14,17 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.Toast
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
 import com.upv.solidarityHub.R
 import java.lang.Double.parseDouble
 import java.lang.Integer.parseInt
-
+import com.upv.solidarityHub.utils.TextInputLayoutUtils
+import com.upv.solidarityHub.utils.TextInputLayoutUtils.setErrorTo
 
 class RegistrarDesaparecidoFragment : Fragment() {
 
@@ -52,14 +54,14 @@ class RegistrarDesaparecidoFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         myView = inflater.inflate(R.layout.fragment_registrar_desaparecido, container, false)
         viewModel = ViewModelProvider(requireActivity()).get(RegistrarDesaparecidoViewModel::class.java)
 
         initializeFields()
         initializeButtons()
-        addItemsSpinnerComplexion()
+        addItemsToSpinnerComplexion()
         initializeListeners()
         initializeObservers()
 
@@ -90,12 +92,12 @@ class RegistrarDesaparecidoFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 viewModel.updateNombre(inputNombre.editText!!.text.toString())
             }
-
         })
 
         inputApellidos.editText!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
             override fun afterTextChanged(s: Editable?) {
                 viewModel.updateApellidos(inputApellidos.editText!!.text.toString())
             }
@@ -135,7 +137,6 @@ class RegistrarDesaparecidoFragment : Fragment() {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 viewModel.updateComplexion(position)
             }
-
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         })
@@ -158,46 +159,35 @@ class RegistrarDesaparecidoFragment : Fragment() {
             }
         }
 
+        buttonCancelar. setOnClickListener {
+            findNavController().popBackStack()
+        }
+
     }
 
     private fun initializeObservers() {
         viewModel.nombreIsValid.observe(viewLifecycleOwner, Observer { newNombreIsValid ->
-            inputNombre.editText!!.error = "Por favor introduzca un Nombre válido"
-            inputNombre.isErrorEnabled = !newNombreIsValid
-            if (newNombreIsValid) inputNombre.editText!!.error = null
+            inputNombre.setErrorTo("Por favor introduzca un Nombre válido", !newNombreIsValid)
         })
 
         viewModel.apellidosIsValid.observe(viewLifecycleOwner, Observer { newApellidosIsValid ->
-            inputApellidos.editText!!.error = "Por favor introduzca Apellidos válidos"
-            inputApellidos.isErrorEnabled = !newApellidosIsValid
-            if (newApellidosIsValid) inputApellidos.editText!!.error = null
-        })
-
-        viewModel.apellidosIsValid.observe(viewLifecycleOwner, Observer { newApellidosIsValid ->
-            inputApellidos.editText!!.error = "Por favor introduzca los Apellidos"
-            inputApellidos.isErrorEnabled = !newApellidosIsValid
-            if (newApellidosIsValid) inputApellidos.editText!!.error = null
+            inputApellidos.setErrorTo("Por favor introduzca Apellidos válidos", !newApellidosIsValid)
         })
 
         viewModel.edadIsValid.observe(viewLifecycleOwner, Observer { newEdadIsValid ->
-            inputEdad.editText!!.error = "Por favor introduzca una edad válida"
-            inputEdad.isErrorEnabled = !newEdadIsValid
-            if (newEdadIsValid) inputEdad.editText!!.error = null
+            inputEdad.setErrorTo("Por favor añada una edad válida", !newEdadIsValid)
         })
 
         viewModel.alturaIsValid.observe(viewLifecycleOwner, Observer { newAlturaIsValid ->
-            inputAltura.editText!!.error = "Por favor una altura válida"
-            inputAltura.isErrorEnabled = !newAlturaIsValid
-            if (newAlturaIsValid) inputAltura.editText!!.error = null
+            inputAltura.setErrorTo("Por favor una altura válida", !newAlturaIsValid)
         })
 
         viewModel.allIsValid.observe(viewLifecycleOwner, Observer { newAllIsValid ->
-        buttonConfirmar.isEnabled = newAllIsValid
+            buttonConfirmar.isEnabled = newAllIsValid
         })
-
     }
 
-    private fun addItemsSpinnerComplexion() {
+    private fun addItemsToSpinnerComplexion() {
         val items = listOf("Pequeña", "Normal", "Grande")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

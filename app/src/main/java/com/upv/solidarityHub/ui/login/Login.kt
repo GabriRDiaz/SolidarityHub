@@ -2,6 +2,7 @@ package com.upv.solidarityHub.ui.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.ui.AppBarConfiguration
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
 import com.upv.solidarityHub.HabilidadesActivity
 import com.upv.solidarityHub.Main
@@ -31,7 +33,7 @@ class Login : AppCompatActivity() {
 
     private lateinit var inputCorreo: TextInputLayout
     private lateinit var inputContrasena: TextInputLayout
-    private lateinit var showPasswordButton:Button
+    private lateinit var showPasswordButton: MaterialButton
     private lateinit var irHaciaRegistroButton:Button
     private lateinit var logearseButton:Button
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -40,19 +42,17 @@ class Login : AppCompatActivity() {
     private lateinit var viewModel: LoginViewModel
 
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+
         initializeFields()
         initializeButtons()
         initializeListeners()
         initializeObservers()
-
-
     }
 
     private fun initializeFields() {
@@ -64,6 +64,7 @@ class Login : AppCompatActivity() {
 
     private fun initializeButtons() {
         showPasswordButton = findViewById(R.id.loginShowPassButton)
+        showPasswordButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_menu_view,0,0,0)
         logearseButton = findViewById(R.id.logearseButton)
         irHaciaRegistroButton = findViewById(R.id.botonIrRegistrarse)
     }

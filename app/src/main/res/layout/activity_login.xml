@@ -98,12 +98,21 @@
                         android:hint="p.e: newerty11" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/loginShowPassButton"
                     android:layout_width="22dp"
                     android:layout_height="34dp"
                     android:layout_marginLeft="2dp"
-                    android:text="Button" />
+                    android:backgroundTint="#673AB7"
+                    android:drawableStart="@android:drawable/ic_menu_view"
+                    android:drawableLeft="@android:drawable/ic_menu_view"
+                    android:drawableTop="@android:drawable/ic_menu_view"
+                    android:drawableEnd="@android:drawable/ic_menu_view"
+                    android:drawableRight="@android:drawable/ic_menu_view"
+                    android:drawableBottom="@android:drawable/ic_menu_view"
+                    android:drawableTint="#FF0000"
+                    android:text="Button"
+                    app:icon="@android:drawable/ic_menu_view" />
             </LinearLayout>
 
         </TableRow>
