@@ -1,7 +1,6 @@
 package com.upv.solidarityHub
 
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
@@ -10,6 +9,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.upv.solidarityHub.ui.createHelpReq.SolAyudaFragment
 import com.upv.solidarityHub.ui.login.Login
 import com.upv.solidarityHub.ui.registro.Registro
 

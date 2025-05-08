@@ -58,9 +58,6 @@
             android:exported="true"
             android:theme="@style/Theme.SolidarityHub" />
         <activity
-            android:name=".SolAyuda"
-            android:exported="false" />
-        <activity
             android:name=".HabilidadesActivity"
             tools:ignore="Instantiatable" />
         <!--

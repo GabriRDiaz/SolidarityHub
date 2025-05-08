@@ -92,7 +92,7 @@
 
     <fragment
         android:id="@+id/sol_ayuda_fragment"
-        android:name="com.upv.solidarityHub.SolAyudaFragment"
+        android:name="com.upv.solidarityHub.ui.createHelpReq.SolAyudaFragment"
         android:label="Crear Solicitud de ayuda"
         />
 
