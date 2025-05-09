@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
@@ -25,7 +26,7 @@ import org.osmdroid.views.MapController
 import org.osmdroid.views.overlay.OverlayItem
 import org.osmdroid.views.overlay.*
 
-class MapaGenerico : Fragment() {
+class MapaGenerico : DialogFragment() {
 
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map: MapView

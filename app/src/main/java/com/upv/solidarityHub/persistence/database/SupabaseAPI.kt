@@ -12,6 +12,8 @@ import com.upv.solidarityHub.persistence.model.Desaparecido
 import com.upv.solidarityHub.persistence.model.Habilidad
 import com.upv.solidarityHub.persistence.taskReq
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
@@ -23,6 +25,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
+import io.github.jan.supabase.auth.providers.builtin.Email
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -69,8 +72,11 @@ class SupabaseAPI : DatabaseAPI {
 
     public override fun initializeDatabase() {
 
-        if ( supabase == null) {
-            supabase = createSupabaseClient(supabaseUrl, supabaseKey) {install(Postgrest)}
+        if (supabase == null) {
+            supabase = createSupabaseClient(supabaseUrl, supabaseKey) {
+                install(Postgrest)
+                install(Auth)
+            }
         }
 
     }
@@ -407,8 +413,12 @@ class SupabaseAPI : DatabaseAPI {
         return task;
     }
 
-    public override suspend fun registerDesaparecido(desaparecido: Desaparecido) {
+    public override suspend fun registerDesaparecido(desaparecido: Desaparecido, ultimaUbi: Baliza?) {
         initializeDatabase()
+        //TODO: Un poco tinkie winkie que desaparecido pille id y luego aquí pasar la ultimaUbi por separado, veré como lo pongo mas bonito más adelante
+        if(ultimaUbi != null) {
+            addBaliza(ultimaUbi.id,ultimaUbi.latitud,ultimaUbi.longitud,ultimaUbi.nombre,ultimaUbi.tipo,ultimaUbi.descripcion)
+        }
         supabase?.from("Desaparecido")?.insert(desaparecido)
 
     }
@@ -427,28 +437,43 @@ class SupabaseAPI : DatabaseAPI {
     }
 
     public override suspend fun getAsignacionesUsuario(userId: String): List<tieneAsignado>? {
-        val response = supabase?.from("tiene_asignado")?.select(){
+        initializeDatabase()
+        val response = supabase?.from("tieneAsignado")?.select(){
             filter{
-                eq("correo", userId)
+                eq("id_user", userId)
             }
         }?.decodeList<tieneAsignado>()
+        Log.d("SupabaseAPI", "Asignaciones para $userId: ${response?.size}")
         return response
     }
 
-    public override suspend fun eliminarAsignacion(id: Int) {
-        supabase?.from("tiene_asignado")
-            ?.delete {
-                filter {
-                    eq("id", id)
-                }
+    public override suspend fun eliminarAsignacion(id: Int): Boolean {
+        return try {
+            initializeDatabase()
+            supabase?.from("tieneAsignado")?.delete {
+                filter { eq("id", id) }
             }
+            true
+        } catch (e: Exception) {
+            Log.e("Supabase", "Error rechazando tarea", e)
+            false
+        }
     }
 
-
-
-
-
-
+    public override suspend fun aceptarTarea(asignacionId: Int): Boolean {
+        return try {
+            initializeDatabase()
+            supabase?.from("tieneAsignado")?.update({
+                set("estado", "aceptada")  // Asegúrate que este campo existe en tu tabla
+            }) {
+                filter { eq("id", asignacionId) }
+            }
+            true
+        } catch (e: Exception) {
+            Log.e("Supabase", "Error aceptando tarea", e)
+            false
+        }
+    }
 
 
 

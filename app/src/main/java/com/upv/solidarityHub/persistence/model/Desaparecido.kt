@@ -12,7 +12,7 @@ class Desaparecido(
     val altura: Double,
     val complexion: Int,
     val genero: Int,
-    val id_baliza_visto_por_ultima_vez: Int?
+    var id_baliza_visto_por_ultima_vez: Int?
 ) : Parcelable {
 
 
@@ -35,7 +35,7 @@ class Desaparecido(
         parcel.writeInt(complexion)
         parcel.writeInt(genero)
         if(id_baliza_visto_por_ultima_vez != null) {
-            parcel.writeInt(id_baliza_visto_por_ultima_vez)
+            parcel.writeInt(id_baliza_visto_por_ultima_vez!!)
         }
 
     }

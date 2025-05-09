@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 class tieneAsignado(
     val id:Int,
     val created_at: String,
-    val id_user: Int,
-    val id_task: Int
+    val id_user: String,
+    val id_task: Int,
+    val estado: String
 )
