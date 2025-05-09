@@ -17,6 +17,10 @@
         <action
             android:id="@+id/action_volunteermenu_to_gruposayudaFragment"
             app:destination="@id/gruposAyudaFragment" />
+
+        <action
+            android:id="@+id/action_volunteermenu_to_notificationsFragment"
+            app:destination="@id/misNotificacionesFragment" />
     </fragment>
 
     <fragment
@@ -73,7 +77,7 @@
 
     <fragment
         android:id="@+id/CrearTareasFragment"
-        android:name="com.upv.solidarityHub.CrearTareasFragment"
+        android:name="com.upv.solidarityHub.ui.taskCreation.CrearTareasFragment"
         android:label="Creación de tareas">
 
         <action
@@ -88,7 +92,7 @@
 
     <fragment
         android:id="@+id/sol_ayuda_fragment"
-        android:name="com.upv.solidarityHub.SolAyudaFragment"
+        android:name="com.upv.solidarityHub.ui.createHelpReq.SolAyudaFragment"
         android:label="Crear Solicitud de ayuda"
         />
 
@@ -98,6 +102,28 @@
         android:label="Registrar desaparecido"
         />
 
+    <fragment
+        android:id="@+id/misNotificacionesFragment"
+        android:name="com.upv.solidarityHub.MisNotificacionesFragment"
+        android:label="Mis Notificaciones"
+        tools:layout="@layout/fragment_mis_notificaciones" >
+        <action
+            android:id="@+id/action_misNotisFragment_to_notiFragment"
+            app:destination="@id/notificacionFragment" >
+            <argument
+                android:name="taskId"
+                app:argType="integer" />
+            <argument
+                android:name="asignacionId"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/notificacionFragment"
+        android:name="com.upv.solidarityHub.NotificacionFragment"
+        android:label="Notificaciones"
+        tools:layout="@layout/fragment_notificacion" />
 
 
 

@@ -30,7 +30,7 @@
             android:name=".StopGap"
             android:exported="false" />
         <activity
-            android:name=".Login"
+            android:name=".ui.login.Login"
             android:exported="true" />
         <activity
             android:name=".CrearGrupoAyuda"
@@ -57,9 +57,6 @@
             android:name=".DetallesGrupoVoluntarios"
             android:exported="true"
             android:theme="@style/Theme.SolidarityHub" />
-        <activity
-            android:name=".SolAyuda"
-            android:exported="false" />
         <activity
             android:name=".HabilidadesActivity"
             tools:ignore="Instantiatable" />

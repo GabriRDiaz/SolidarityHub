@@ -141,7 +141,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Altura (Aprox)"
+                        android:text="Altura (cm)"
                         android:textStyle="bold" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -283,15 +283,10 @@
                     android:id="@+id/botonCancelarDesaparecido"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="#C70505"
-                    android:shadowColor="#BD1010"
-                    android:text="Cancelar"
-                    android:textColor="#D00606"
-                    android:textColorHighlight="#AB1414"
-                    android:textColorHint="#C70D0D"
-                    android:textColorLink="#AB1E1E"
-                    app:rippleColor="#B60A0A"
-                    app:strokeColor="#E40808" />
+                    android:layout_weight="1"
+                    android:backgroundTint="#A83333"
+                    android:text="Cancelar" />
+
             </LinearLayout>
 
         </TableRow>

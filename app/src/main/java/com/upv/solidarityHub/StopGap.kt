@@ -29,11 +29,11 @@ class StopGap : AppCompatActivity() {
             startActivity(intent)
         }
 
-        findViewById<Button>(R.id.stgSolAyudaButton).setOnClickListener {
-            val intent = Intent(this, SolAyuda::class.java)
-            intent.putExtra("usuario", usr)
-            startActivity(intent)
-        }
+        //findViewById<Button>(R.id.stgSolAyudaButton).setOnClickListener {
+            //val intent = Intent(this, SolAyuda::class.java)
+            //intent.putExtra("usuario", usr)
+            //startActivity(intent)
+        //}
 
         findViewById<Button>(R.id.stgGruposButton).setOnClickListener {
             val intent = Intent(this, GruposAyuda::class.java)

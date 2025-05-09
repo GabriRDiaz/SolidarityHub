@@ -27,7 +27,7 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="22dp"
             android:layout_marginVertical="5dp">
 
             <TextView
@@ -37,13 +37,16 @@
                 android:text="Correo"
                 android:textStyle="bold" />
 
-            <EditText
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/loginInputCorreo"
-                android:layout_width="179dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="p.e: nacho@gmail.com"
-                android:inputType="textEmailAddress" />
+                android:layout_width="match_parent"
+                android:layout_height="55dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="184dp"
+                    android:layout_height="wrap_content"
+                    android:hint="p.e: nc@gmail.com" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </TableRow>
 
@@ -65,7 +68,7 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="31dp"
+            android:layout_height="73dp"
             android:layout_marginTop="5dp"
             android:gravity="center|left">
 
@@ -77,22 +80,39 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="188dp"
                 android:layout_height="wrap_content"
+                android:gravity="center|left"
                 android:orientation="horizontal">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/loginInputContrasena"
-                    android:layout_width="167dp"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPassword" />
+                    android:layout_width="162dp"
+                    android:layout_height="55dp"
+                    android:layout_gravity="center|left"
+                    android:gravity="center|left">
 
-                <Button
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="p.e: newerty11" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/loginShowPassButton"
                     android:layout_width="22dp"
                     android:layout_height="34dp"
-                    android:text="Button" />
+                    android:layout_marginLeft="2dp"
+                    android:backgroundTint="#673AB7"
+                    android:drawableStart="@android:drawable/ic_menu_view"
+                    android:drawableLeft="@android:drawable/ic_menu_view"
+                    android:drawableTop="@android:drawable/ic_menu_view"
+                    android:drawableEnd="@android:drawable/ic_menu_view"
+                    android:drawableRight="@android:drawable/ic_menu_view"
+                    android:drawableBottom="@android:drawable/ic_menu_view"
+                    android:drawableTint="#FF0000"
+                    android:text="Button"
+                    app:icon="@android:drawable/ic_menu_view" />
             </LinearLayout>
 
         </TableRow>

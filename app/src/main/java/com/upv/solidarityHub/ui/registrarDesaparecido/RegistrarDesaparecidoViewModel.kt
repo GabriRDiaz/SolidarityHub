@@ -10,12 +10,16 @@ import kotlinx.coroutines.runBlocking
 
 class RegistrarDesaparecidoViewModel : ViewModel() {
 
-    private val _nombre = MutableLiveData<String>()
-    private val _apellidos = MutableLiveData<String>()
-    private val _edad = MutableLiveData<Int>()
-    private val _altura = MutableLiveData<Double>()
-    private val _complexion = MutableLiveData<Int>()
-    private val _sexo = MutableLiveData<Int>()
+    private val max_char = 50
+    private val max_altura = 300
+    private val max_edad = 120
+
+    private val _nombre = MutableLiveData<String>("")
+    private val _apellidos = MutableLiveData<String>("")
+    private val _edad = MutableLiveData<Int>(-1)
+    private val _altura = MutableLiveData<Double>(-1.0)
+    private val _complexion = MutableLiveData<Int>(1)
+    private val _sexo = MutableLiveData<Int>(-1)
 
     private val _nombreIsValid = MutableLiveData<Boolean>(true)
     private val _apellidosIsValid = MutableLiveData<Boolean>(true)
@@ -79,37 +83,47 @@ class RegistrarDesaparecidoViewModel : ViewModel() {
 
 
     fun checkNombreIsValid(): Boolean {
-        var res = _nombre.value != ""
+        val nombre = _nombre.value!!
+        val res = nombre != "" && nombre.length <= max_char && hasNoSpecialChar(nombre)
         _nombreIsValid.value = res
         return res
     }
 
+    fun hasNoSpecialChar(text:String): Boolean {
+        return text.all { it.isLetter() || it in " " }
+    }
+
     fun checkApellidosIsValid(): Boolean {
-        var res = apellidos.value != ""
+        val apellidos = _apellidos.value!!
+        val res = apellidos != "" && apellidos.length <= max_char && hasNoSpecialChar(apellidos)
         _apellidosIsValid.value = res
         return res
     }
 
     fun checkEdadIsValid(): Boolean {
-        val res = _edad.value != null && _edad.value!! >= 0
+        val edad = _edad.value
+        val res = edad != null && edad >= 0 && edad <= max_edad
         _edadIsValid.value = res
         return res
     }
 
     fun checkAlturaIsValid(): Boolean {
-        val res = _altura.value != null && _altura.value!! >= 0
+        val altura = _altura.value!!
+        val res = altura in 0.0..300.0
         _alturaIsValid.value = res
         return res
     }
 
     fun checkComplexionIsValid(): Boolean {
-        val res = _complexion.value != null
+        val complexion = _complexion.value
+        val res = complexion != -1
         _complexionIsValid.value = res
         return res
     }
 
     fun checkSexoIsValid(): Boolean {
-        val res = _sexo.value != null
+        val sexo = _sexo.value
+        val res = sexo != -1
         _sexoIsValid.value = res
         return res
     }
@@ -121,19 +135,19 @@ class RegistrarDesaparecidoViewModel : ViewModel() {
     }
 
     fun registrarDesaparecido(): Boolean {
+        var succesfulRegistry = false
         if(allIsValid.value!!) {
             val desaparecido = Desaparecido(_nombre.value!!, _apellidos.value!!, _edad.value!!, _altura.value!!, _complexion.value!!, _sexo.value!!, null)
             runBlocking {
                 try {
                     SupabaseAPI().registerDesaparecido(desaparecido)
-                    return@runBlocking true
+                    succesfulRegistry = true
                 } catch (e: Exception) {
                     Log.d("DEBUG",e.toString())
                     //TODO: ADD ERROR HANDLING
-                    return@runBlocking false
                 }
             }
         }
-        return false
+        return succesfulRegistry
     }
 }

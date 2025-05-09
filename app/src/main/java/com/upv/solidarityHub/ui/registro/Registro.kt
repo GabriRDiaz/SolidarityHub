@@ -11,14 +11,15 @@ import android.view.View
 import android.widget.Button
 import android.widget.SearchView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
 import com.upv.solidarityHub.HabilidadesActivity
-import com.upv.solidarityHub.Login
+import com.upv.solidarityHub.ui.login.Login
 import com.upv.solidarityHub.R
 import com.upv.solidarityHub.utils.SuggestionAdapter
 import com.upv.solidarityHub.databinding.ActivityRegistroBinding
@@ -52,11 +53,12 @@ class Registro : AppCompatActivity(), DatePickerHandler {
     private lateinit var contrasenaField: TextInputLayout
     private lateinit var repContrasenaField: TextInputLayout
 
+    private lateinit var viewModel: RegistroViewModel
 
 
+    //TODO LLAMAR A LA BD DEBERÍA NO SER NECESARIO, O LO HACE EL VIEWMODEL O SE OBTIENE EL USUARIO USANDO UN MÉTODO GLOBAL LOCAL
     private val db:SupabaseAPI = SupabaseAPI()
 
-    private lateinit var municipios: Array<String?>
     private var searchSuggestions = arrayOfNulls<String>(FileReader.numMunicipios)
 
 
@@ -70,18 +72,19 @@ class Registro : AppCompatActivity(), DatePickerHandler {
 
         setSupportActionBar(binding.toolbar)
 
+        viewModel = ViewModelProvider(this).get(RegistroViewModel::class.java)
 
         initializeFields()
         initializeButtons()
         initializeSearchView()
         initializeListeners()
+        initializeObservers()
 
         suggestionAdapter.updateSuggestions(listOf("Municipio"))
     }
 
     public override fun handleDate(date: String) {
-        displayNacimiento.text = date
-        checkAllFields()
+        viewModel.updateFechaNacimiento(date)
     }
 
     private fun initializeFields() {
@@ -114,29 +117,25 @@ class Registro : AppCompatActivity(), DatePickerHandler {
             newFragment.show(supportFragmentManager, "datePicker")
         }
 
-
-        findViewById<Button>(R.id.fechaPickerButton).setOnClickListener {
-            val newFragment = DatePickerFragment()
-            newFragment.show(supportFragmentManager, "datePicker")
-        }
-
-        correoField.editText!!.addTextChangedListener(object : TextWatcher {
-
+        nombreField.editText!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
-
-                if(checkCorreoValidity()){
-                    correoField.isErrorEnabled = false
-                } else checkAllFields()
+                viewModel.updateNombre(nombreField.editText!!.text.toString())
             }
+        })
 
+        apellidosField.editText!!.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.updateApellidos(apellidosField.editText!!.text.toString())
+            }
         })
 
         correoField.editText!!.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
-                if(!checkCorreoValidity())  {
+                if(!viewModel.checkCorreoIsValid())  {
                     correoField.isErrorEnabled = true
                     correoField.editText!!.error = "Correo no válido"
 
@@ -144,52 +143,17 @@ class Registro : AppCompatActivity(), DatePickerHandler {
             }
         }
 
-        nombreField.editText!!.addTextChangedListener(object : TextWatcher {
-
+        correoField.editText!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
-
-                if(!checkNameValidity()){
-                    nombreField.editText!!.error = "Por favor, añada su nombre"
-                } else checkAllFields()
+                viewModel.updateCorreo(correoField.editText!!.text.toString())
             }
-
-        })
-
-        apellidosField.editText!!.addTextChangedListener(object : TextWatcher {
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable?) {
-
-                if(!checkApellidosValidity()){
-                    apellidosField.editText!!.error = "Por favor, añada sus apellidos"
-                } else checkAllFields()
-            }
-
-        })
-
-        contrasenaField.editText!!.addTextChangedListener(object : TextWatcher {
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable?) {
-
-                if(checkContrasenaValidity()){
-                    contrasenaField.isErrorEnabled = false
-                    //contrasenaField.editText!!.error = "Debe contener más de 8 carácteres y almenos un número"
-                } else checkAllFields()
-            }
-
         })
 
         contrasenaField.editText!!.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
-              if(!checkContrasenaValidity())  {
+              if(!viewModel.checkContrasenaIsValid())  {
                   contrasenaField.isErrorEnabled = true
                   contrasenaField.editText!!.error = "Debe contener más de 8 carácteres y almenos un número"
 
@@ -197,23 +161,17 @@ class Registro : AppCompatActivity(), DatePickerHandler {
             }
         }
 
-        repContrasenaField.editText!!.addTextChangedListener(object : TextWatcher {
-
+        contrasenaField.editText!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
-
-                if(checkRepContrasenaValidity()){
-                    repContrasenaField.isErrorEnabled = false
-                } else checkAllFields()
+                viewModel.updateContrasena(contrasenaField.editText!!.text.toString())
             }
-
         })
 
         repContrasenaField.editText!!.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
-                if(!checkRepContrasenaValidity())  {
+                if(!viewModel.checkRepContrasenaIsValid())  {
                     repContrasenaField.isErrorEnabled = true
                     repContrasenaField.editText!!.error = "Las contraseñas no coinciden"
 
@@ -221,22 +179,23 @@ class Registro : AppCompatActivity(), DatePickerHandler {
             }
         }
 
-        buscadorMunicipio.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            if (checkMunicipioValidity()) {
-                checkAllFields()
+        repContrasenaField.editText!!.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.updateRepContrasena(repContrasenaField.editText!!.text.toString())
             }
+        })
+
+        buscadorMunicipio.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            viewModel.updateMunicipio(buscadorMunicipio.query.toString())
             false
         })
 
-        buscadorMunicipio.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
-            if (!hasFocus) {
-                if (!checkMunicipioValidity()) {
-                    checkAllFields()
-                }
-            }
-
+        recyclerView.setOnTouchListener { v, event ->
+            viewModel.updateMunicipio(buscadorMunicipio.query.toString())
+            false
         }
-
 
         showPassButton.setOnTouchListener { view, motionEvent ->
 
@@ -258,31 +217,26 @@ class Registro : AppCompatActivity(), DatePickerHandler {
         }
 
         showRepPassButton.setOnTouchListener { view, motionEvent ->
-
             when (motionEvent.action) {
                 MotionEvent.ACTION_UP -> {
-                    repContrasenaField.editText!!.inputType =
-                        android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    repContrasenaField.editText!!.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
                     true
                 }
 
                 MotionEvent.ACTION_DOWN -> {
-                    repContrasenaField.editText!!.inputType =
-                        android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    repContrasenaField.editText!!.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                     true
                 }
 
                 else -> false
             }
-
-
         }
 
         registrarseButton.setOnClickListener {
 
             runBlocking {
                 val deferred1 = async {
-                registrarse()
+                viewModel.registrarse()
                 }
                 deferred1.await()
             }
@@ -293,13 +247,64 @@ class Registro : AppCompatActivity(), DatePickerHandler {
         }
     }
 
+    private fun initializeObservers() {
+        viewModel.correoIsValid.observe(this, Observer { newCorreoIsValid ->
+            if(newCorreoIsValid) {
+                correoField.isErrorEnabled = false
+                correoField.editText!!.error = null
+            }
+        })
+
+        viewModel.nombreIsValid.observe(this, Observer { newNombreIsValid ->
+            if(newNombreIsValid) {
+                nombreField.editText!!.error = null
+            }   else {
+                nombreField.editText!!.error = "Introduzca su nombre"
+            }
+            nombreField.isErrorEnabled = !newNombreIsValid
+
+        })
+
+        viewModel.apellidosIsValid.observe(this, Observer { newApellidosIsValid ->
+            apellidosField.isErrorEnabled = !newApellidosIsValid
+            if(newApellidosIsValid) apellidosField.editText!!.error = null
+            else apellidosField.editText!!.error = "Introduzca sus apellidos"
+
+        })
+
+        viewModel.contrasenaIsValid.observe(this, Observer { newContrasenaIsValid ->
+            if(newContrasenaIsValid) {
+                contrasenaField.editText!!.error = null
+                contrasenaField.isErrorEnabled = false
+            }
+        })
+
+        viewModel.repContrasenaIsValid.observe(this, Observer { newRepContrasenaIsValid ->
+            if(newRepContrasenaIsValid) {
+                repContrasenaField.editText!!.error = null
+                repContrasenaField.isErrorEnabled = false
+            }
+        })
+
+        viewModel.registryFinalized.observe(this, Observer { newRegistryFinalized ->
+            if(newRegistryFinalized) {
+                runBlocking {
+                    goToHabilidades(db.getUsuarioByCorreo(viewModel.correo.value!!)!!)
+                }
+            }
+        })
+
+        viewModel.allIsValid.observe(this, Observer { newAllIsValid ->
+            registrarseButton.isEnabled = newAllIsValid
+        })
+    }
+
 
     private fun initializeSearchView() {
         recyclerView = findViewById(R.id.recyclerMunicipio)
 
         suggestionAdapter = SuggestionAdapter(emptyList()) { suggestion ->
             buscadorMunicipio.setQuery(suggestion, true)
-            checkAllFields()
             suggestionAdapter.updateSuggestions(emptyList())
         }
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -308,10 +313,8 @@ class Registro : AppCompatActivity(), DatePickerHandler {
 
         try {
             val inputStream = assets.open("municipios")
-            municipios = FileReader.readMunicipiosToArray(inputStream)
-            searchSuggestions = municipios
-
-
+            viewModel.updateMunicipiosList(FileReader.readMunicipiosToArray(inputStream))
+            searchSuggestions = viewModel.municipios.value!!
         } catch (e: IOException) {
             Log.d("DEBUG","Failure to read file" + "   " + e.toString())
         }
@@ -322,6 +325,7 @@ class Registro : AppCompatActivity(), DatePickerHandler {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.updateMunicipio(buscadorMunicipio.query.toString())
                 val filteredSuggestions = searchSuggestions.filter { it!!.contains(newText ?: "", ignoreCase = true) }
                 suggestionAdapter.updateSuggestions(filteredSuggestions)
                 return true
@@ -330,43 +334,6 @@ class Registro : AppCompatActivity(), DatePickerHandler {
 
     }
 
-
-    suspend fun registrarse() {
-        var successfullRegistry = false
-        var foundExistingUser = true
-        try{
-            db.getUsuarioByCorreo(correoField.editText!!.text.toString())
-        } catch (e:NoSuchElementException) {
-            foundExistingUser = false
-
-            var correo = correoField.editText!!.text.toString()
-            var nombre = nombreField.editText!!.text.toString()
-            var apellidos = apellidosField.editText!!.text.toString()
-            var contrasena = contrasenaField.editText!!.text.toString()
-            var fecha_nacimiento = displayNacimiento.text.toString()
-            var municipio = buscadorMunicipio.query.toString()
-
-            successfullRegistry = db.registerUsuario(correo, nombre, apellidos, contrasena, fecha_nacimiento,municipio)
-            if (successfullRegistry) {
-                runBlocking {
-                    val deferred1 = async {
-                    db.getUsuarioByCorreo(correo)
-                        ?.let { it1 -> goToHabilidades(it1) }
-                    }
-                }
-
-
-            } else {
-
-            }
-        } catch (e:Exception) {
-            Toast.makeText(getApplicationContext(),"Hubo un error, porfavor inténtelo más tarde", Toast.LENGTH_SHORT).show()
-
-        }
-
-        if(foundExistingUser) Toast.makeText(getApplicationContext(),"Usuario con ese correo ya existe", Toast.LENGTH_SHORT).show()
-
-    }
     fun goToLogin() {
         val intent = Intent(this, Login::class.java)
         startActivity(intent)
@@ -379,47 +346,4 @@ class Registro : AppCompatActivity(), DatePickerHandler {
 
         startActivity(intent)
     }
-
-    private fun checkCorreoValidity(): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(correoField.editText!!.text.toString()).matches()
-    }
-
-    private fun checkNameValidity(): Boolean {
-        return nombreField.editText!!.text.toString() != ""
-    }
-
-    private fun checkApellidosValidity(): Boolean {
-        return apellidosField.editText!!.text.toString() != ""
-    }
-
-    private fun checkFechaNacimientoValidity(): Boolean {
-        return !displayNacimiento.text.equals("")
-    }
-
-    private fun checkContrasenaValidity(): Boolean {
-        val contrasena = contrasenaField.editText!!.text.toString()
-        if (contrasena.length < 8) {
-            return false
-        }
-        return contrasena.any { it.isDigit() }
-    }
-
-    private fun checkRepContrasenaValidity(): Boolean {
-        var contrasena = contrasenaField.editText!!.text.toString()
-        var repetirContrasena = repContrasenaField.editText!!.text.toString()
-
-        return contrasena == repetirContrasena
-    }
-
-    private fun checkMunicipioValidity(): Boolean {
-        return municipios.contains(buscadorMunicipio.query.toString())
-    }
-
-    private fun checkAllFields(): Boolean {
-        var allGood: Boolean = checkNameValidity() && checkApellidosValidity() && checkCorreoValidity() && checkContrasenaValidity() && checkRepContrasenaValidity() && checkFechaNacimientoValidity() && checkMunicipioValidity()
-        if(allGood) {
-            registrarseButton.isEnabled = true; return true
-        } else {registrarseButton.isEnabled = false; return false}
-    }
-
 }

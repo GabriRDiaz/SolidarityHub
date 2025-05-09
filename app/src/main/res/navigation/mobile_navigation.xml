@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/CrearTareasFragment"
-        android:name="com.upv.solidarityHub.CrearTareasFragment"
+        android:name="com.upv.solidarityHub.ui.taskCreation.CrearTareasFragment"
         android:label="Create Task"
         tools:layout="@layout/fragment_crear_tareas">
 
