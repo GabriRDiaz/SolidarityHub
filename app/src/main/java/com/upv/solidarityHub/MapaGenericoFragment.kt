@@ -2,7 +2,6 @@ package com.upv.solidarityHub
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
 import org.osmdroid.util.GeoPoint
@@ -34,6 +32,7 @@ class MapaGenericoFragment : Fragment() {
     private lateinit var overlayBalizasItemized: ItemizedOverlay<OverlayItem>
     private lateinit var buttonAddRecurso: ImageButton
     private var supabaseAPI: SupabaseAPI = SupabaseAPI()
+    private final var angelGuimeraLocation = GeoPoint(39.4703606, -0.3836834)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +42,6 @@ class MapaGenericoFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_mapa_generico, container, false)
 
         // Set up the view
-        //enableEdgeToEdge()
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -67,7 +65,7 @@ class MapaGenericoFragment : Fragment() {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val permissionsToRequest = ArrayList<String>()
         var i = 0
         while (i < grantResults.size) {
@@ -85,18 +83,17 @@ class MapaGenericoFragment : Fragment() {
     private fun loadMap(view: View) {
         try {
             map = view.findViewById(R.id.mapView)
-            overlayBalizas = ArrayList()
             mapController = map.controller as MapController
             buttonAddRecurso = view.findViewById(R.id.botonIrRegistrarse)
             buttonAddRecurso.setOnClickListener {
                 showAddRecursoDialog()
             }
+            overlayBalizas = ArrayList()
             updateOverlay()
             map.setTileSource(TileSourceFactory.MAPNIK)
             map.setMultiTouchControls(true)
             mapController.setZoom(20.0)
-            mapController.setCenter(GeoPoint(39.4703606, -0.3836834))
-
+            mapController.setCenter(angelGuimeraLocation)
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(requireContext(), "Error en loadMap: ${e.message}", Toast.LENGTH_LONG).show()
@@ -122,12 +119,7 @@ class MapaGenericoFragment : Fragment() {
             }
             deferred1.await()
         }
-
-        balizas?.forEach { baliza ->
-            val balizaOverlay = OverlayItem("${baliza.nombre} (${baliza.tipo})", baliza.descripcion, GeoPoint(baliza.latitud, baliza.longitud))
-            overlayBalizas.add(balizaOverlay)
-        }
-
+        addAllBalizasToOverlay(balizas)
         map.overlays.clear()
         overlayBalizasItemized = ItemizedIconOverlay(overlayBalizas, object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
             override fun onItemSingleTapUp(index: Int, item: OverlayItem?): Boolean {
@@ -138,19 +130,13 @@ class MapaGenericoFragment : Fragment() {
                         .setPositiveButton("OK", null)
                         .setNegativeButton("Eliminar") { _, _ ->
 
-                            runBlocking {
-                                val deferred1 = async {
-                                    supabaseAPI.deleteBaliza(it.title.substringBefore(" (").trim())
-                                }
-                                deferred1.await()
-                            }
-
+                            deleteBaliza(it)
                             Toast.makeText(
                                     activity,
                                     "Recurso eliminado correctamente",
                                     Toast.LENGTH_SHORT
                             ).show()
-                            updateOverlay()
+
                         }
                         .show()
                 }
@@ -164,15 +150,30 @@ class MapaGenericoFragment : Fragment() {
         map.overlays.add(overlayBalizasItemized)
         map.invalidate()
     }
+
+    private fun deleteBaliza(it: OverlayItem) {
+        runBlocking {
+            val deferred1 = async {
+                supabaseAPI.deleteBaliza(it.title.substringBefore(" (").trim())
+            }
+            deferred1.await()
+        }
+        updateOverlay()
+    }
+
+    private fun addAllBalizasToOverlay(balizas: List<Baliza>?) {
+        balizas?.forEach { baliza ->
+            val balizaOverlay = OverlayItem(
+                "${baliza.nombre} (${baliza.tipo})",
+                baliza.descripcion,
+                GeoPoint(baliza.latitud, baliza.longitud)
+            )
+            overlayBalizas.add(balizaOverlay)
+        }
+    }
+
     private fun showAddRecursoDialog() {
-        val layout = LinearLayout(activity)
-        layout.orientation = LinearLayout.VERTICAL
-        val nameEditText = EditText(activity)
-        nameEditText.hint = "Título del recurso"
-        layout.addView(nameEditText)
-        val descriptionEditText = EditText(activity)
-        descriptionEditText.hint = "Descripción del recurso"
-        layout.addView(descriptionEditText)
+        val (layout, nameEditText, descriptionEditText) = createLayout()
         val dialog = AlertDialog.Builder(activity)
             .setTitle("Añadir recurso")
             .setMessage("Ingresa el título y la descripción del recurso")
@@ -181,17 +182,8 @@ class MapaGenericoFragment : Fragment() {
                 val name = nameEditText.text.toString()
                 val tipo = "Recurso"
                 val description = descriptionEditText.text.toString()
-
                 if (name.isNotEmpty() && description.isNotEmpty()) {
-                    var balizas:List<Baliza>? = null
-                    runBlocking {
-                        val deferred1 = async {
-                            balizas = supabaseAPI.getAllBalizas()}
-                        deferred1.await()
-                    }
-                    var id = balizas?.size?.plus(1) as Int
-                    var baliza= Baliza(id,map.getMapCenter().latitude,map.getMapCenter().longitude,name,tipo,description)
-                    addBaliza(baliza)
+                    addBalizaFromDialog(name, tipo, description)
                     Toast.makeText(activity, "Localización añadida: $name - $description", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(activity, "Por favor, ingresa ambos campos.", Toast.LENGTH_SHORT).show()
@@ -201,5 +193,37 @@ class MapaGenericoFragment : Fragment() {
             .create()
 
         dialog.show()
+    }
+
+    private fun createLayout(): Triple<LinearLayout, EditText, EditText> {
+        val layout = LinearLayout(activity)
+        layout.orientation = LinearLayout.VERTICAL
+        val nameEditText = EditText(activity)
+        nameEditText.hint = "Título del recurso"
+        layout.addView(nameEditText)
+        val descriptionEditText = EditText(activity)
+        descriptionEditText.hint = "Descripción del recurso"
+        layout.addView(descriptionEditText)
+        return Triple(layout, nameEditText, descriptionEditText)
+    }
+
+    private fun addBalizaFromDialog(name: String, tipo: String, description: String) {
+        var balizas: List<Baliza>? = null
+        runBlocking {
+            val deferred1 = async {
+                balizas = supabaseAPI.getAllBalizas()
+            }
+            deferred1.await()
+        }
+        var id = balizas?.size?.plus(1) as Int
+        var baliza = Baliza(
+            id,
+            map.getMapCenter().latitude,
+            map.getMapCenter().longitude,
+            name,
+            tipo,
+            description
+        )
+        addBaliza(baliza)
     }
 }
