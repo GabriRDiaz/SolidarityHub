@@ -21,18 +21,10 @@ class NotificacionFragment : Fragment() {
 
 
     private lateinit var textCategoriaNoti: TextView
-    private lateinit var municipio: TextView
+    private lateinit var textMunicipioNoti: TextView
     private lateinit var textHorarioNoti: TextView
     private lateinit var btnAceptar: Button
     private lateinit var btnCancelar: Button
-
-    private val supabaseAPI = SupabaseAPI()
-
-    private val args by lazy {
-        val taskId = arguments?.getInt("idTask", -1) ?: -1
-        val asignacionId = arguments?.getInt("idAsignacion", -1) ?: -1
-        Pair(taskId, asignacionId)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,68 +33,35 @@ class NotificacionFragment : Fragment() {
     ): View {
         val view = inflater.inflate(R.layout.fragment_notificacion, container, false)
 
-        initViews(view)
-        setupButtons()
-        loadTaskData()
-
-        return view
-    }
-
-    private fun initViews(view: View) {
+        // Inicializar vistas
         textCategoriaNoti = view.findViewById(R.id.textCategoriaNoti)
-        municipio = view.findViewById(R.id.textMunicipioNoti)
+        textMunicipioNoti = view.findViewById(R.id.textMunicipioNoti)
         textHorarioNoti = view.findViewById(R.id.textHorarioNoti)
         btnAceptar = view.findViewById(R.id.botAceptarNoti)
         btnCancelar = view.findViewById(R.id.botCancelarNoti)
-    }
 
-    private fun setupButtons() {
+        // Obtener datos del bundle
+        val categoria = arguments?.getString("categoria") ?: ""
+        val municipio = arguments?.getString("municipio") ?: ""
+        val horario = arguments?.getString("horario") ?: ""
+
+        // Mostrar datos
+        textCategoriaNoti.text = categoria
+        textMunicipioNoti.text = municipio
+        textHorarioNoti.text = horario
+
+        // Configurar botones
         btnAceptar.setOnClickListener {
             Toast.makeText(requireContext(), "¡Tarea aceptada!", Toast.LENGTH_SHORT).show()
             findNavController().navigateUp()
         }
 
         btnCancelar.setOnClickListener {
-            lifecycleScope.launch {
-                supabaseAPI.eliminarAsignacion(args.second)
-                Toast.makeText(requireContext(), "Tarea rechazada", Toast.LENGTH_SHORT).show()
-                findNavController().navigateUp()
-            }
+            Toast.makeText(requireContext(), "Tarea rechazada", Toast.LENGTH_SHORT).show()
+            findNavController().navigateUp()
         }
-    }
 
-    private fun loadTaskData() {
-        lifecycleScope.launch {
-            try {
-                // Obtener la tarea y su solicitud asociada
-                val task = supabaseAPI.getTaskById(args.first)
-                if (task == null) {
-                    showError("Tarea no encontrada")
-                    return@launch
-                }
-
-                val req = task.og_req?.let { supabaseAPI.getHelpReqById(it) }
-                if (req == null) {
-                    showError("Información de solicitud no disponible")
-                    return@launch
-                }
-
-                // Actualizar UI con los datos
-                with(req) {
-                    textCategoriaNoti.text = req.categoria
-                    municipio.text = req.ubicacion // O usa req.municipio si existe ese campo
-                    textHorarioNoti.text = req.horario
-                }
-
-            } catch (e: Exception) {
-                showError("Error al cargar datos: ${e.localizedMessage}")
-            }
-        }
-    }
-
-    private fun showError(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-        findNavController().navigateUp()
+        return view
     }
 
 

@@ -30,7 +30,9 @@ class MisNotificacionesFragment : Fragment() {
     private lateinit var botonVer: Button
     private lateinit var botonVolver: Button
     private val supabaseAPI = SupabaseAPI()
-    private var notificaciones: List<Triple<Any, Any, Any>> = emptyList() // Triple<Asignación, Tarea, Req>
+    //private var notificaciones: List<Triple<Any, Any, Any>> = emptyList() // Triple<Asignación, Tarea, Req>
+    private var notificaciones: List<Triple<tieneAsignado, SupabaseAPI.taskDB, SupabaseAPI.reqDB>> = emptyList()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +71,7 @@ class MisNotificacionesFragment : Fragment() {
                     val adapter = ArrayAdapter(
                         requireContext(),
                         android.R.layout.simple_list_item_single_choice,
-                        notificaciones.map { (_, _, req) -> "Tarea:" }
+                        notificaciones.map { (_, tarea, _) -> "Encajas perfectamente en la tarea ${tarea.id}" }
                     )
                     listaNotis.choiceMode = ListView.CHOICE_MODE_SINGLE
                     listaNotis.adapter = adapter
@@ -86,11 +88,13 @@ class MisNotificacionesFragment : Fragment() {
         botonVer.setOnClickListener {
             val selectedPosition = listaNotis.checkedItemPosition
             if (selectedPosition != ListView.INVALID_POSITION) {
-                val (asignacion, tarea, _) = notificaciones[selectedPosition]
-                val bundle = Bundle().apply {
-                    putInt("taskId", 2)
-                    putString("id_usuario", correo)
-                }
+                val (asignacion, tarea, req) = notificaciones[selectedPosition]
+                val bundle = bundleOf(
+                    "taskId" to tarea.id,
+                    "categoria" to req.categoria,
+                    "municipio" to req.ubicacion,
+                    "horario" to req.horario
+                )
                 findNavController().navigate(R.id.action_misNotisFragment_to_notiFragment, bundle)
             } else {
                 Toast.makeText(requireContext(), "Selecciona una notificación", Toast.LENGTH_SHORT).show()
