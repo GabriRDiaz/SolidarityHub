@@ -447,13 +447,32 @@ class SupabaseAPI : DatabaseAPI {
         return response
     }
 
-    public override suspend fun eliminarAsignacion(id: Int) {
-        supabase?.from("tieneAsignado")
-            ?.delete {
-                filter {
-                    eq("id_user", id)
-                }
+    public override suspend fun eliminarAsignacion(id: Int): Boolean {
+        return try {
+            initializeDatabase()
+            supabase?.from("tieneAsignado")?.delete {
+                filter { eq("id", id) }
             }
+            true
+        } catch (e: Exception) {
+            Log.e("Supabase", "Error rechazando tarea", e)
+            false
+        }
+    }
+
+    public override suspend fun aceptarTarea(asignacionId: Int): Boolean {
+        return try {
+            initializeDatabase()
+            supabase?.from("tieneAsignado")?.update({
+                set("estado", "aceptada")  // Asegúrate que este campo existe en tu tabla
+            }) {
+                filter { eq("id", asignacionId) }
+            }
+            true
+        } catch (e: Exception) {
+            Log.e("Supabase", "Error aceptando tarea", e)
+            false
+        }
     }
 
 

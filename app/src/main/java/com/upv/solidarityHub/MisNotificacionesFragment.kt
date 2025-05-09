@@ -71,7 +71,7 @@ class MisNotificacionesFragment : Fragment() {
                     val adapter = ArrayAdapter(
                         requireContext(),
                         android.R.layout.simple_list_item_single_choice,
-                        notificaciones.map { (_, tarea, _) -> "Encajas perfectamente en la tarea ${tarea.id}" }
+                        notificaciones.map { (asignacion, tarea, req) -> "Encajas perfectamente en la tarea ${tarea.id} - ${req.titulo} [${asignacion.estado?.uppercase() ?: "PENDIENTE"}]" }
                     )
                     listaNotis.choiceMode = ListView.CHOICE_MODE_SINGLE
                     listaNotis.adapter = adapter
@@ -91,6 +91,7 @@ class MisNotificacionesFragment : Fragment() {
                 val (asignacion, tarea, req) = notificaciones[selectedPosition]
                 val bundle = bundleOf(
                     "taskId" to tarea.id,
+                    "asignacionId" to asignacion.id,
                     "categoria" to req.categoria,
                     "municipio" to req.ubicacion,
                     "horario" to req.horario

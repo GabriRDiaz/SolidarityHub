@@ -25,6 +25,7 @@ class NotificacionFragment : Fragment() {
     private lateinit var textHorarioNoti: TextView
     private lateinit var btnAceptar: Button
     private lateinit var btnCancelar: Button
+    private var asignacionId: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,6 +45,7 @@ class NotificacionFragment : Fragment() {
         val categoria = arguments?.getString("categoria") ?: ""
         val municipio = arguments?.getString("municipio") ?: ""
         val horario = arguments?.getString("horario") ?: ""
+        asignacionId = arguments?.getInt("asignacionId") ?: -1
 
         // Mostrar datos
         textCategoriaNoti.text = categoria
@@ -52,16 +54,40 @@ class NotificacionFragment : Fragment() {
 
         // Configurar botones
         btnAceptar.setOnClickListener {
-            Toast.makeText(requireContext(), "¡Tarea aceptada!", Toast.LENGTH_SHORT).show()
-            findNavController().navigateUp()
+            aceptarTarea()
         }
 
         btnCancelar.setOnClickListener {
-            Toast.makeText(requireContext(), "Tarea rechazada", Toast.LENGTH_SHORT).show()
-            findNavController().navigateUp()
+            rechazarTarea()
         }
 
         return view
+    }
+
+    private fun aceptarTarea() {
+        lifecycleScope.launch {
+            val success = SupabaseAPI().aceptarTarea(asignacionId)
+            if (success) {
+                Toast.makeText(requireContext(), "¡Tarea aceptada con éxito!", Toast.LENGTH_SHORT).show()
+                // Actualizar lista de notificaciones
+                findNavController().previousBackStackEntry?.savedStateHandle?.set("tareaAceptada", true)
+                findNavController().navigateUp()
+            } else {
+                Toast.makeText(requireContext(), "Error al aceptar la tarea", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun rechazarTarea() {
+        lifecycleScope.launch {
+            val success = SupabaseAPI().eliminarAsignacion(asignacionId)
+            if (success) {
+                Toast.makeText(requireContext(), "Tarea rechazada", Toast.LENGTH_SHORT).show()
+                findNavController().navigateUp()
+            } else {
+                Toast.makeText(requireContext(), "Error al rechazar la tarea", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
