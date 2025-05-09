@@ -407,8 +407,12 @@ class SupabaseAPI : DatabaseAPI {
         return task;
     }
 
-    public override suspend fun registerDesaparecido(desaparecido: Desaparecido) {
+    public override suspend fun registerDesaparecido(desaparecido: Desaparecido, ultimaUbi: Baliza?) {
         initializeDatabase()
+        //TODO: Un poco tinkie winkie que desaparecido pille id y luego aquí pasar la ultimaUbi por separado, veré como lo pongo mas bonito más adelante
+        if(ultimaUbi != null) {
+            addBaliza(ultimaUbi.id,ultimaUbi.latitud,ultimaUbi.longitud,ultimaUbi.nombre,ultimaUbi.tipo,ultimaUbi.descripcion)
+        }
         supabase?.from("Desaparecido")?.insert(desaparecido)
 
     }

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.model.Desaparecido
 import kotlinx.coroutines.runBlocking
@@ -20,6 +21,8 @@ class RegistrarDesaparecidoViewModel : ViewModel() {
     private val _altura = MutableLiveData<Double>(-1.0)
     private val _complexion = MutableLiveData<Int>(1)
     private val _sexo = MutableLiveData<Int>(-1)
+    private val _ultimaUbiDesaparecido = MutableLiveData<Baliza?>(null)
+
 
     private val _nombreIsValid = MutableLiveData<Boolean>(true)
     private val _apellidosIsValid = MutableLiveData<Boolean>(true)
@@ -35,6 +38,8 @@ class RegistrarDesaparecidoViewModel : ViewModel() {
     val altura: LiveData<Double> get() = _altura
     val complexion: LiveData<Int> get() = _complexion
     val sexo: LiveData<Int> get() = _sexo
+    val ultimaUbiDesaparecido: LiveData<Baliza?> get() = _ultimaUbiDesaparecido
+
 
     val nombreIsValid: LiveData<Boolean> get() = _nombreIsValid
     val apellidosIsValid: LiveData<Boolean> get() = _apellidosIsValid
@@ -43,6 +48,9 @@ class RegistrarDesaparecidoViewModel : ViewModel() {
     val complexionIsValid: LiveData<Boolean> get() = _complexionIsValid
     val sexoIsValid: LiveData<Boolean> get() = _sexoIsValid
     val allIsValid: LiveData<Boolean> get() = _allIsValid
+
+    var isFirstLogin: Boolean = true
+
 
 
     fun updateNombre(newNombre: String) {
@@ -81,6 +89,28 @@ class RegistrarDesaparecidoViewModel : ViewModel() {
         checkAllValid()
     }
 
+    fun updateUltimaUbiDesaparecido(newUbi: Baliza?) {
+        _ultimaUbiDesaparecido.value = newUbi
+    }
+
+    fun clearAllData() {
+        updateNombre("")
+        updateApellidos("")
+        updateEdad(-1)
+        updateAltura(-1.0)
+        updateComplexion(1)
+        updateSexo(-1)
+        updateUltimaUbiDesaparecido(null)
+
+        _nombreIsValid.value = true
+        _apellidosIsValid.value = true
+        _edadIsValid.value = true
+        _alturaIsValid.value = true
+        _complexionIsValid.value = false
+        _sexoIsValid.value = false
+        _allIsValid.value = false
+
+    }
 
     fun checkNombreIsValid(): Boolean {
         val nombre = _nombre.value!!
@@ -137,10 +167,17 @@ class RegistrarDesaparecidoViewModel : ViewModel() {
     fun registrarDesaparecido(): Boolean {
         var succesfulRegistry = false
         if(allIsValid.value!!) {
+            var ultimaUbi = _ultimaUbiDesaparecido.value
             val desaparecido = Desaparecido(_nombre.value!!, _apellidos.value!!, _edad.value!!, _altura.value!!, _complexion.value!!, _sexo.value!!, null)
+            if(ultimaUbi != null) {
+                ultimaUbi.tipo = "Desaparecido"
+                ultimaUbi.nombre = _nombre.value!! + _apellidos.value!!
+                ultimaUbi.descripcion = "Última ubicación del desaparecido"
+                desaparecido.id_baliza_visto_por_ultima_vez = ultimaUbi.id
+            }
             runBlocking {
                 try {
-                    SupabaseAPI().registerDesaparecido(desaparecido)
+                    SupabaseAPI().registerDesaparecido(desaparecido,ultimaUbi)
                     succesfulRegistry = true
                 } catch (e: Exception) {
                     Log.d("DEBUG",e.toString())

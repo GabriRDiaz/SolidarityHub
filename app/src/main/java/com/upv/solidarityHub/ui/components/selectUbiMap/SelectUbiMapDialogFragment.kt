@@ -1,15 +1,19 @@
-package com.upv.solidarityHub
+package com.upv.solidarityHub.ui.components.selectUbiMap
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.annotation.Nullable
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
+import com.upv.solidarityHub.R
 import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import kotlinx.coroutines.async
@@ -18,45 +22,69 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.*
+import org.osmdroid.views.overlay.ItemizedIconOverlay
+import org.osmdroid.views.overlay.ItemizedOverlay
+import org.osmdroid.views.overlay.OverlayItem
 
 
-class MapaDesaparecidos : DialogFragment() {
+class SelectUbiMapDialogFragment : DialogFragment() {
+
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map: MapView
     private lateinit var mapController: MapController
     private lateinit var overlayBalizas: ArrayList<OverlayItem>
     private lateinit var overlayBalizasItemized: ItemizedOverlay<OverlayItem>
+    private lateinit var buttonAddRecurso: ImageButton
     private var supabaseAPI: SupabaseAPI = SupabaseAPI()
+
+    interface DialogListener {
+        fun onDialogUbi(baliza: Baliza)
+    }
+
+    private var listener: DialogListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_mapa_desaparecidos, container, false)
+        val view = inflater.inflate(R.layout.fragment_mapa_generico, container, false)
 
         // Set up the view
         //enableEdgeToEdge()
-        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+//            insets
+//        }
 
         // Initialize the map
         loadMap(view)
 
         return view
     }
-    override fun onViewCreated(view: View, @Nullable savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        // Ensure that the host fragment implements the callback interface
+        try {
+            listener = parentFragment as DialogListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$context must implement DialogListener")
+        }
     }
+
     override fun onResume() {
         super.onResume()
         map.onResume()
+
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        dialog?.window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+    }
     override fun onPause() {
         super.onPause()
         map.onPause()
@@ -83,6 +111,22 @@ class MapaDesaparecidos : DialogFragment() {
             map = view.findViewById(R.id.mapView)
             overlayBalizas = ArrayList()
             mapController = map.controller as MapController
+            buttonAddRecurso = view.findViewById(R.id.botonIrRegistrarse)
+            buttonAddRecurso.setOnClickListener {
+                //TODO: Malísimo, se supone que supabase pone el ID de forma automática no hace falta hacer esto. CAMBIAR!!!
+                var balizas:List<Baliza>? = null
+                runBlocking {
+                    val deferred1 = async {
+                        balizas = supabaseAPI.getAllBalizas()}
+                    deferred1.await()
+                }
+                var id = balizas?.size?.plus(1) as Int
+                var baliza = Baliza(id,map.getMapCenter().latitude,map.getMapCenter().longitude,"","","")
+                listener!!.onDialogUbi(baliza)
+                Toast.makeText(activity,"Ubicación añadida", Toast.LENGTH_LONG).show()
+
+                dismiss()
+            }
             updateOverlay()
             map.setTileSource(TileSourceFactory.MAPNIK)
             map.setMultiTouchControls(true)
@@ -106,7 +150,6 @@ class MapaDesaparecidos : DialogFragment() {
     }
 
     private fun updateOverlay() {
-        overlayBalizas.clear()
         var balizas: List<Baliza>? = null
         runBlocking {
             val deferred1 = async {
@@ -117,7 +160,7 @@ class MapaDesaparecidos : DialogFragment() {
 
         balizas?.forEach { baliza ->
             val balizaOverlay = OverlayItem("${baliza.nombre} (${baliza.tipo})", baliza.descripcion, GeoPoint(baliza.latitud, baliza.longitud))
-            if (baliza.tipo == "Desaparecido") overlayBalizas.add(balizaOverlay)
+            overlayBalizas.add(balizaOverlay)
         }
 
         map.overlays.clear()
@@ -128,22 +171,6 @@ class MapaDesaparecidos : DialogFragment() {
                         .setTitle(it.title)
                         .setMessage(it.snippet)
                         .setPositiveButton("OK", null)
-                        .setNegativeButton("Eliminar") { _, _ ->
-
-                            runBlocking {
-                                val deferred1 = async {
-                                    supabaseAPI.deleteBaliza(it.title.substringBefore(" (").trim())
-                                }
-                                deferred1.await()
-                            }
-
-                            Toast.makeText(
-                                activity,
-                                "Desaparecido eliminado correctamente",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            updateOverlay()
-                        }
                         .show()
                 }
                 return true
@@ -156,5 +183,42 @@ class MapaDesaparecidos : DialogFragment() {
         map.overlays.add(overlayBalizasItemized)
         map.invalidate()
     }
+    private fun showAddRecursoDialog() {
+        val layout = LinearLayout(activity)
+        layout.orientation = LinearLayout.VERTICAL
+        val nameEditText = EditText(activity)
+        nameEditText.hint = "Título del recurso"
+        layout.addView(nameEditText)
+        val descriptionEditText = EditText(activity)
+        descriptionEditText.hint = "Descripción del recurso"
+        layout.addView(descriptionEditText)
+        val dialog = AlertDialog.Builder(activity)
+            .setTitle("Añadir recurso")
+            .setMessage("Ingresa el título y la descripción del recurso")
+            .setView(layout)
+            .setPositiveButton("Aceptar") { _, _ ->
+                val name = nameEditText.text.toString()
+                val tipo = "Recurso"
+                val description = descriptionEditText.text.toString()
 
+                if (name.isNotEmpty() && description.isNotEmpty()) {
+                    var balizas:List<Baliza>? = null
+                    runBlocking {
+                        val deferred1 = async {
+                            balizas = supabaseAPI.getAllBalizas()}
+                        deferred1.await()
+                    }
+                    var id = balizas?.size?.plus(1) as Int
+                    var baliza= Baliza(id,map.getMapCenter().latitude,map.getMapCenter().longitude,name,tipo,description)
+                    addBaliza(baliza)
+                    Toast.makeText(activity, "Localización añadida: $name - $description", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(activity, "Por favor, ingresa ambos campos.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .create()
+
+        dialog.show()
+    }
 }

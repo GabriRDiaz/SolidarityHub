@@ -3,7 +3,6 @@ package com.upv.solidarityHub.ui.registrarDesaparecido
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,18 +14,20 @@ import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
+import com.upv.solidarityHub.MapaDesaparecidos
+import com.upv.solidarityHub.MapaGenerico
 import com.upv.solidarityHub.R
+import com.upv.solidarityHub.persistence.Baliza
+import com.upv.solidarityHub.ui.components.selectUbiMap.SelectUbiMapDialogFragment
+import com.upv.solidarityHub.utils.TextInputLayoutUtils.setErrorTo
 import java.lang.Double.parseDouble
 import java.lang.Integer.parseInt
-import com.upv.solidarityHub.utils.TextInputLayoutUtils
-import com.upv.solidarityHub.utils.TextInputLayoutUtils.setErrorTo
 
-class RegistrarDesaparecidoFragment : Fragment() {
+class RegistrarDesaparecidoFragment : Fragment(), SelectUbiMapDialogFragment.DialogListener {
 
     companion object {
         fun newInstance() = RegistrarDesaparecidoFragment()
@@ -47,6 +48,10 @@ class RegistrarDesaparecidoFragment : Fragment() {
     private lateinit var buttonMapa: Button
 
 
+    override fun onDialogUbi(baliza: Baliza) {
+        viewModel.updateUltimaUbiDesaparecido(baliza)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -60,10 +65,12 @@ class RegistrarDesaparecidoFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(RegistrarDesaparecidoViewModel::class.java)
 
         initializeFields()
-        initializeButtons()
         addItemsToSpinnerComplexion()
+        loadDataFromModel()
+        initializeButtons()
         initializeListeners()
         initializeObservers()
+
 
         return myView
     }
@@ -85,7 +92,6 @@ class RegistrarDesaparecidoFragment : Fragment() {
 
     private fun initializeListeners() {
         inputNombre.editText!!.addTextChangedListener(object : TextWatcher {
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
@@ -153,13 +159,21 @@ class RegistrarDesaparecidoFragment : Fragment() {
             if(index != -1) viewModel.updateSexo(index)
         })
 
+        buttonMapa.setOnClickListener {
+            val dialogFragment: SelectUbiMapDialogFragment = SelectUbiMapDialogFragment()
+            dialogFragment.show(childFragmentManager, "Introduzca la ubicación aproximada")
+        }
+
         buttonConfirmar.setOnClickListener {
             if(viewModel.registrarDesaparecido()) {
                 Toast.makeText(activity, "Registrado con éxito", Toast.LENGTH_SHORT).show()
+                clearAllFields()
+                findNavController().popBackStack()
             }
         }
 
         buttonCancelar. setOnClickListener {
+            clearAllFields()
             findNavController().popBackStack()
         }
 
@@ -192,6 +206,32 @@ class RegistrarDesaparecidoFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, items)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         inputComplexion.adapter = adapter
+    }
+
+    private fun loadDataFromModel() {
+            inputNombre.editText!!.setText(viewModel.nombre.value.toString())
+            inputApellidos.editText!!.setText(viewModel.apellidos.value.toString())
+            if(viewModel.edad.value!! != -1) inputEdad.editText!!.setText(viewModel.edad.value!!.toString())
+            if(viewModel.altura.value!! != -1.0) inputAltura.editText!!.setText(viewModel.altura.value!!.toString())
+            if(viewModel.complexion.value!! != -1) {
+                inputComplexion.setSelection(viewModel.complexion.value!!)
+            } else {inputComplexion.setSelection(1)}
+
+            if(viewModel.sexo.value!! != -1) {
+                ((inputSexo.getChildAt(viewModel.sexo.value!!)) as RadioButton).isChecked = true
+            }
+
+    }
+
+    private fun clearAllFields() {
+        inputNombre.editText!!.setText("")
+        inputApellidos.editText!!.setText("")
+        inputEdad.editText!!.setText("")
+        inputAltura.editText!!.setText("")
         inputComplexion.setSelection(1)
+        ((inputSexo.getChildAt(0)) as RadioButton).isChecked = false
+        ((inputSexo.getChildAt(1)) as RadioButton).isChecked = false
+        ((inputSexo.getChildAt(2)) as RadioButton).isChecked = false
+        viewModel.clearAllData()
     }
 }

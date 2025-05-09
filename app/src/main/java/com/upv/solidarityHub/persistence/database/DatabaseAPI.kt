@@ -38,7 +38,7 @@ interface DatabaseAPI {
     public suspend fun createIsAssigned(idTask: Int, user: Usuario)
     public suspend fun getTaskById(id: Int): taskDB?
     public suspend fun getHelpReqById(id: Int): reqDB?
-    public suspend fun registerDesaparecido(desaparecido: Desaparecido)
+    public suspend fun registerDesaparecido(desaparecido: Desaparecido, ultimaUbi: Baliza?)
     public suspend fun unirseAGrupo(usuario: String, grupoId: Int): Boolean
     public suspend fun getAsignacionesUsuario(userId: String): List<tieneAsignado>?
     public suspend fun eliminarAsignacion(id: Int)
