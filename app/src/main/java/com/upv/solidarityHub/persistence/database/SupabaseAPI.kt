@@ -12,6 +12,8 @@ import com.upv.solidarityHub.persistence.model.Desaparecido
 import com.upv.solidarityHub.persistence.model.Habilidad
 import com.upv.solidarityHub.persistence.taskReq
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
@@ -23,6 +25,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
+import io.github.jan.supabase.auth.providers.builtin.Email
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -69,8 +72,11 @@ class SupabaseAPI : DatabaseAPI {
 
     public override fun initializeDatabase() {
 
-        if ( supabase == null) {
-            supabase = createSupabaseClient(supabaseUrl, supabaseKey) {install(Postgrest)}
+        if (supabase == null) {
+            supabase = createSupabaseClient(supabaseUrl, supabaseKey) {
+                install(Postgrest)
+                install(Auth)
+            }
         }
 
     }
@@ -431,28 +437,24 @@ class SupabaseAPI : DatabaseAPI {
     }
 
     public override suspend fun getAsignacionesUsuario(userId: String): List<tieneAsignado>? {
-        val response = supabase?.from("tiene_asignado")?.select(){
+        initializeDatabase()
+        val response = supabase?.from("tieneAsignado")?.select(){
             filter{
-                eq("correo", userId)
+                eq("id_user", userId)
             }
         }?.decodeList<tieneAsignado>()
+        Log.d("SupabaseAPI", "Asignaciones para $userId: ${response?.size}")
         return response
     }
 
     public override suspend fun eliminarAsignacion(id: Int) {
-        supabase?.from("tiene_asignado")
+        supabase?.from("tieneAsignado")
             ?.delete {
                 filter {
-                    eq("id", id)
+                    eq("id_user", id)
                 }
             }
     }
-
-
-
-
-
-
 
 
 

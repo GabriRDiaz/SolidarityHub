@@ -17,9 +17,8 @@
         <action
             android:id="@+id/action_volunteermenu_to_gruposayudaFragment"
             app:destination="@id/gruposAyudaFragment" />
-
         <action
-            android:id="@+id/action_volunteermenu_to_notificationsFragment"
+            android:id="@+id/action_volunteermenu_to_misNotificacionesFragment"
             app:destination="@id/misNotificacionesFragment" />
     </fragment>
 
@@ -77,7 +76,7 @@
 
     <fragment
         android:id="@+id/CrearTareasFragment"
-        android:name="com.upv.solidarityHub.ui.taskCreation.CrearTareasFragment"
+        android:name="com.upv.solidarityHub.CrearTareasFragment"
         android:label="Creación de tareas">
 
         <action
