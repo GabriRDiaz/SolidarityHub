@@ -1,4 +1,4 @@
-package com.upv.solidarityHub
+package com.upv.solidarityHub.ui.notifications
 
 import android.content.Context
 import android.os.Bundle
@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.upv.solidarityHub.R
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.taskReq
 import com.upv.solidarityHub.persistence.tieneAsignado
