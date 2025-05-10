@@ -2,6 +2,7 @@ package com.upv.solidarityHub.ui.notifications
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -25,73 +27,81 @@ import kotlinx.coroutines.launch
  */
 class MisNotificacionesFragment : Fragment() {
     private lateinit var listaNotis: ListView
+    private lateinit var botonVer: Button
     private lateinit var botonVolver: Button
-    private lateinit var botonVerNoti: Button
-
-    private var notificaciones: List<Pair<tieneAsignado, SupabaseAPI.taskDB>> = listOf()
-    private var selectedPos = -1
     private val supabaseAPI = SupabaseAPI()
+    //private var notificaciones: List<Triple<Any, Any, Any>> = emptyList() // Triple<Asignación, Tarea, Req>
+    private var notificaciones: List<Triple<tieneAsignado, SupabaseAPI.taskDB, SupabaseAPI.reqDB>> = emptyList()
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        val view = inflater.inflate(R.layout.fragment_mis_notificaciones, container, false)
+    ): View? {
+        val rootView = inflater.inflate(R.layout.fragment_mis_notificaciones, container, false)
 
-        listaNotis = view.findViewById(R.id.listaNotis)
-        botonVolver = view.findViewById(R.id.botonVolverNotis)
-        botonVerNoti = view.findViewById(R.id.botonVerNoti)
+        listaNotis = rootView.findViewById(R.id.listaNotis)
+        botonVolver = rootView.findViewById(R.id.botonVolverNotis)
+        botonVer = rootView.findViewById(R.id.botonVerNoti)
 
-        val sharedPref = requireContext().getSharedPreferences("auth", Context.MODE_PRIVATE)
-        val userId = sharedPref.getString("user_email", null)
-        if (userId == null) {
-            // No hay usuario logeado, manejar este caso
-            findNavController().navigate(R.id.nav_gallery)
-            return view
+        // Recuperar los datos desde SharedPreferences
+        val sharedPref = requireActivity().getSharedPreferences("usuario", AppCompatActivity.MODE_PRIVATE)
+        val correo = sharedPref.getString("usuarioCorreo", null)  // Devuelve null si no existe
+        val nombre = sharedPref.getString("usuarioNombre", null)
+
+        botonVolver.setOnClickListener {
+            findNavController().popBackStack()
         }
 
         lifecycleScope.launch {
-            val asignaciones = supabaseAPI.getAsignacionesUsuario(userId) ?: emptyList()
-            val tareas = asignaciones.mapNotNull {
-                val task = supabaseAPI.getTaskById(it.id_task)
-                val req = task?.og_req?.let { reqId -> supabaseAPI.getHelpReqById(reqId) }
-                if (task != null && req != null) Triple(it, task, req) else null
-            }
-
-            val adapter = ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_list_item_single_choice,
-                tareas.map { "Tarea: ${it.third.titulo} en ${it.third.ubicacion}" } // Usamos ubicacion en lugar de municipio
-            )
-            listaNotis.choiceMode = ListView.CHOICE_MODE_SINGLE
-            listaNotis.adapter = adapter
-        }
-
-        listaNotis.setOnItemClickListener { _, _, position, _ ->
-            selectedPos = position
-        }
-
-        botonVerNoti.setOnClickListener {
-            if (selectedPos >= 0) {
-                val (asignacion, tarea) = notificaciones[selectedPos]
-
-                // Navegar pasando los parámetros
-                findNavController().navigate(
-                    R.id.action_misNotisFragment_to_notiFragment,
-                    bundleOf(
-                        "taskId" to tarea.id,
-                        "asignacionId" to asignacion.id
+            try {
+                if(correo!= null){
+                    Log.d("Notificaciones", "Buscando asignaciones para: $correo")
+                    val asignaciones = supabaseAPI.getAsignacionesUsuario(correo) ?: emptyList()
+                    Log.d("Notificaciones", "Asignaciones encontradas: ${asignaciones.size}")
+                    notificaciones = asignaciones.mapNotNull { asignacion ->
+                        val tarea = supabaseAPI.getTaskById(asignacion.id_task)
+                        val req = tarea?.og_req?.let { reqId -> supabaseAPI.getHelpReqById(reqId) }
+                        if (tarea != null && req != null) Triple(asignacion, tarea, req) else null
+                    }
+                    val adapter = ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_list_item_single_choice,
+                        notificaciones.map { (asignacion, tarea, req) -> "Encajas perfectamente en la tarea ${tarea.id} - ${req.titulo} [${asignacion.estado?.uppercase() ?: "PENDIENTE"}]" }
                     )
+                    listaNotis.choiceMode = ListView.CHOICE_MODE_SINGLE
+                    listaNotis.adapter = adapter
+                }else{
+                    Toast.makeText(requireContext(), "Usuario no autenticado", Toast.LENGTH_SHORT).show()
+                }
+
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error cargando notificaciones", Toast.LENGTH_LONG).show()
+                e.printStackTrace()
+            }
+        }
+
+        botonVer.setOnClickListener {
+            val selectedPosition = listaNotis.checkedItemPosition
+            if (selectedPosition != ListView.INVALID_POSITION) {
+                val (asignacion, tarea, req) = notificaciones[selectedPosition]
+                val bundle = bundleOf(
+                    "taskId" to tarea.id,
+                    "asignacionId" to asignacion.id,
+                    "categoria" to req.categoria,
+                    "municipio" to req.ubicacion,
+                    "horario" to req.horario
                 )
+                findNavController().navigate(R.id.action_misNotisFragment_to_notiFragment, bundle)
             } else {
                 Toast.makeText(requireContext(), "Selecciona una notificación", Toast.LENGTH_SHORT).show()
             }
         }
 
-        botonVolver.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        return view
+        return rootView
     }
 }

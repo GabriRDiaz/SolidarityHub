@@ -130,6 +130,12 @@ class Login : AppCompatActivity() {
                 }
 
                 if(usuario != null) {Toast.makeText(getApplicationContext(), usuario!!.correo.toString() + "  " + usuario!!.nombre.toString(), Toast.LENGTH_SHORT).show()
+                    val sharedPref = getSharedPreferences("usuario", MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        putString("usuarioCorreo", usuario!!.correo)  // Guardar el correo del usuario
+                        putString("usuarioNombre", usuario!!.nombre)  // Guardar el nombre del usuario
+                        apply()
+                    }
                     goToMain(usuario!!)
                 } else {Toast.makeText(getApplicationContext(), "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()}
 

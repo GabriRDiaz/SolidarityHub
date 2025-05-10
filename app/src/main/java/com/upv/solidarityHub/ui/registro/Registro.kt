@@ -1,6 +1,7 @@
 package com.upv.solidarityHub.ui.registro
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +12,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -155,7 +157,7 @@ class Registro : AppCompatActivity(), DatePickerHandler {
             if(!hasFocus) {
               if(!viewModel.checkContrasenaIsValid())  {
                   contrasenaField.isErrorEnabled = true
-                  contrasenaField.editText!!.error = "Debe contener más de 8 carácteres y almenos un número"
+                  contrasenaField.editText!!.error = "Debe contener más de 8 caracteres, una mayúscula, un número y un caracter especial (,.-:;)"
 
               }
             }
@@ -233,7 +235,7 @@ class Registro : AppCompatActivity(), DatePickerHandler {
         }
 
         registrarseButton.setOnClickListener {
-
+            Log.d(TAG, "Click")
             runBlocking {
                 val deferred1 = async {
                 viewModel.registrarse()

@@ -41,5 +41,6 @@ interface DatabaseAPI {
     public suspend fun registerDesaparecido(desaparecido: Desaparecido, ultimaUbi: Baliza?)
     public suspend fun unirseAGrupo(usuario: String, grupoId: Int): Boolean
     public suspend fun getAsignacionesUsuario(userId: String): List<tieneAsignado>?
-    public suspend fun eliminarAsignacion(id: Int)
+    public suspend fun eliminarAsignacion(id: Int): Boolean
+    public suspend fun aceptarTarea(asignacionId: Int): Boolean
 }
