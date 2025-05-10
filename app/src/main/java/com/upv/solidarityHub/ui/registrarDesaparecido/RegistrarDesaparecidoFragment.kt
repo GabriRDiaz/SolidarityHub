@@ -18,8 +18,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
-import com.upv.solidarityHub.MapaDesaparecidos
-import com.upv.solidarityHub.MapaGenerico
 import com.upv.solidarityHub.R
 import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.ui.components.selectUbiMap.SelectUbiMapDialogFragment
@@ -178,6 +176,8 @@ class RegistrarDesaparecidoFragment : Fragment(), SelectUbiMapDialogFragment.Dia
         }
 
     }
+
+
 
     private fun initializeObservers() {
         viewModel.nombreIsValid.observe(viewLifecycleOwner, Observer { newNombreIsValid ->

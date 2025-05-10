@@ -20,7 +20,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
-import com.upv.solidarityHub.HabilidadesActivity
+import com.upv.solidarityHub.ui.habilidades.HabilidadesActivity
 import com.upv.solidarityHub.ui.login.Login
 import com.upv.solidarityHub.R
 import com.upv.solidarityHub.utils.SuggestionAdapter

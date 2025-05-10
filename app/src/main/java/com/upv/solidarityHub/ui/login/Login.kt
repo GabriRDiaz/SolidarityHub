@@ -2,12 +2,10 @@ package com.upv.solidarityHub.ui.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MotionEvent
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,16 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.ui.AppBarConfiguration
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
-import com.upv.solidarityHub.HabilidadesActivity
-import com.upv.solidarityHub.Main
-import com.upv.solidarityHub.MainPage
+import com.upv.solidarityHub.ui.main.Main
 import com.upv.solidarityHub.R
-import com.upv.solidarityHub.StopGap
 import com.upv.solidarityHub.databinding.ActivityLoginBinding
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.ui.registro.Registro
-import com.upv.solidarityHub.ui.registro.RegistroViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 

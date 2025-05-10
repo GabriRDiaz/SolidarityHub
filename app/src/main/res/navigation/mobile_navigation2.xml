@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.upv.solidarityHub.MapaGenericoFragment"
+        android:name="com.upv.solidarityHub.ui.mapa.MapaGenericoFragment"
         android:label="Mapa"/>
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.upv.solidarityHub.volunteer_menu"
+        android:name="com.upv.solidarityHub.ui.main.volunteer_menu"
         android:label="Menú de voluntarios">
         <action
             android:id="@+id/action_volunteermenu_to_gruposayudaFragment"
@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.upv.solidarityHub.affected_menu"
+        android:name="com.upv.solidarityHub.ui.main.affected_menu"
         android:label="Menú de afectados">
 
         <action
@@ -39,7 +39,7 @@
 
     <fragment
         android:id="@+id/tempTaskFragment"
-        android:name="com.upv.solidarityHub.tempTaskFragment"
+        android:name="com.upv.solidarityHub.ui.taskCreation.tempTaskFragment"
         android:label="Temp Task"
         tools:layout="@layout/fragment_temp_task">
 
@@ -51,7 +51,7 @@
 
     <fragment
         android:id="@+id/gruposAyudaFragment"
-        android:name="com.upv.solidarityHub.GruposAyudaFragment"
+        android:name="com.upv.solidarityHub.ui.gruposDeAyuda.GruposAyudaFragment"
         android:label="Grupos de Ayuda"
         tools:layout="@layout/fragment_grupos_ayuda2" >
         <action
@@ -61,13 +61,13 @@
 
     <fragment
         android:id="@+id/misGruposFragment"
-        android:name="com.upv.solidarityHub.MisGruposFragment"
+        android:name="com.upv.solidarityHub.ui.gruposDeAyuda.MisGruposFragment"
         android:label="Mis Grupos"
         tools:layout="@layout/fragment_mis_grupos" />
 
     <fragment
         android:id="@+id/nav_admin"
-        android:name="com.upv.solidarityHub.admin_menu"
+        android:name="com.upv.solidarityHub.ui.main.admin_menu"
         android:label="Menú de administradores" >
         <action
         android:id="@+id/action_adminMenu_to_CrearTareas"
@@ -103,7 +103,7 @@
 
     <fragment
         android:id="@+id/misNotificacionesFragment"
-        android:name="com.upv.solidarityHub.MisNotificacionesFragment"
+        android:name="com.upv.solidarityHub.ui.notifications.MisNotificacionesFragment"
         android:label="Mis Notificaciones"
         tools:layout="@layout/fragment_mis_notificaciones" >
         <action
@@ -120,7 +120,7 @@
 
     <fragment
         android:id="@+id/notificacionFragment"
-        android:name="com.upv.solidarityHub.NotificacionFragment"
+        android:name="com.upv.solidarityHub.ui.notifications.NotificacionFragment"
         android:label="Notificaciones"
         tools:layout="@layout/fragment_notificacion" />
 
