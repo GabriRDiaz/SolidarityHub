@@ -1,6 +1,6 @@
 package com.upv.solidarityHub
 
-import android.content.Context
+//import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,7 +16,7 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
-import com.upv.solidarityHub.persistence.taskReq
+//import com.upv.solidarityHub.persistence.taskReq
 import com.upv.solidarityHub.persistence.tieneAsignado
 import kotlinx.coroutines.launch
 
@@ -60,25 +60,11 @@ class MisNotificacionesFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 if(correo!= null){
-                    Log.d("Notificaciones", "Buscando asignaciones para: $correo")
-                    val asignaciones = supabaseAPI.getAsignacionesUsuario(correo) ?: emptyList()
-                    Log.d("Notificaciones", "Asignaciones encontradas: ${asignaciones.size}")
-                    notificaciones = asignaciones.mapNotNull { asignacion ->
-                        val tarea = supabaseAPI.getTaskById(asignacion.id_task)
-                        val req = tarea?.og_req?.let { reqId -> supabaseAPI.getHelpReqById(reqId) }
-                        if (tarea != null && req != null) Triple(asignacion, tarea, req) else null
-                    }
-                    val adapter = ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_list_item_single_choice,
-                        notificaciones.map { (asignacion, tarea, req) -> "Encajas perfectamente en la tarea ${tarea.id} - ${req.titulo} [${asignacion.estado?.uppercase() ?: "PENDIENTE"}]" }
-                    )
-                    listaNotis.choiceMode = ListView.CHOICE_MODE_SINGLE
-                    listaNotis.adapter = adapter
+                    cargarNotificaciones(correo)
+                    crearAdaptadorNotificaciones(notificaciones)
                 }else{
                     Toast.makeText(requireContext(), "Usuario no autenticado", Toast.LENGTH_SHORT).show()
                 }
-
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Error cargando notificaciones", Toast.LENGTH_LONG).show()
                 e.printStackTrace()
@@ -103,5 +89,25 @@ class MisNotificacionesFragment : Fragment() {
         }
 
         return rootView
+    }
+
+    private fun crearAdaptadorNotificaciones(notificaciones: List<Triple<tieneAsignado, SupabaseAPI.taskDB, SupabaseAPI.reqDB>>) {
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_list_item_single_choice,
+            notificaciones.map { (asignacion, tarea, req) ->
+                "Encajas perfectamente en la tarea ${tarea.id} - ${req.titulo} [${asignacion.estado?.uppercase() ?: "PENDIENTE"}]"
+            }
+        )
+        listaNotis.adapter = adapter
+    }
+
+    private suspend fun cargarNotificaciones(correo: String): List<Triple<tieneAsignado, SupabaseAPI.taskDB, SupabaseAPI.reqDB>> {
+        val asignaciones = supabaseAPI.getAsignacionesUsuario(correo) ?: emptyList()
+        return asignaciones.mapNotNull { asignacion ->
+            val tarea = supabaseAPI.getTaskById(asignacion.id_task)
+            val req = tarea?.og_req?.let { reqId -> supabaseAPI.getHelpReqById(reqId) }
+            if (tarea != null && req != null) Triple(asignacion, tarea, req) else null
+        }
     }
 }
