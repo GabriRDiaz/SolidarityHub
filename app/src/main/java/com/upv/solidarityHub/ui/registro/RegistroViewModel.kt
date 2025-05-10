@@ -13,6 +13,7 @@ import com.upv.solidarityHub.ui.components.DatePicker.DatePickerFragment
 import com.upv.solidarityHub.ui.components.DatePicker.DatePickerHandler
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import com.upv.solidarityHub.utils.strategy.*
 
 class RegistroViewModel : ViewModel() {
 
@@ -66,31 +67,31 @@ class RegistroViewModel : ViewModel() {
 
     fun updateCorreo(newCorreo: String) {
         _correo.value = newCorreo
-        checkCorreoIsValid()
+        _correoIsValid.value = checkCorreoIsValid()
         checkAllValid()
     }
 
     fun updateNombre(newNombre: String) {
         _nombre.value = newNombre
-        checkNombreIsValid()
+        _nombreIsValid.value = checkNombreIsValid()
         checkAllValid()
     }
 
     fun updateApellidos(newApellidos: String) {
         _apellidos.value = newApellidos
-        checkApellidosIsValid()
+        _apellidosIsValid.value = checkApellidosIsValid()
         checkAllValid()
     }
 
     fun updateContrasena(newContrasena: String) {
         _contrasena.value = newContrasena
-        checkContrasenaIsValid()
+        _contrasenaIsValid.value = checkContrasenaIsValid()
         checkAllValid()
     }
 
     fun updateRepContrasena(newRepContrasena: String) {
         _repContrasena.value = newRepContrasena
-        checkRepContrasenaIsValid()
+        _repContrasenaIsValid.value = checkRepContrasenaIsValid()
         checkAllValid()
     }
 
@@ -111,32 +112,40 @@ class RegistroViewModel : ViewModel() {
     }
 
     fun checkCorreoIsValid(): Boolean {
-        var res = false
-        if(_correo.value != null) res = android.util.Patterns.EMAIL_ADDRESS.matcher(correo.value!!).matches()
-        _correoIsValid.value = res
-        return res
+        val correo = _correo.value;
+        if(correo != null){
+            var validate = FormField("email",correo,EmailValidator());
+            Log.d("LOG DEBUG", validate.isValid().toString())
+            return validate.isValid();
+        }
+        return false;
     }
 
     fun checkNombreIsValid(): Boolean {
-        var res = _nombre.value != null && _nombre.value.toString() != ""
-        _nombreIsValid.value = res
-        return res
+        val nombre = _nombre.value
+        if(nombre!=null){
+            var validate = FormField("nombre",nombre,NameValidator());
+            return validate.isValid();
+        }
+        return false;
     }
 
     fun checkApellidosIsValid(): Boolean {
-        var res =_apellidos.value != null && _apellidos.value != ""
-        _apellidosIsValid.value = res
-        return res
+        val apellidos = _apellidos.value
+        if(apellidos!=null){
+            var validate = FormField("apellidos",apellidos,NameValidator());
+            return validate.isValid()
+        }
+        return false;
     }
 
     fun checkContrasenaIsValid(): Boolean {
-        val contrasena = _contrasena.value
-        var res = false
-        if (contrasena != null && contrasena.length >= 8) {
-            res = contrasena.any { it.isDigit() }
+        val password = _contrasena.value
+        if(password!=null){
+            var validate = FormField("password",password,PasswordValidator());
+            return validate.isValid()
         }
-        _contrasenaIsValid.value = res
-        return res
+        return false;
     }
 
     fun checkRepContrasenaIsValid(): Boolean {

@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.media3.common.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
