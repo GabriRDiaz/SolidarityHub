@@ -171,16 +171,17 @@ class SupabaseAPI : DatabaseAPI {
 
         val idsGrupo = relaciones.map { it.grupo }
 
-        val grupos = supabase?.from("GrupoDeAyuda")
-            ?.select()
-            {
-                filter {
-                    idsGrupo.forEach { grupoId ->
-                        or { eq("id", grupoId) }
-                    }
-                }
-            }
-            ?.decodeList<GrupoDeAyuda>()
+        if (idsGrupo.isEmpty()) return emptyList()
+
+        val grupos = mutableListOf<GrupoDeAyuda>()
+
+        idsGrupo.forEach { grupoId ->
+            supabase?.from("GrupoDeAyuda")
+                ?.select()
+                { filter { eq("id", grupoId) } }
+                ?.decodeSingle<GrupoDeAyuda>()
+                ?.let { grupos.add(it) }
+        }
 
         return grupos
     }
