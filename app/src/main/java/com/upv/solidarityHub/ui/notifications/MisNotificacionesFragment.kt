@@ -1,4 +1,4 @@
-package com.upv.solidarityHub
+package com.upv.solidarityHub.ui.notifications
 
 import android.content.Context
 import android.os.Bundle
@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.upv.solidarityHub.R
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.taskReq
 import com.upv.solidarityHub.persistence.tieneAsignado
@@ -48,10 +49,9 @@ class MisNotificacionesFragment : Fragment() {
         botonVolver = rootView.findViewById(R.id.botonVolverNotis)
         botonVer = rootView.findViewById(R.id.botonVerNoti)
 
-        // Recuperar los datos desde SharedPreferences
         val sharedPref = requireActivity().getSharedPreferences("usuario", AppCompatActivity.MODE_PRIVATE)
-        val correo = sharedPref.getString("usuarioCorreo", null)  // Devuelve null si no existe
-        val nombre = sharedPref.getString("usuarioNombre", null)
+        val correo = sharedPref.getString("usuarioCorreo", null)
+        //val nombre = sharedPref.getString("usuarioNombre", null)
 
         botonVolver.setOnClickListener {
             findNavController().popBackStack()
@@ -110,5 +110,6 @@ class MisNotificacionesFragment : Fragment() {
             }
         )
         listaNotis.adapter = adapter
+        listaNotis.choiceMode = ListView.CHOICE_MODE_SINGLE
     }
 }

@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import com.upv.solidarityHub.persistence.Usuario
 import androidx.navigation.fragment.findNavController
 
@@ -33,22 +34,27 @@ class MisGruposFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //usuario = requireArguments().getParcelable("usuario")!!
-        usuario = requireActivity().intent.getParcelableExtra("usuario")!!
+        //usuario = requireActivity().intent.getParcelableExtra("usuario")!!
         //usuario = arguments?.getParcelable("usuario")
-            //?: throw IllegalArgumentException("Usuario no encontrado")
+        val sharedPref = requireActivity().getSharedPreferences("usuario", AppCompatActivity.MODE_PRIVATE)
+        val usuario = sharedPref.getString("usuarioCorreo", null)
 
         lifecycleScope.launch {
-            val gruposInscritos = db.getGruposusuario(usuario.correo)
-            if (gruposInscritos.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), "No estás inscrito en ningún grupo", Toast.LENGTH_SHORT).show()
-            } else {
-                val nombresGrupos = gruposInscritos.map { "Grupo ${it.id} - ${it.sesion}" }
-                val adapter = ArrayAdapter(
-                    requireContext(),
-                    android.R.layout.simple_list_item_1,
-                    nombresGrupos
-                )
-                binding.listaMisGrupos.adapter = adapter
+            if(usuario!=null){
+                val gruposInscritos = db.getGruposusuario(usuario)
+                if (gruposInscritos.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No estás inscrito en ningún grupo", Toast.LENGTH_SHORT).show()
+                } else {
+                    val nombresGrupos = gruposInscritos.map { "Grupo ${it.id} - ${it.sesion}" }
+                    val adapter = ArrayAdapter(
+                        requireContext(),
+                        android.R.layout.simple_list_item_1,
+                        nombresGrupos
+                    )
+                    binding.listaMisGrupos.adapter = adapter
+                }
+            }else{
+                Toast.makeText(requireContext(), "Error al buscar el usuario", Toast.LENGTH_SHORT).show()
             }
         }
 
