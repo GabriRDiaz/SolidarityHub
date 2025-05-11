@@ -103,7 +103,7 @@
 
     <fragment
         android:id="@+id/misNotificacionesFragment"
-        android:name="com.upv.solidarityHub.ui.notifications.NotificacionFragment"
+        android:name="com.upv.solidarityHub.ui.notifications.MisNotificacionesFragment"
         android:label="Mis Notificaciones"
         tools:layout="@layout/fragment_mis_notificaciones" >
         <action

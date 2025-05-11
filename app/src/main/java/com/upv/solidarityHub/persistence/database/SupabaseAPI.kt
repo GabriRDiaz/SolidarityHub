@@ -183,8 +183,6 @@ class SupabaseAPI : DatabaseAPI {
             ?.decodeList<GrupoDeAyuda>()
 
         return grupos
-
-
     }
 
     public override suspend fun registrarReq(req : SolicitudAyuda): Boolean {

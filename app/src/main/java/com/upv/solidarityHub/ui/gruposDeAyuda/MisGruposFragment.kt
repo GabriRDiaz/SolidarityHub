@@ -1,6 +1,7 @@
 package com.upv.solidarityHub.ui.gruposDeAyuda
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,7 @@ import androidx.navigation.fragment.findNavController
 class MisGruposFragment : Fragment() {
     private var _binding: FragmentMisGruposBinding? = null
     private val binding get() = _binding!!
-    private lateinit var usuario: Usuario
+    //private lateinit var usuario: Usuario
     private val db = SupabaseAPI()
 
     override fun onCreateView(
