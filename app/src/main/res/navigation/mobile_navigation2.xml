@@ -76,7 +76,7 @@
 
     <fragment
         android:id="@+id/CrearTareasFragment"
-        android:name="com.upv.solidarityHub.CrearTareasFragment"
+        android:name="com.upv.solidarityHub.ui.taskCreation.CrearTareasFragment"
         android:label="Creación de tareas">
 
         <action
@@ -103,7 +103,7 @@
 
     <fragment
         android:id="@+id/misNotificacionesFragment"
-        android:name="com.upv.solidarityHub.ui.notifications.MisNotificacionesFragment"
+        android:name="com.upv.solidarityHub.ui.notifications.NotificacionFragment"
         android:label="Mis Notificaciones"
         tools:layout="@layout/fragment_mis_notificaciones" >
         <action
