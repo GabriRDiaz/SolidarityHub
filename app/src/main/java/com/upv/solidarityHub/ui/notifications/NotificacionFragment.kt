@@ -20,6 +20,8 @@ class NotificacionFragment : Fragment() {
     private lateinit var textCategoriaNoti: TextView
     private lateinit var textMunicipioNoti: TextView
     private lateinit var textHorarioNoti: TextView
+    private lateinit var textTituloNoti: TextView
+    private lateinit var textDescripcionNoti: TextView
     private lateinit var btnAceptar: Button
     private lateinit var btnCancelar: Button
     private var asignacionId: Int = -1
@@ -35,6 +37,8 @@ class NotificacionFragment : Fragment() {
         textCategoriaNoti = view.findViewById(R.id.textCategoriaNoti)
         textMunicipioNoti = view.findViewById(R.id.textMunicipioNoti)
         textHorarioNoti = view.findViewById(R.id.textHorarioNoti)
+        textTituloNoti = view.findViewById(R.id.textTituloNoti)
+        textDescripcionNoti = view.findViewById(R.id.textDescripcionNoti)
         btnAceptar = view.findViewById(R.id.botAceptarNoti)
         btnCancelar = view.findViewById(R.id.botCancelarNoti)
 
@@ -42,12 +46,16 @@ class NotificacionFragment : Fragment() {
         val categoria = arguments?.getString("categoria") ?: ""
         val municipio = arguments?.getString("municipio") ?: ""
         val horario = arguments?.getString("horario") ?: ""
+        val titulo = arguments?.getString("titulo")
+        val descripcion = arguments?.getString("descripcion")
         asignacionId = arguments?.getInt("asignacionId") ?: -1
 
         // Mostrar datos
         textCategoriaNoti.text = categoria
         textMunicipioNoti.text = municipio
         textHorarioNoti.text = horario
+        textTituloNoti.text = titulo
+        textDescripcionNoti.text = descripcion
 
         // Configurar botones
         btnAceptar.setOnClickListener {

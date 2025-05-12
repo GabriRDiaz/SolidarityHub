@@ -81,7 +81,9 @@ class MisNotificacionesFragment : Fragment() {
                     "asignacionId" to asignacion.id,
                     "categoria" to req.categoria,
                     "municipio" to req.ubicacion,
-                    "horario" to req.horario
+                    "horario" to req.horario,
+                    "titulo" to req.titulo,
+                    "descripcion" to req.descripcion
                 )
                 findNavController().navigate(R.id.action_misNotisFragment_to_notiFragment, bundle)
             } else {

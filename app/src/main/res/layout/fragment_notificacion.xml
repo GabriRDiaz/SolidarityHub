@@ -28,7 +28,7 @@
         android:text="Categoria:"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView26" />
+        app:layout_constraintTop_toBottomOf="@id/textView35" />
 
     <TextView
         android:id="@+id/textView28"
@@ -57,11 +57,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="130dp"
         android:text="Encajas perectamente en esta tarea. Deseas unirte?"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView29" />
+        app:layout_constraintTop_toBottomOf="@id/textView31" />
 
     <Button
         android:id="@+id/botCancelarNoti"
@@ -69,7 +69,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="75dp"
         android:layout_marginTop="40dp"
+        android:layout_marginBottom="100dp"
         android:text="Rechazar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView30" />
 
@@ -80,7 +82,9 @@
         android:layout_marginStart="67dp"
         android:layout_marginTop="40dp"
         android:layout_marginEnd="75dp"
+        android:layout_marginBottom="100dp"
         android:text="Aceptar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/botCancelarNoti"
         app:layout_constraintTop_toBottomOf="@+id/textView30" />
@@ -94,7 +98,7 @@
         android:text="Categoria X"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView27"
-        app:layout_constraintTop_toBottomOf="@+id/textView26" />
+        app:layout_constraintTop_toBottomOf="@id/textView35" />
 
     <TextView
         android:id="@+id/textMunicipioNoti"
@@ -117,5 +121,51 @@
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/textView29"
         app:layout_constraintTop_toBottomOf="@+id/textMunicipioNoti" />
+
+    <TextView
+        android:id="@+id/textView31"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="40dp"
+        android:text="Descripcion:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView29" />
+
+    <TextView
+        android:id="@+id/textDescripcionNoti"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp"
+        android:text="Descripcion de la tarea"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textView31"
+        app:layout_constraintTop_toBottomOf="@id/textHorarioNoti" />
+
+    <TextView
+        android:id="@+id/textView35"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="40dp"
+        android:text="Titulo:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView26" />
+
+    <TextView
+        android:id="@+id/textTituloNoti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:text="Título de la tarea"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/textView35"
+        app:layout_constraintTop_toBottomOf="@id/textView26" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
