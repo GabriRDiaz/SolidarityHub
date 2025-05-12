@@ -291,6 +291,12 @@ class Registro : AppCompatActivity(), DatePickerHandler {
         viewModel.registryFinalized.observe(this, Observer { newRegistryFinalized ->
             if(newRegistryFinalized) {
                 runBlocking {
+                    val sharedPref = getSharedPreferences("usuario", MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        putString("usuarioCorreo", viewModel.correo.value)  // Guardar el correo del usuario
+                        putString("usuarioNombre", viewModel.nombre.value)  // Guardar el nombre del usuario
+                        apply()
+                    }
                     goToHabilidades(db.getUsuarioByCorreo(viewModel.correo.value!!)!!)
                 }
             }
