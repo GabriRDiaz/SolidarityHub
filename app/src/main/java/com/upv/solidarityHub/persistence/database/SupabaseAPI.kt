@@ -474,6 +474,22 @@ class SupabaseAPI : DatabaseAPI {
         }
     }
 
+    public override suspend fun salirDelGrupo(usuario: String, grupo: Int) : Boolean{
+        return try {
+            initializeDatabase()
+            supabase?.from("FormaParte")?.delete {
+                filter {
+                    eq("user", usuario)
+                    eq("grupo", grupo)
+                }
+            }
+            true
+        } catch (e: Exception) {
+            Log.e("Supabase", "Error saliendo del grupo", e)
+            false
+        }
+    }
+
 
 
 

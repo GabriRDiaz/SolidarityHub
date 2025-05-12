@@ -43,4 +43,5 @@ interface DatabaseAPI {
     public suspend fun getAsignacionesUsuario(userId: String): List<tieneAsignado>?
     public suspend fun eliminarAsignacion(id: Int): Boolean
     public suspend fun aceptarTarea(asignacionId: Int): Boolean
+    public suspend fun salirDelGrupo(usuario: String, grupo: Int): Boolean
 }
