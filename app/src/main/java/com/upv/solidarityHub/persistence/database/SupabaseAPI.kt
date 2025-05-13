@@ -68,6 +68,7 @@ class SupabaseAPI : DatabaseAPI {
         val created_at: String? = null,
         val id_user : String?,
         val id_task: Int?,
+        val estado: String
     )
 
     public override fun initializeDatabase() {
@@ -386,7 +387,7 @@ class SupabaseAPI : DatabaseAPI {
     }
 
     public override suspend fun createIsAssigned(idTask: Int, user: Usuario){
-        val res = assignedDB(getLastId("tieneAsignado")?.plus(1),null,user.correo,idTask)
+        val res = assignedDB(getLastId("tieneAsignado")?.plus(1),null,user.correo,idTask,"pendiente")
         supabase?.from("tieneAsignado")?.insert(res)
     }
 
