@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Donaciones"
+        android:textSize="34sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Cantidad a donar:"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
+
+        <!-- Botón disminuir -->
+        <Button
+            android:id="@+id/btn_decrease"
+            android:layout_width="60dp"
+            android:layout_height="48dp"
+            android:text="-"
+            android:textSize="24sp" />
+
+        <!-- Cantidad actual -->
+        <TextView
+            android:id="@+id/tv_amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="10€"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:layout_marginHorizontal="8dp"/>
+
+        <!-- Botón aumentar -->
+        <Button
+            android:id="@+id/btn_increase"
+            android:layout_width="60dp"
+            android:layout_height="48dp"
+            android:text="+"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Selecciona el método de pago:"
+        android:textSize="20sp" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp">
+
+        <RadioButton
+            android:id="@+id/radio_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tarjeta bancaria"/>
+
+        <RadioButton
+            android:id="@+id/radio_bizum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bizum"/>
+
+        <RadioButton
+            android:id="@+id/radio_paypal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Paypal"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="32dp">
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Volver"/>
+
+        <Button
+            android:id="@+id/btn_donate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Donar"/>
+    </LinearLayout>
+
+</LinearLayout>

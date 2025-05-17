@@ -47,6 +47,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/menuGroupsButton" />
 
+        <Button
+            android:id="@+id/menuDonarButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Donaciones"
+            android:textAlignment="center"
+            app:icon="@drawable/baseline_attach_money_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/menuNotisButton"
+            tools:layout_constraintStart_toStartOf="@id/menuNotisButton" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
