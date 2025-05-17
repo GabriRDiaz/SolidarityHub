@@ -32,28 +32,46 @@ class PasarelaPago : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val amount = arguments?.getInt("amount") ?: 10
-        val paymentMethod = arguments?.getString("paymentMethod") ?: getString(R.string.card_payment)
+        binding.textCantidad.text = "Cantidad: ${args.amount}€"
+        binding.textMetodoPago.text = "Método de pago: ${args.paymentMethod}"
 
-        binding.textCantidad.text = "Cantidad: ${amount}€"
-        binding.textMetodoPago.text = "Metodo de pago: ${paymentMethod}"
-
-        //setupUI()
+        setupPaymentUI() // Nueva función
         setupListeners()
         setupObservers()
     }
 
+    private fun setupPaymentUI() {
+        when (args.paymentMethod) {
+            getString(R.string.card_payment) -> {
+                binding.containerTarjeta.visibility = View.VISIBLE
+            }
+            getString(R.string.bizum_payment) -> {
+                binding.containerBizum.visibility = View.VISIBLE
+            }
+            getString(R.string.paypal_payment) -> {
+                binding.containerPaypal.visibility = View.VISIBLE
+            }
+        }
+    }
+
     private fun setupListeners() {
         binding.btnPay.setOnClickListener {
-            if (validateForm()) {
-                viewModel.processPayment(
-                    amount = args.amount,
-                    cardholder = binding.inputCardholder.text.toString(),
-                    cardNumber = binding.inputCardNumber.text.toString(),
-                    expiryDate = binding.inputExpiry.text.toString(),
-                    cvv = binding.inputCvv.text.toString()
+            val cardData = if (args.paymentMethod == getString(R.string.card_payment)) {
+                CardData(
+                    binding.inputCardholder.text.toString(),
+                    binding.inputCardNumber.text.toString(),
+                    binding.inputExpiry.text.toString(),
+                    binding.inputCvv.text.toString()
                 )
-            }
+            } else null
+
+            viewModel.processPayment(
+                amount = args.amount,
+                paymentMethod = args.paymentMethod,
+                cardData = cardData,
+                phone = binding.inputPhone.text?.toString(),
+                email = binding.inputEmail.text?.toString()
+            )
         }
 
         binding.btnCancel.setOnClickListener {
@@ -61,7 +79,8 @@ class PasarelaPago : Fragment() {
         }
     }
 
-    private fun setupObservers() {
+
+        private fun setupObservers() {
         viewModel.paymentResult.observe(viewLifecycleOwner) { success ->
             if (success) {
                 showSuccessAndFinish()
@@ -69,48 +88,8 @@ class PasarelaPago : Fragment() {
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { message ->
-            Toast.makeText(requireContext(), "Error: ${message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
         }
-    }
-
-    private fun validateForm(): Boolean {
-        return when {
-            binding.inputCardholder.text.isNullOrEmpty() -> {
-                Toast.makeText(requireContext(), "Error: ${getString(R.string.error_cardholder)}", Toast.LENGTH_LONG).show()
-
-                false
-            }
-            binding.inputCardNumber.text?.length != 16 -> {
-                Toast.makeText(requireContext(), "Error: ${getString(R.string.error_card_number)}", Toast.LENGTH_LONG).show()
-
-
-                false
-            }
-            !isValidExpiryDate(binding.inputExpiry.text.toString()) -> {
-                Toast.makeText(requireContext(), "Error: ${getString(R.string.error_expiry_date)}", Toast.LENGTH_LONG).show()
-
-                false
-            }
-            binding.inputCvv.text?.length !in 3..4 -> {
-                Toast.makeText(requireContext(), "Error: ${getString(R.string.error_cvv)}", Toast.LENGTH_LONG).show()
-
-                false
-            }
-            else -> true
-        }
-    }
-
-    private fun isValidExpiryDate(expiry: String): Boolean {
-        val parts = expiry.split("/").takeIf { it.size == 2 } ?: return false
-        val (month, year) = parts
-        val currentYear = Calendar.getInstance().get(Calendar.YEAR) % 100
-        val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
-
-        return year.toIntOrNull()?.let { y ->
-            month.toIntOrNull()?.let { m ->
-                m in 1..12 && (y > currentYear || (y == currentYear && m >= currentMonth))
-            }
-        } ?: false
     }
 
     private fun showSuccessAndFinish() {

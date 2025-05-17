@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Confirmar operación"
         android:textSize="34sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
     <!-- Detalles de la operación -->
     <TextView
@@ -21,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Cantidad: 10€"
-        android:textSize="20sp" />
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/textMetodoPago"
@@ -29,100 +30,162 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:text="Método de pago: Tarjeta bancaria"
-        android:textSize="20sp" />
+        android:textSize="20sp"/>
 
-    <!-- Campos del formulario -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Nombre del titular:"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/input_cardholder"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@android:drawable/editbox_background"
-        android:hint="Ej: Juan Pérez"
-        android:importantForAccessibility="yes"
-        android:inputType="textPersonName"
-        android:minHeight="48dp"
-        android:padding="12dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Número de tarjeta:"
-        android:textSize="16sp" />
-
-    <EditText
-        android:id="@+id/input_card_number"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@android:drawable/editbox_background"
-        android:hint="1234 5678 9012 3456"
-        android:importantForAccessibility="yes"
-        android:inputType="number"
-        android:minHeight="48dp"
-        android:padding="12dp" />
-
-    <!-- Sección Fecha y CVV -->
+    <!-- Campos para Tarjeta -->
     <LinearLayout
+        android:id="@+id/containerTarjeta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
-            android:id="@+id/label_expiry"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:labelFor="@+id/input_expiry"
-            android:text="Fecha de caducidad:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/label_cvv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:labelFor="@+id/input_cvv"
-            android:text="CVV:"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingVertical="8dp">
+            android:layout_marginTop="24dp"
+            android:text="Nombre del titular:"
+            android:textSize="16sp"/>
 
         <EditText
-            android:id="@+id/input_expiry"
-            android:layout_width="0dp"
+            android:id="@+id/input_cardholder"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_weight="1"
             android:background="@android:drawable/editbox_background"
-            android:hint="MM/AAAA"
+            android:hint="Ej: Juan Pérez"
             android:importantForAccessibility="yes"
+            android:inputType="textPersonName"
             android:minHeight="48dp"
-            android:padding="12dp" />
+            android:padding="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Número de tarjeta:"
+            android:textSize="16sp"/>
 
         <EditText
-            android:id="@+id/input_cvv"
-            android:layout_width="0dp"
+            android:id="@+id/input_card_number"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
             android:background="@android:drawable/editbox_background"
-            android:hint="CVV"
+            android:hint="1234 5678 9012 3456"
             android:importantForAccessibility="yes"
             android:inputType="number"
             android:minHeight="48dp"
-            android:padding="12dp" />
+            android:padding="12dp"/>
+
+        <!-- Sección Fecha y CVV -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/label_expiry"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:labelFor="@+id/input_expiry"
+                android:text="Fecha de caducidad:"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/label_cvv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:labelFor="@+id/input_cvv"
+                android:text="CVV:"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="8dp">
+
+            <EditText
+                android:id="@+id/input_expiry"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@android:drawable/editbox_background"
+                android:hint="MM/AAAA"
+                android:importantForAccessibility="yes"
+                android:minHeight="48dp"
+                android:padding="12dp"/>
+
+            <EditText
+                android:id="@+id/input_cvv"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@android:drawable/editbox_background"
+                android:hint="CVV"
+                android:importantForAccessibility="yes"
+                android:inputType="number"
+                android:minHeight="48dp"
+                android:padding="12dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Campos para Bizum -->
+    <LinearLayout
+        android:id="@+id/containerBizum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Número de teléfono:"
+            android:textSize="16sp"/>
+
+        <EditText
+            android:id="@+id/input_phone"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@android:drawable/editbox_background"
+            android:hint="+34 123 456 789"
+            android:importantForAccessibility="yes"
+            android:inputType="phone"
+            android:minHeight="48dp"
+            android:padding="12dp"/>
+    </LinearLayout>
+
+    <!-- Campos para PayPal -->
+    <LinearLayout
+        android:id="@+id/containerPaypal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Correo electrónico:"
+            android:textSize="16sp"/>
+
+        <EditText
+            android:id="@+id/input_email"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@android:drawable/editbox_background"
+            android:hint="usuario@example.com"
+            android:importantForAccessibility="yes"
+            android:inputType="textEmailAddress"
+            android:minHeight="48dp"
+            android:padding="12dp"/>
     </LinearLayout>
 
     <!-- Botones -->
