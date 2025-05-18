@@ -60,6 +60,9 @@
         <action
             android:id="@+id/action_gruposAyudaFragment_to_misGruposFragment"
             app:destination="@id/misGruposFragment" />
+        <action
+            android:id="@+id/action_gruposAyudaFragment_to_DetallesGruposFragment"
+            app:destination="@id/DetallesGrupoFragment" />
     </fragment>
 
     <fragment
@@ -67,6 +70,17 @@
         android:name="com.upv.solidarityHub.ui.gruposDeAyuda.MisGruposFragment"
         android:label="Mis Grupos"
         tools:layout="@layout/fragment_mis_grupos" />
+
+    <fragment
+        android:id="@+id/DetallesGrupoFragment"
+        android:name="com.upv.solidarityHub.ui.gruposDeAyuda.detallesGrupoVoluntarios.DetallesGrupoVoluntariosFragment"
+        android:label="Detalles Grupos"
+        tools:layout="@layout/fragment_detalles_grupo_voluntarios">
+    <argument
+        android:name="grupoId"
+        app:argType="integer"
+        android:defaultValue="-1"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_admin"
