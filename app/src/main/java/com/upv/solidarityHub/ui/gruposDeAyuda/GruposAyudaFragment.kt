@@ -46,7 +46,7 @@ class GruposAyudaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        usuario = requireActivity().intent.getParcelableExtra("usuario")!!
+        usuario = db.getLogedUser()
 
         obtenerGrupos()
 

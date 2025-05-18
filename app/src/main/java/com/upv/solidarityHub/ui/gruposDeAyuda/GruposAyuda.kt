@@ -35,7 +35,7 @@ class GruposAyuda() : AppCompatActivity() {
     private lateinit var usuario: Usuario
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        usuario = intent.getParcelableExtra<Usuario>("usuario")!!
+        usuario = db.getLogedUser()
 
         super.onCreate(savedInstanceState)
 

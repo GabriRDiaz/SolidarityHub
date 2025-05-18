@@ -39,8 +39,7 @@ class MisGruposFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val sharedPref = requireActivity().getSharedPreferences("usuario", AppCompatActivity.MODE_PRIVATE)
-        val usuario = sharedPref.getString("usuarioCorreo", null)
+        val usuario = db.getLogedUser()
 
         // Configuración del ListView
         binding.listaMisGrupos.choiceMode = ListView.CHOICE_MODE_SINGLE
@@ -57,12 +56,12 @@ class MisGruposFragment : Fragment() {
                 val grupoSeleccionado = gruposInscritos[selectedPosition]
                 lifecycleScope.launch {
                     try {
-                        val success = db.salirDelGrupo(usuario!!, grupoSeleccionado.id)
+                        val success = db.salirDelGrupo(usuario.correo, grupoSeleccionado.id)
                         if (success) {
                             Toast.makeText(requireContext(), "Has salido del grupo", Toast.LENGTH_SHORT).show()
                             // Limpiar selección visual
                             binding.listaMisGrupos.clearChoices()
-                            cargarGrupos(usuario)
+                            cargarGrupos(usuario.correo)
                         } else {
                             Toast.makeText(requireContext(), "Error al salir del grupo", Toast.LENGTH_SHORT).show()
                         }
@@ -79,7 +78,7 @@ class MisGruposFragment : Fragment() {
 
         if (usuario != null) {
             lifecycleScope.launch {
-                cargarGrupos(usuario)
+                cargarGrupos(usuario.correo)
             }
         } else {
             Toast.makeText(requireContext(), "Error al buscar el usuario", Toast.LENGTH_SHORT).show()

@@ -1,11 +1,15 @@
-package com.upv.solidarityHub.utils
+package com.upv.solidarityHub.utils.municipioSpinner
 
 // SuggestionAdapter.kt
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.upv.solidarityHub.persistence.FileReader
+import java.io.IOException
+import java.io.InputStream
 
 class SuggestionAdapter(
     private var suggestions: List<String>,
@@ -34,4 +38,6 @@ class SuggestionAdapter(
         suggestions = newSuggestions as List<String>
         notifyDataSetChanged()
     }
+
+
 }

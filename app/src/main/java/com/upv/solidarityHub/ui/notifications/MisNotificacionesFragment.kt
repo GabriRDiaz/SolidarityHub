@@ -49,9 +49,7 @@ class MisNotificacionesFragment : Fragment() {
         botonVolver = rootView.findViewById(R.id.botonVolverNotis)
         botonVer = rootView.findViewById(R.id.botonVerNoti)
 
-        val sharedPref = requireActivity().getSharedPreferences("usuario", AppCompatActivity.MODE_PRIVATE)
-        val correo = sharedPref.getString("usuarioCorreo", null)
-        //val nombre = sharedPref.getString("usuarioNombre", null)
+        val correo = SupabaseAPI().getLogedUser().correo
 
         botonVolver.setOnClickListener {
             findNavController().popBackStack()

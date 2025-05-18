@@ -18,9 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputEditText
 import com.upv.solidarityHub.databinding.FragmentSolAyudaBinding
 import com.upv.solidarityHub.persistence.FileReader
-import com.upv.solidarityHub.persistence.SolicitudAyuda
-import com.upv.solidarityHub.ui.taskCreation.CrearTareasViewModel
-import com.upv.solidarityHub.utils.SuggestionAdapter
+import com.upv.solidarityHub.utils.municipioSpinner.SuggestionAdapter
 import kotlinx.coroutines.launch
 import java.io.IOException
 

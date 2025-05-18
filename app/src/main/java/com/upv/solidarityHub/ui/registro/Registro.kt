@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.SearchView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -23,10 +22,9 @@ import com.google.android.material.textfield.TextInputLayout
 import com.upv.solidarityHub.ui.habilidades.HabilidadesActivity
 import com.upv.solidarityHub.ui.login.Login
 import com.upv.solidarityHub.R
-import com.upv.solidarityHub.utils.SuggestionAdapter
+import com.upv.solidarityHub.utils.municipioSpinner.SuggestionAdapter
 import com.upv.solidarityHub.databinding.ActivityRegistroBinding
 import com.upv.solidarityHub.persistence.FileReader
-import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.ui.components.DatePicker.DatePickerFragment
 import com.upv.solidarityHub.ui.components.DatePicker.DatePickerHandler
@@ -290,15 +288,8 @@ class Registro : AppCompatActivity(), DatePickerHandler {
 
         viewModel.registryFinalized.observe(this, Observer { newRegistryFinalized ->
             if(newRegistryFinalized) {
-                runBlocking {
-                    val sharedPref = getSharedPreferences("usuario", MODE_PRIVATE)
-                    with(sharedPref.edit()) {
-                        putString("usuarioCorreo", viewModel.correo.value)  // Guardar el correo del usuario
-                        putString("usuarioNombre", viewModel.nombre.value)  // Guardar el nombre del usuario
-                        apply()
-                    }
-                    goToHabilidades(db.getUsuarioByCorreo(viewModel.correo.value!!)!!)
-                }
+                db.setLogedUserCorreo(viewModel.correo.value.toString())
+                goToHabilidades()
             }
         })
 
@@ -347,11 +338,8 @@ class Registro : AppCompatActivity(), DatePickerHandler {
         startActivity(intent)
     }
 
-    fun goToHabilidades(usuario:Usuario) {
+    fun goToHabilidades() {
         val intent = Intent(this, HabilidadesActivity()::class.java)
-        intent.putExtra("usuario", usuario)
-
-
         startActivity(intent)
     }
 }

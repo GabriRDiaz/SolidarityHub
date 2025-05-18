@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.Toast
@@ -123,26 +124,22 @@ class Login : AppCompatActivity() {
             var db = SupabaseAPI()
             try {
                 runBlocking {
-                    val deferred1 = async {
-                        usuario = db.loginUsuario(inputCorreo.editText!!.text.toString(), inputContrasena.editText!!.text.toString())
-                    }
-                    deferred1.await()
+                    db.loginUsuario(inputCorreo.editText!!.text.toString(), inputContrasena.editText!!.text.toString())
+                    db.setLogedUserCorreo(inputCorreo.editText!!.text.toString())
+                    usuario = db.getLogedUser()
                 }
 
                 if(usuario != null) {Toast.makeText(getApplicationContext(), usuario!!.correo.toString() + "  " + usuario!!.nombre.toString(), Toast.LENGTH_SHORT).show()
-                    val sharedPref = getSharedPreferences("usuario", MODE_PRIVATE)
-                    with(sharedPref.edit()) {
-                        putString("usuarioCorreo", usuario!!.correo)  // Guardar el correo del usuario
-                        putString("usuarioNombre", usuario!!.nombre)  // Guardar el nombre del usuario
-                        apply()
-                    }
-                    goToMain(usuario!!)
+                    goToMain()
                 } else {Toast.makeText(getApplicationContext(), "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()}
 
             } catch (e:NoSuchElementException) {
                 Toast.makeText(getApplicationContext(), "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                Log.d("Debug", e.toString())
+
             } catch (e:Exception) {
                 Toast.makeText(getApplicationContext(),"Hubo un error, porfavor inténtelo más tarde", Toast.LENGTH_SHORT).show()
+                Log.d("Debug", e.toString())
             }
         }
     }
@@ -172,9 +169,8 @@ class Login : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun goToMain(usr:Usuario) {
+    fun goToMain() {
         val intent = Intent(this, Main::class.java)
-        intent.putExtra("usuario", usr)
         startActivity(intent)
     }
 

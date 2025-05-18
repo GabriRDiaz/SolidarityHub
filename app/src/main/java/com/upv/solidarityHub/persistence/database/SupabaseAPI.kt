@@ -26,6 +26,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
 import io.github.jan.supabase.auth.providers.builtin.Email
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -33,6 +34,7 @@ import java.util.Calendar
 //public var supabase: SupabaseClient? = null;
 private const val supabaseUrl = "https://jjmkaouvmwcakqusbabw.supabase.co"
 private const val supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpqbWthb3V2bXdjYWtxdXNiYWJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0Nzg0MTIsImV4cCI6MjA1NjA1NDQxMn0.FwI-6QCb12bth5DnIJUARbZ74LDbxZ7g7Hls7D9xJcE"
+private lateinit var logedUserCorreo: String
 
 class SupabaseAPI : DatabaseAPI {
 
@@ -80,6 +82,18 @@ class SupabaseAPI : DatabaseAPI {
             }
         }
 
+    }
+
+    public fun setLogedUserCorreo(usr: String) {
+        logedUserCorreo = usr
+    }
+
+    public fun getLogedUser(): Usuario {
+        var res:Usuario
+        runBlocking{
+            res = getUsuarioByCorreo(logedUserCorreo)!!
+        }
+        return res
     }
 
     public override suspend fun getUsuarioByCorreo(correo: String): Usuario? {

@@ -24,8 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.upv.solidarityHub.R
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.taskReq
-import com.upv.solidarityHub.ui.registrarDesaparecido.RegistrarDesaparecidoViewModel
-import com.upv.solidarityHub.utils.SuggestionAdapter
+import com.upv.solidarityHub.utils.municipioSpinner.SuggestionAdapter
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Calendar
