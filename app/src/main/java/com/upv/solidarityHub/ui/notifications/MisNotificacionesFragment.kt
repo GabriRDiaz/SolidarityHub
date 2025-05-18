@@ -95,11 +95,50 @@ class MisNotificacionesFragment : Fragment() {
     }
 
     private suspend fun cargarNotificaciones(correo: String): List<Triple<tieneAsignado, SupabaseAPI.taskDB, SupabaseAPI.reqDB>> {
-        val asignaciones = supabaseAPI.getAsignacionesUsuario(correo) ?: emptyList()
-        return asignaciones.mapNotNull { asignacion ->
-            val tarea = supabaseAPI.getTaskById(asignacion.id_task)
-            val req = tarea?.og_req?.let { reqId -> supabaseAPI.getHelpReqById(reqId) }
-            if (tarea != null && req != null) Triple(asignacion, tarea, req) else null
+        return try {
+            Log.d("Notificaciones", "Obteniendo asignaciones para: $correo")
+            val asignaciones = supabaseAPI.getAsignacionesUsuario(correo) ?: emptyList()
+
+            if (asignaciones.isEmpty()) {
+                Log.d("Notificaciones", "No se encontraron asignaciones")
+                Toast.makeText(requireContext(), "No tienes notificaciones", Toast.LENGTH_SHORT).show()
+            }
+
+            asignaciones.mapNotNull { asignacion ->
+                try {
+                    Log.d("Notificaciones", "Procesando asignación: ${asignacion.id}")
+
+                    val tarea = supabaseAPI.getTaskById(asignacion.id_task)
+                    if (tarea == null) {
+                        Log.e("Notificaciones", "Tarea no encontrada para asignación: ${asignacion.id}")
+                        return@mapNotNull null
+                    }
+
+                    val req = tarea.og_req?.let { reqId ->
+                        supabaseAPI.getHelpReqById(reqId)?.also {
+                            Log.d("Notificaciones", "Req encontrado: $reqId")
+                        } ?: run {
+                            Log.e("Notificaciones", "Req no encontrado: $reqId")
+                            null
+                        }
+                    }
+
+                    if (req == null) {
+                        Log.e("Notificaciones", "Relación req/tarea incompleta")
+                        return@mapNotNull null
+                    }
+
+                    Triple(asignacion, tarea, req)
+                } catch (e: Exception) {
+                    Log.e("Notificaciones", "Error procesando asignación ${asignacion.id}: ${e.message}")
+                    null
+                }
+            }.also {
+                Log.d("Notificaciones", "Notificaciones cargadas: ${it.size}")
+            }
+        } catch (e: Exception) {
+            Log.e("Notificaciones", "Error general: ${e.stackTraceToString()}")
+            throw e
         }
     }
 
