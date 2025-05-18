@@ -16,6 +16,7 @@ private const val ARG_PARAM2 = "param2"
 
 private lateinit var groupsButton: Button
 private lateinit var notisButton: Button
+private lateinit var donarButton: Button
 
 /**
  * A simple [Fragment] subclass.
@@ -55,12 +56,16 @@ class volunteer_menu : Fragment() {
         notisButton.setOnClickListener {
             findNavController().navigate(R.id.action_volunteermenu_to_misNotificacionesFragment)
         }
+        donarButton.setOnClickListener {
+            findNavController().navigate(R.id.action_volunteermenu_to_sistemaDeDonaciones)
+        }
     }
 
     private fun findComponents(rootView: View?) {
         if (rootView != null) {
             groupsButton = rootView.findViewById(R.id.menuGroupsButton)
             notisButton = rootView.findViewById(R.id.menuNotisButton)
+            donarButton = rootView.findViewById(R.id.menuDonarButton)
         }
 
     }

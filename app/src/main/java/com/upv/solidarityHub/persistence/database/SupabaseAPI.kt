@@ -61,7 +61,9 @@ class SupabaseAPI : DatabaseAPI {
         val og_req : Int?,
         val latitud: Double,
         val longitud : Double,
-        val fecha : String,
+        val fecha_inicial : String,
+        val fecha_final : String,
+        val hora_inicio : String? = null,
     )
 
     @Serializable
@@ -352,7 +354,7 @@ class SupabaseAPI : DatabaseAPI {
         initializeDatabase()
         try{
             val date = task.calendarToDateString(task.date)
-            val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,date)
+            val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,date, date, "10:00")
 
             try{
                 supabase?.from("Task")?.insert(taskDB)

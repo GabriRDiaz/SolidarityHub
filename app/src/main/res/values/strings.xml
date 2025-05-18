@@ -75,4 +75,19 @@
     <string name="Mapa">Mapa</string>
     <string name="Voluntarios">Voluntarios</string>
     <string name="Afectados">Afectados</string>
+
+    <string name="amount_format">%d€</string>
+    <string name="card_payment">Tarjeta bancaria</string>
+    <string name="bizum_payment">Bizum</string>
+    <string name="paypal_payment">Paypal</string>
+
+    <string name="error_cardholder">Ingrese el nombre del titular</string>
+    <string name="error_card_number">Número de tarjeta inválido</string>
+    <string name="error_expiry_date">Fecha de caducidad inválida</string>
+    <string name="error_cvv">CVV debe tener 3 o 4 dígitos</string>
+    <string name="payment_success">Pago realizado con éxito</string>
+
+    <string name="error_card_fields">Complete todos los campos de la tarjeta</string>
+    <string name="error_phone">Teléfono inválido (9 dígitos)</string>
+    <string name="error_email">Correo electrónico inválido</string>
 </resources>

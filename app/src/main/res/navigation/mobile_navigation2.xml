@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_volunteermenu_to_misNotificacionesFragment"
             app:destination="@id/misNotificacionesFragment" />
+        <action
+            android:id="@+id/action_volunteermenu_to_sistemaDeDonaciones"
+            app:destination="@id/sistemaDeDonaciones" />
     </fragment>
 
     <fragment
@@ -124,7 +127,46 @@
         android:label="Notificaciones"
         tools:layout="@layout/fragment_notificacion" />
 
+    <fragment
+        android:id="@+id/sistemaDeDonaciones"
+        android:name="com.upv.solidarityHub.ui.donaciones.SistemaDeDonaciones"
+        android:label="SistemaDeDonaciones">
 
+        <action
+            android:id="@+id/action_sistemaDeDonaciones_to_pasarelaPago"
+            app:destination="@id/pasarelaPago" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/pasarelaPago"
+        android:name="com.upv.solidarityHub.ui.donaciones.PasarelaPago"
+        android:label="PasarelaPago">
+        <argument
+            android:name="amount"
+            app:argType="integer" />
+        <argument
+            android:name="paymentMethod"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_pasarelaPago_to_donacionExitosa"
+            app:destination="@id/donacionExitosa" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/donacionExitosa"
+        android:name="com.upv.solidarityHub.ui.donaciones.DonacionExitosa"
+        android:label="Donación Exitosa">
+
+        <argument
+            android:name="amount"
+            app:argType="integer"/>
+
+        <argument
+            android:name="paymentMethod"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_donacionExitosa_to_volunteermenu"
+            app:destination="@id/nav_gallery" />
+    </fragment>
 
 </navigation>
