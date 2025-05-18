@@ -66,12 +66,12 @@ class ModificarPerfilFragment : Fragment() {
         myView = inflater.inflate(R.layout.fragment_modificar_perfil, container, false)
         viewModel = ViewModelProvider(requireActivity()).get(ModificarPerfilViewModel::class.java)
 
-        initializeFields()
-        addItemsToSpinnerComplexion()
-        loadDataFromModel()
-        initializeButtons()
-        initializeListeners()
-        initializeObservers()
+        //initializeFields()
+        //addItemsToSpinnerComplexion()
+        //loadDataFromModel()
+        //initializeButtons()
+        //initializeListeners()
+        //initializeObservers()
 
 
         return myView
@@ -92,7 +92,7 @@ class ModificarPerfilFragment : Fragment() {
             val assetManager = requireContext().assets
             val inputStream = assetManager.open("municipios")
             viewModel.updateMunicipiosList(FileReader.readMunicipiosToArray(inputStream))
-            searchSuggestions = viewModel.municipios.value!!
+            //searchSuggestions = viewModel.municipios.value!!
         } catch (e: IOException) {
             Log.d("DEBUG","Failure to read file" + "   " + e.toString())
         }
@@ -104,8 +104,8 @@ class ModificarPerfilFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 viewModel.updateMunicipio(buscadorMunicipio.query.toString())
-                val filteredSuggestions = searchSuggestions.filter { it!!.contains(newText ?: "", ignoreCase = true) }
-                suggestionAdapter.updateSuggestions(filteredSuggestions)
+                //val filteredSuggestions = searchSuggestions.filter { it!!.contains(newText ?: "", ignoreCase = true) }
+                //suggestionAdapter.updateSuggestions(filteredSuggestions)
                 return true
             }
         })
