@@ -1,11 +1,14 @@
 package com.upv.solidarityHub.persistence.database
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.FormaParte
 import com.upv.solidarityHub.persistence.GrupoDeAyuda
 import com.upv.solidarityHub.persistence.SolicitudAyuda
 import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.persistence.factory.habilidad.HabilidadFactory
+import com.upv.solidarityHub.persistence.factory.habilidad.HabilidadFactoryImpl
 import com.upv.solidarityHub.persistence.tieneAsignado
 import com.upv.solidarityHub.persistence.model.DatabaseHabilidad
 import com.upv.solidarityHub.persistence.model.Desaparecido
@@ -508,7 +511,54 @@ class SupabaseAPI : DatabaseAPI {
     }
 
 
+    public override fun getHabilidadesOfUser(correo: String): List<Habilidad>? {
+        initializeDatabase()
+        var response: List<DatabaseHabilidad>?
+        var result: MutableList<Habilidad> = mutableListOf()
+        runBlocking {
+            response = supabase?.from("Habilidad")?.select(){
+                filter{
+                    eq("correo_usuario", correo)
+                }
+            }?.decodeList<DatabaseHabilidad>()
+        }
 
+        val factory: HabilidadFactory = HabilidadFactoryImpl()
+        for (habilidad in response!!) {
+            result.add(factory.createHabilidad(habilidad.nombre_habilidad, habilidad.competencia, habilidad.preferencia))
+        }
+        return result
+    }
+
+
+    public override fun updateUsuario(usuario: Usuario, habilidades: List<Habilidad>?): Boolean {
+        initializeDatabase()
+        var error = false
+        try {
+            runBlocking {
+                supabase?.from("Usuario")?.update({
+                    set("nombre", usuario.nombre)
+                    set("apellidos", usuario.apellidos)
+                    set("password", usuario.password)
+                    set("municipio", usuario.municipio)
+                    set("nacimiento", usuario.nacimiento)
+                }) {
+                    filter { eq("correo", usuario.correo) }
+                }
+
+                if(habilidades != null) {
+                    supabase?.from("Habilidad")?.delete {
+                        filter {
+                            eq("correo_usuario", usuario.correo)
+                        }
+                    }
+                    registrarHabilidades(habilidades, usuario)
+                }
+            }
+        } catch (e: Exception) {error = true}
+
+        return !error
+    }
 
 
 }

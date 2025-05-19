@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.modificarPerfil.ModificarPerfilFragment" >
+    tools:context=".ui.modificarPerfil.ModificarPerfilActivity" >
 
     <TextView
         android:id="@+id/textView36"
@@ -27,7 +27,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etiquetaTitulo">
+        app:layout_constraintTop_toBottomOf="@+id/textView36">
 
         <TableRow
             android:layout_width="match_parent"
@@ -90,7 +90,7 @@
                     android:layout_height="55dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="272dp"
+                        android:layout_width="270dp"
                         android:layout_height="match_parent"
                         android:hint="p.e: Pascual Utiel" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -105,24 +105,24 @@
             android:gravity="center|left">
 
             <LinearLayout
-                android:layout_width="320dp"
+                android:layout_width="250dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Contraseña"
+                    android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="297dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Contraseña"
-                        android:textStyle="bold" />
+                    android:layout_width="320dp"
+                    android:layout_height="80dp"
+                    android:orientation="horizontal">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/mod_ContrasenaInput"
-                        android:layout_width="match_parent"
+                        android:layout_width="270dp"
                         android:layout_height="55dp">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -132,24 +132,14 @@
                             android:inputType="number" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/inputAlturaDesaparecido"
-                        android:layout_width="match_parent"
-                        android:layout_height="55dp" />
+                    <Button
+                        android:id="@+id/mod_mostrarContrasenaButton"
+                        android:layout_width="41dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1" />
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="114dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" />
             </LinearLayout>
 
         </TableRow>
@@ -181,6 +171,12 @@
                         android:layout_width="72dp"
                         android:layout_height="26dp"
                         android:text="Button" />
+
+                    <TextView
+                        android:id="@+id/displayNacimiento"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TextView" />
 
                 </LinearLayout>
 

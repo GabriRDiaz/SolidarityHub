@@ -2,24 +2,23 @@ package com.upv.solidarityHub.ui.modificarPerfil
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.upv.solidarityHub.persistence.Baliza
+import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.persistence.model.Habilidad
 import com.upv.solidarityHub.utils.strategy.ApellidosValidator
-import com.upv.solidarityHub.utils.strategy.EmailValidator
 import com.upv.solidarityHub.utils.strategy.FormField
 import com.upv.solidarityHub.utils.strategy.NameValidator
 import com.upv.solidarityHub.utils.strategy.PasswordValidator
+import com.upv.solidarityHub.persistence.database.SupabaseAPI
 
 class ModificarPerfilModel {
-        val max_char: Int = 50
-        val max_altura: Int = 300
-        val max_edad: Int = 120
-
+        val usuario: Usuario = SupabaseAPI().getLogedUser()
         val _nombre: MutableLiveData<String> = MutableLiveData<String>("")
         val _apellidos: MutableLiveData<String> = MutableLiveData<String>("")
         val _contrasena: MutableLiveData<String> = MutableLiveData<String>("")
         val _municipio: MutableLiveData<String> = MutableLiveData<String>("")
         val _oldContrasena: MutableLiveData<String> = MutableLiveData<String>("")
         val _fechaNacimiento: MutableLiveData<String> = MutableLiveData<String>("")
+        lateinit var _habilidades: MutableLiveData<List<Habilidad>>
 
         val _municipios = MutableLiveData<Array<String?>>()
 
@@ -35,84 +34,127 @@ class ModificarPerfilModel {
         fun updateNombre(newNombre: String) {
             _nombre.value = newNombre
             checkNombreIsValid()
-            //checkAllValid()
+            checkAllValid()
         }
 
         fun updateApellidos(newApellidos: String) {
             _apellidos.value = newApellidos
-            //checkApellidosIsValid()
-            //checkAllValid()
+            checkApellidosIsValid()
+            checkAllValid()
         }
 
         fun updateContrasena(newContrasena: String) {
             _contrasena.value = newContrasena
-            //checkEdadIsValid()
-            //checkAllValid()
+            checkContrasenaIsValid()
+            checkAllValid()
         }
 
         fun updateMunicipio(newMunicipio: String) {
             _municipio.value = newMunicipio
-            //checkAlturaIsValid()
-            //checkAllValid()
+            checkMunicipioIsValid()
+            checkAllValid()
         }
 
         fun updateOldContrasena(newOldContrasena: String) {
             _oldContrasena.value = newOldContrasena
-            //checkComplexionIsValid()
-            //checkAllValid()
+            checkOldContrasenaIsValid()
+            checkAllValid()
         }
 
         fun updateFechaNacimiento(newFechaNacimiento: String) {
             _fechaNacimiento.value = newFechaNacimiento
-            //checkSexoIsValid()
-            //checkAllValid()
+            checkFechaNacimientoIsValid()
+            checkAllValid()
         }
 
-        fun checkNombreIsValid(): Boolean {
-            val nombre = _nombre.value;
+        private fun checkNombreIsValid(): Boolean {
+            val nombre = _nombre.value
             if(nombre != null){
-                var validate = FormField("nombre",nombre, NameValidator());
-                return validate.isValid();
+                val validate = FormField("nombre",nombre, NameValidator())
+                _nombreIsValid.value = validate.isValid()
+                return validate.isValid()
             }
-            return false;
+            return false
         }
 
-
-        fun checkMunicipioIsValid(): Boolean {
-            val municipio = _municipio.value;
+        private fun checkMunicipioIsValid(): Boolean {
+            val municipio = _municipio.value
             if(municipio != null){
-                val validate = FormField("contrasena",municipio, PasswordValidator());
-                return validate.isValid();
+                val found = _municipios.value!!.contains(municipio)
+                _municipioIsValid.value = found
+                return found
             }
-            return false;
+            return false
         }
 
-//        fun checkEdadIsValid(): Boolean {
-//            val edad = _edad.value
-//            val res = edad != null && edad >= 0 && edad <= max_edad
-//            _edadIsValid.value = res
-//            return res
-//        }
-//
-//        fun checkAlturaIsValid(): Boolean {
-//            val altura = _altura.value!!
-//            val res = altura in 0.0..300.0
-//            _alturaIsValid.value = res
-//            return res
-//        }
-//
-//        fun checkComplexionIsValid(): Boolean {
-//            val complexion = _complexion.value
-//            val res = complexion != -1
-//            _complexionIsValid.value = res
-//            return res
-//        }
-//
-//        fun checkSexoIsValid(): Boolean {
-//            val sexo = _sexo.value
-//            val res = sexo != -1
-//            _sexoIsValid.value = res
-//            return res
-//        }
+        private fun checkApellidosIsValid(): Boolean {
+            val apellidos = _apellidos.value
+            if(apellidos != null){
+                val validate = FormField("apellidos",apellidos, ApellidosValidator())
+                _apellidosIsValid.value = validate.isValid()
+                return validate.isValid()
+            }
+            return false
+        }
 
-    }
+        private fun checkContrasenaIsValid(): Boolean {
+            val contrasena = _contrasena.value
+            if(contrasena != null){
+                val validate = FormField("password",contrasena, PasswordValidator())
+                _contrasenaIsValid.value = validate.isValid()
+                return validate.isValid()
+            }
+            return false
+        }
+
+        private fun checkFechaNacimientoIsValid(): Boolean {
+            val fecha = _fechaNacimiento.value
+            if(fecha != null){
+                return fecha != ""
+            }
+            return false
+        }
+
+        private fun checkOldContrasenaIsValid(): Boolean {
+            val contrasena = _oldContrasena.value
+            if(contrasena != null) {
+                return contrasena != ""
+            }
+            return false
+        }
+
+        private fun checkAllValid(): Boolean {
+            val allGood = _nombreIsValid.value!! && _apellidosIsValid.value!! && _contrasenaIsValid.value!! && _oldContrasenaIsValid.value!! && _fechaNacimientoIsValid.value!! && _municipioIsValid.value!!
+            _allIsValid.value = allGood
+            return allGood
+        }
+
+        private fun getOriginalHabilidades(): MutableLiveData<List<Habilidad>> {
+            val habilidades = SupabaseAPI().getHabilidadesOfUser(SupabaseAPI().getLogedUser().correo)
+            if(habilidades != null) {
+            return MutableLiveData<List<Habilidad>>(habilidades)
+            } else return MutableLiveData<List<Habilidad>>(listOf<Habilidad>())
+
+        }
+
+        public fun confirmarModificacion(): Boolean {
+            val db = SupabaseAPI()
+
+            val nuevoUser: Usuario = Usuario(usuario.correo, _nombre.value!!, _apellidos.value!!, _contrasena.value!!, _fechaNacimiento.value!!, _municipio.value!!)
+            if (usuario.password == _oldContrasena.value) {
+                    if (!db.updateUsuario(nuevoUser, _habilidades.value)) throw Exception("unknown error")
+            }   else return false
+
+            return true
+        }
+
+        public fun setOriginalUsuarioValues() {
+            _nombre.value = usuario.nombre
+            _apellidos.value = usuario.apellidos
+            _municipio.value = usuario.municipio
+            _fechaNacimiento.value = usuario.nacimiento
+            _contrasena.value = usuario.password
+            _habilidades = getOriginalHabilidades()
+        }
+
+}

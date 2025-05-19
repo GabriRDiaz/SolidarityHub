@@ -3,9 +3,10 @@ package com.upv.solidarityHub.ui.modificarPerfil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.upv.solidarityHub.persistence.Baliza
+import com.upv.solidarityHub.persistence.model.Habilidad
 
 class ModificarPerfilViewModel : ViewModel() {
-    val model = ModificarPerfilModel()
+    private val model = ModificarPerfilModel()
 
     val nombre: LiveData<String> get() = model._nombre
     val apellidos: LiveData<String> get() = model._apellidos
@@ -13,6 +14,7 @@ class ModificarPerfilViewModel : ViewModel() {
     val municipio: LiveData<String> get() = model._municipio
     val oldContrasena: LiveData<String> get() = model._oldContrasena
     val fechaNacimiento: LiveData<String> get() = model._fechaNacimiento
+    val habilidades: LiveData<List<Habilidad>?> get() = model._habilidades
 
     val municipios: LiveData<Array<String?>> get() = model._municipios
 
@@ -51,6 +53,18 @@ class ModificarPerfilViewModel : ViewModel() {
 
     fun updateFechaNacimiento(newFechaNacimiento: String) {
         model._fechaNacimiento.value = newFechaNacimiento
+    }
+
+    fun updateHabilidades(newHabilidades: List<Habilidad>) {
+        model._habilidades.value = newHabilidades
+    }
+
+    fun confirmar(): Boolean {
+        return model.confirmarModificacion()
+    }
+
+    fun setOriginalValues() {
+        model.setOriginalUsuarioValues()
     }
 
 
