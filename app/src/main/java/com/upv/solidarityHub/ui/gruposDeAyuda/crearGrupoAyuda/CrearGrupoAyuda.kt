@@ -1,6 +1,8 @@
 package com.upv.solidarityHub.ui.gruposDeAyuda.crearGrupoAyuda
 
+import android.R
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 //import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -26,16 +28,26 @@ class CrearGrupoAyuda : AppCompatActivity() {
 
         binding = ContentCrearGrupoAyudaBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val opcionesHorario = listOf(
+            "Mañana Temprana (6:00 - 9:00)",
+            "Mañana (9:00 - 12:00)",
+            "Mediodía (12:00 - 15:00)",
+            "Tarde (15:00 - 18:00)",
+            "Noche Temprana (18:00 - 21:00)",
+            "Noche (21:00 - 00:00)",
+            "Madrugada (00:00 - 6:00)"
+        )
+        val adapter = ArrayAdapter(this, R.layout.simple_dropdown_item_1line, opcionesHorario)
+        binding.dropdownHorario.setAdapter(adapter)
 
-        //setSupportActionBar(binding.toolbar)
         binding.botonAceptar.setOnClickListener {
             val descripcion = binding.textoDescripcion.text?.toString()?.trim() ?: ""
             val ubicacion = binding.textoMunicipio.text?.toString()?.trim() ?: ""
-            val sesion = binding.textoSesion.text?.toString()?.trim() ?: ""
+            val sesion = binding.dropdownHorario.text?.toString()?.trim() ?: ""
             val tamanyo = 1
 
-            if (descripcion.isEmpty() || ubicacion.isEmpty() || sesion.isEmpty()) {
-                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+            if (descripcion.isEmpty() || ubicacion.isEmpty() || sesion.isEmpty() || sesion !in opcionesHorario) {
+                Toast.makeText(this, "Rellena todos los campos con opciones validas", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

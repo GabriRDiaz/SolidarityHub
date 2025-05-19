@@ -51,10 +51,9 @@ class GruposAyudaFragment : Fragment() {
         obtenerGrupos()
 
         contentBinding.botonVerDetalles2.setOnClickListener {
-            grupoSeleccionado?.let {
-                val intent = Intent(requireContext(), DetallesGrupoVoluntarios::class.java)
-                intent.putExtra("grupoId", it.id)
-                startActivity(intent)
+            grupoSeleccionado?.let { grupo ->
+                val action = GruposAyudaFragmentDirections.actionGruposAyudaFragmentToDetallesGruposFragment(grupo.id)
+                findNavController().navigate(action)
             } ?: Toast.makeText(requireContext(), "Selecciona un grupo primero", Toast.LENGTH_SHORT).show()
         }
 
@@ -78,7 +77,6 @@ class GruposAyudaFragment : Fragment() {
 
         contentBinding.botonVerGrupos.setOnClickListener {
             val bundle = Bundle()
-            //bundle.putParcelable("usuario", usuario)
             findNavController().navigate(R.id.action_gruposAyudaFragment_to_misGruposFragment, bundle)
         }
 
