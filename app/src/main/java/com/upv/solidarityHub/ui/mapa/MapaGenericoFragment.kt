@@ -1,6 +1,7 @@
 package com.upv.solidarityHub.ui.mapa
 
 import android.app.AlertDialog
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,13 +28,12 @@ import org.osmdroid.views.overlay.*
 class MapaGenericoFragment : Fragment() {
 
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-    private lateinit var map: MapView
-    private lateinit var mapController: MapController
+    private var mapa: Mapa = Mapa()
     private lateinit var overlayBalizas: ArrayList<OverlayItem>
     private lateinit var overlayBalizasItemized: ItemizedOverlay<OverlayItem>
     private lateinit var buttonAddRecurso: ImageButton
     private var supabaseAPI: SupabaseAPI = SupabaseAPI()
-    private final var angelGuimeraLocation = GeoPoint(39.4703606, -0.3836834)
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,12 +57,12 @@ class MapaGenericoFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        map.onResume()
+        mapa.getMap().onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        map.onPause()
+        mapa.getMap().onPause()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -82,23 +82,14 @@ class MapaGenericoFragment : Fragment() {
     }
 
     private fun loadMap(view: View) {
-        try {
-            map = view.findViewById(R.id.mapView)
-            mapController = map.controller as MapController
-            buttonAddRecurso = view.findViewById(R.id.botonIrRegistrarse)
-            buttonAddRecurso.setOnClickListener {
-                showAddRecursoDialog()
-            }
-            overlayBalizas = ArrayList()
-            updateOverlay()
-            map.setTileSource(TileSourceFactory.MAPNIK)
-            map.setMultiTouchControls(true)
-            mapController.setZoom(20.0)
-            mapController.setCenter(angelGuimeraLocation)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(requireContext(), "Error en loadMap: ${e.message}", Toast.LENGTH_LONG).show()
+        mapa.setMap(view.findViewById(R.id.mapView))
+        mapa.setMapController(mapa.getMap().controller as MapController)
+        buttonAddRecurso = view.findViewById(R.id.botonIrRegistrarse)
+        buttonAddRecurso.setOnClickListener {
+            showAddRecursoDialog()
         }
+        overlayBalizas = ArrayList()
+        updateOverlay()
     }
 
     private fun addBaliza(baliza: Baliza?) {
@@ -121,7 +112,7 @@ class MapaGenericoFragment : Fragment() {
             deferred1.await()
         }
         addAllBalizasToOverlay(balizas)
-        map.overlays.clear()
+        mapa.getMap().overlays.clear()
         overlayBalizasItemized = ItemizedIconOverlay(overlayBalizas, object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
             override fun onItemSingleTapUp(index: Int, item: OverlayItem?): Boolean {
                 item?.let {
@@ -148,8 +139,8 @@ class MapaGenericoFragment : Fragment() {
                 return false
             }
         }, requireContext())
-        map.overlays.add(overlayBalizasItemized)
-        map.invalidate()
+        mapa.getMap().overlays.add(overlayBalizasItemized)
+        mapa.getMap().invalidate()
     }
 
     private fun deleteBaliza(it: OverlayItem) {
@@ -219,8 +210,8 @@ class MapaGenericoFragment : Fragment() {
         var id = balizas?.size?.plus(1) as Int
         var baliza = Baliza(
             id,
-            map.getMapCenter().latitude,
-            map.getMapCenter().longitude,
+            mapa.getMap().getMapCenter().latitude,
+            mapa.getMap().getMapCenter().longitude,
             name,
             tipo,
             description
