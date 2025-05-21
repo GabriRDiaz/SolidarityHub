@@ -1,123 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/contentGrupoAyuda"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFEFE"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:background="@android:color/white"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/etiquetaGruposAyudaDisp2"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/filterCard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="50dp"
-        android:text="Grupos de Ayuda disponibles:"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:cardElevation="4dp"
+        android:layout_marginBottom="16dp">
 
-    <ListView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/textFiltrarMunicipio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Filtrar por municipio:"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Municipio"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spinnerMunicipio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:text="Municipio" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/botonFiltrar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aplicar"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listaGruposAyuda"
-        android:layout_width="225dp"
-        android:layout_height="525dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="150dp"
-        android:layout_marginBottom="120dp"
-        android:choiceMode="singleChoice"
-        android:minHeight="250dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:clipToPadding="false"
+        android:paddingBottom="88dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etiquetaGruposAyudaDisp2" />
+        app:layout_constraintTop_toBottomOf="@id/filterCard" />
 
-    <Button
-        android:id="@+id/botonVerDetalles2"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/buttonBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginBottom="60dp"
-        android:background="#050505"
-        android:text="Ver detalles"
-        android:textColor="#FDFDFD"
-        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardElevation="8dp">
 
-    <Button
-        android:id="@+id/botonUnirse2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="60dp"
-        android:background="#0B0B0B"
-        android:text="Unirse"
-        android:textColor="#FDFDFD"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/botonVerDetalles2" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="8dp">
 
-    <Button
-        android:id="@+id/botonCrearGrupo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="10dp"
-        android:text="Crear Grupo"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/botonUnirse2" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonVerDetalles2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Detalles"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_marginEnd="4dp"/>
 
-    <Button
-        android:id="@+id/botonVerGrupos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="20dp"
-        android:text="Mis grupos"
-        app:layout_constraintEnd_toStartOf="@id/botonCrearGrupo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/botonVerDetalles2" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonUnirse2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Unirse"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"/>
 
-    <TextView
-        android:id="@+id/textFiltrarMunicipio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="5dp"
-        android:text="Filtrar por municipio:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/listaGruposAyuda"
-        app:layout_constraintTop_toBottomOf="@id/etiquetaGruposAyudaDisp2" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonVerGrupos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Mis Grupos"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginStart="4dp"/>
 
-    <Spinner
-        android:id="@+id/spinnerMunicipio"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="5dp"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/listaGruposAyuda"
-        app:layout_constraintTop_toBottomOf="@id/textFiltrarMunicipio" />
-
-    <Button
-        android:id="@+id/botonFiltrar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="30dp"
-        android:text="Filtrar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/listaGruposAyuda"
-        app:layout_constraintTop_toBottomOf="@id/spinnerMunicipio" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonCrearGrupo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Crear"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_marginStart="4dp"
+                android:icon="@drawable/baseline_add_24"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
