@@ -22,13 +22,14 @@ import com.upv.solidarityHub.databinding.ActivityRegistroBinding
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.model.Habilidad
+import com.upv.solidarityHub.ui.components.DatePicker.DatePickerHandler
 import com.upv.solidarityHub.ui.habilidades.HabilidadesFragment
 import com.upv.solidarityHub.utils.TextInputLayoutUtils
 import com.upv.solidarityHub.utils.municipioSpinner.SuggestionAdapter
 import java.io.IOException
 import com.upv.solidarityHub.utils.TextInputLayoutUtils.setErrorTo
 
-class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.HabilidadesListener {
+class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.HabilidadesListener, DatePickerHandler {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityModPerfilBinding
 
@@ -60,7 +61,8 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
         viewModel = ViewModelProvider(this).get(ModificarPerfilViewModel::class.java)
         initializeFields()
         initializeButtons()
-        viewModel.setOriginalValues()
+        viewModel.setOriginalUserValues()
+        initializeSearchView()
         setFieldsToViewmodelValues()
         initializeListeners()
         initializeObservers()
@@ -164,8 +166,8 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
         })
     }
 
-    private fun initializeSearchView(view: View) {
-        recyclerView = view.findViewById(R.id.recyclerModMunicipio)
+    private fun initializeSearchView() {
+        recyclerView = findViewById(R.id.recyclerModMunicipio)
 
         suggestionAdapter = SuggestionAdapter(emptyList()) { suggestion ->
             buscadorMunicipio.setQuery(suggestion, true)
@@ -204,12 +206,16 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
         nombreField.editText!!.setText(viewModel.nombre.value)
         apellidosField.editText!!.setText(viewModel.apellidos.value)
         contrasenaField.editText!!.setText(viewModel.contrasena.value)
-        displayNacimiento.setText(viewModel.contrasena.value)
-        buscadorMunicipio.setQuery(viewModel.municipio.value, false)
+        displayNacimiento.setText(viewModel.fechaNacimiento.value)
+        suggestionAdapter.updateSuggestions(listOf(viewModel.municipio.value))
     }
 
     override fun onHabilidadesInput(habilidades: List<Habilidad>) {
         viewModel.updateHabilidades(habilidades)
+    }
+
+    override fun handleDate(date: String) {
+        viewModel.updateFechaNacimiento(date)
     }
 
 }

@@ -69,22 +69,19 @@ class ModificarPerfilModel {
 
         private fun checkNombreIsValid(): Boolean {
             val nombre = _nombre.value
-            if(nombre != null){
-                val validate = FormField("nombre",nombre, NameValidator())
-                _nombreIsValid.value = validate.isValid()
-                return validate.isValid()
-            }
-            return false
+            val isValid = FormField("nombre",nombre!!, NameValidator()).isValid()
+            _nombreIsValid.value = isValid
+            checkAllValid()
+            return isValid
         }
 
         private fun checkMunicipioIsValid(): Boolean {
             val municipio = _municipio.value
-            if(municipio != null){
-                val found = _municipios.value!!.contains(municipio)
-                _municipioIsValid.value = found
-                return found
-            }
-            return false
+            val found = _municipios.value!!.contains(municipio)
+            _municipioIsValid.value = found
+            checkAllValid()
+            return found
+
         }
 
         private fun checkApellidosIsValid(): Boolean {

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="52dp"
         android:paddingLeft="40dp"
-        android:text="Registrar Desaparecido"
+        android:text="Modificar Perfil"
         android:textAlignment="textStart"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +59,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="174dp"
                         android:layout_height="wrap_content"
-                        android:hint="p.e: Ignacio" />
+                        android:hint="p.e: Ignacio"
+                        android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -92,7 +93,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="270dp"
                         android:layout_height="match_parent"
-                        android:hint="p.e: Pascual Utiel" />
+                        android:hint="p.e: Pascual Utiel"
+                        android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -129,7 +131,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="nch@gmail.com"
-                            android:inputType="number" />
+                            android:inputType="text|textPassword" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
@@ -195,12 +197,12 @@
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recyclerModMunicipio"
-                            android:layout_width="90dp"
+                            android:layout_width="54dp"
                             android:layout_height="86dp" />
 
                         <SearchView
                             android:id="@+id/buscadorModMunicipio"
-                            android:layout_width="100dp"
+                            android:layout_width="133dp"
                             android:layout_height="wrap_content">
 
                         </SearchView>
@@ -274,7 +276,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="nch@gmail.com"
-                        android:inputType="number" />
+                        android:inputType="text|textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>

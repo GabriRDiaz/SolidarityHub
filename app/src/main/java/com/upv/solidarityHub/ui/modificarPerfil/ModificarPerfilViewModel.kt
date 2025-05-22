@@ -63,7 +63,7 @@ class ModificarPerfilViewModel : ViewModel() {
         return model.confirmarModificacion()
     }
 
-    fun setOriginalValues() {
+    fun setOriginalUserValues() {
         model.setOriginalUsuarioValues()
     }
 
