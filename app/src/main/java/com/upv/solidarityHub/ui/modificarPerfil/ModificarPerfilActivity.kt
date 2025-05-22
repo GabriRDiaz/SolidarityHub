@@ -1,9 +1,11 @@
 package com.upv.solidarityHub.ui.modificarPerfil
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.SearchView
@@ -166,6 +168,7 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
         })
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initializeSearchView() {
         recyclerView = findViewById(R.id.recyclerModMunicipio)
 
@@ -197,6 +200,21 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
                 return true
             }
         })
+
+        showPassButton.setOnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_UP -> {
+                    contrasenaField.editText!!.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    true
+                }
+
+                MotionEvent.ACTION_DOWN -> {
+                    contrasenaField.editText!!.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    true
+                }
+                else -> false
+            }
+        }
 
         suggestionAdapter.updateSuggestions(listOf(SupabaseAPI().getLogedUser().municipio))
 

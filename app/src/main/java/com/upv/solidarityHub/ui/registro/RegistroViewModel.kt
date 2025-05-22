@@ -17,179 +17,62 @@ import com.upv.solidarityHub.utils.strategy.*
 
 class RegistroViewModel : ViewModel() {
 
-    private val _correo = MutableLiveData<String>()
-    private val _nombre = MutableLiveData<String>()
-    private val _apellidos = MutableLiveData<String>()
-    private val _contrasena = MutableLiveData<String>()
-    private val _repContrasena = MutableLiveData<String>()
-    private val _fechaNacimiento = MutableLiveData<String>("")
-    private val _municipio = MutableLiveData<String>()
-    private val _municipios = MutableLiveData<Array<String?>>()
+    private val model: RegistroModel = RegistroModel()
 
-    private val _correoIsValid = MutableLiveData<Boolean>(false)
-    private val _nombreIsValid = MutableLiveData<Boolean>(true)
-    private val _apellidosIsValid = MutableLiveData<Boolean>(true)
-    private val _contrasenaIsValid = MutableLiveData<Boolean>(false)
-    private val _repContrasenaIsValid = MutableLiveData<Boolean>(false)
-    private val _municipioIsValid = MutableLiveData<Boolean>(false)
-    private val _showToast = MutableLiveData<Boolean>(false)
-    private val _toastMessage = MutableLiveData<String>("")
-    private val _registryFinalized = MutableLiveData<Boolean>(false)
+    val correo: LiveData<String> get() = model._correo
+    val nombre: LiveData<String> get() = model._nombre
+    val apellidos: LiveData<String> get() = model._apellidos
+    val contrasena: LiveData<String> get() = model._apellidos
+    val repContrasena: LiveData<String> get() = model._contrasena
+    val fechaNacimiento: LiveData<String> get() = model._fechaNacimiento
+    val municipio: LiveData<String> get() = model._municipio
+    val municipios: LiveData<Array<String?>> get() = model._municipios
+    val toastMessage: LiveData<String> get() = model._toastMessage
 
+    val correoIsValid: LiveData<Boolean> get() = model._correoIsValid
+    val nombreIsValid: LiveData<Boolean> get() = model._nombreIsValid
+    val apellidosIsValid: LiveData<Boolean> get() = model._apellidosIsValid
+    val contrasenaIsValid: LiveData<Boolean> get() = model._contrasenaIsValid
+    val repContrasenaIsValid: LiveData<Boolean> get() = model._repContrasenaIsValid
+    val municipioIsValid: LiveData<Boolean> get() = model._municipioIsValid
+    val fechaNacimientoIsValid: LiveData<Boolean> get() = model._fechaNacimientoIsValid
+    val allIsValid: LiveData<Boolean> get() = model._allIsValid
+    val registryFinalized: LiveData<Boolean> get() = model._registryFinalized
 
-    private val _fechaNacimientoIsValid = MutableLiveData<Boolean>(false)
-    private val _allIsValid = MutableLiveData<Boolean>(false)
-
-    val correo: LiveData<String> get() = _correo
-    val nombre: LiveData<String> get() = _nombre
-    val apellidos: LiveData<String> get() = _apellidos
-    val contrasena: LiveData<String> get() = _apellidos
-    val repContrasena: LiveData<String> get() = _contrasena
-    val fechaNacimiento: LiveData<String> get() = _fechaNacimiento
-    val municipio: LiveData<String> get() = _municipio
-    val municipios: LiveData<Array<String?>> get() = _municipios
-    val toastMessage: LiveData<String> get() = _toastMessage
-
-    val correoIsValid: LiveData<Boolean> get() = _correoIsValid
-    val nombreIsValid: LiveData<Boolean> get() = _nombreIsValid
-    val apellidosIsValid: LiveData<Boolean> get() = _apellidosIsValid
-    val contrasenaIsValid: LiveData<Boolean> get() = _contrasenaIsValid
-    val repContrasenaIsValid: LiveData<Boolean> get() = _repContrasenaIsValid
-    val municipioIsValid: LiveData<Boolean> get() = _municipioIsValid
-    val fechaNacimientoIsValid: LiveData<Boolean> get() = _fechaNacimientoIsValid
-    val allIsValid: LiveData<Boolean> get() = _allIsValid
-    val showToast: LiveData<Boolean> get() = _showToast
-    val registryFinalized: LiveData<Boolean> get() = _registryFinalized
-
-
-    val db: DatabaseAPI = SupabaseAPI()
-
-
-    fun updateCorreo(newCorreo: String) {
-        _correo.value = newCorreo
-        _correoIsValid.value = checkCorreoIsValid()
-        checkAllValid()
+    fun updateCorreo(correo: String) {
+        model.updateCorreo(correo)
     }
 
-    fun updateNombre(newNombre: String) {
-        _nombre.value = newNombre
-        _nombreIsValid.value = checkNombreIsValid()
-        checkAllValid()
+    fun updateNombre(nombre: String) {
+        model.updateNombre(nombre)
     }
 
-    fun updateApellidos(newApellidos: String) {
-        _apellidos.value = newApellidos
-        _apellidosIsValid.value = checkApellidosIsValid()
-        checkAllValid()
+    fun updateApellidos(apellidos: String) {
+        model.updateApellidos(apellidos)
     }
 
-    fun updateContrasena(newContrasena: String) {
-        _contrasena.value = newContrasena
-        _contrasenaIsValid.value = checkContrasenaIsValid()
-        checkAllValid()
+    fun updateContrasena(contrasena: String) {
+        model.updateContrasena(contrasena)
     }
 
-    fun updateRepContrasena(newRepContrasena: String) {
-        _repContrasena.value = newRepContrasena
-        _repContrasenaIsValid.value = checkRepContrasenaIsValid()
-        checkAllValid()
+    fun updateRepContrasena(repContrasena: String) {
+        model.updateRepContrasena(repContrasena)
     }
 
-    fun updateFechaNacimiento(newFechaNacimiento: String) {
-        _fechaNacimiento.value = newFechaNacimiento
-        checkFechaNacimientoIsValid()
-        checkAllValid()
+    fun updateFechaNacimiento(fecha: String) {
+        model.updateFechaNacimiento(fecha)
     }
 
-    fun updateMunicipio(newMunicipio: String) {
-        _municipio.value = newMunicipio
-        checkMunicipioIsValid()
-        checkAllValid()
+    fun updateMunicipio(municipio: String) {
+        model.updateMunicipio(municipio)
     }
 
-    fun updateMunicipiosList(newMunicipio: Array<String?>) {
-        _municipios.value = newMunicipio
+    fun updateMunicipiosList(municipios: Array<String?>) {
+        model.updateMunicipiosList(municipios)
     }
 
-    fun checkCorreoIsValid(): Boolean {
-        val correo = _correo.value;
-        if(correo != null){
-            var validate = FormField("email",correo,EmailValidator());
-            Log.d("LOG DEBUG", validate.isValid().toString())
-            return validate.isValid();
-        }
-        return false;
-    }
-
-    fun checkNombreIsValid(): Boolean {
-        val nombre = _nombre.value
-        if(nombre!=null){
-            var validate = FormField("nombre",nombre,NameValidator());
-            return validate.isValid();
-        }
-        return false;
-    }
-
-    fun checkApellidosIsValid(): Boolean {
-        val apellidos = _apellidos.value
-        if(apellidos!=null){
-            var validate = FormField("apellidos",apellidos,NameValidator());
-            return validate.isValid()
-        }
-        return false;
-    }
-
-    fun checkContrasenaIsValid(): Boolean {
-        val password = _contrasena.value
-        if(password!=null){
-            var validate = FormField("password",password,PasswordValidator());
-            return validate.isValid()
-        }
-        return false;
-    }
-
-    fun checkRepContrasenaIsValid(): Boolean {
-        val res = _contrasena.value == _repContrasena.value
-        _repContrasenaIsValid.value = res
-        return res
-    }
-
-    fun checkFechaNacimientoIsValid(): Boolean {
-        val res = _fechaNacimiento.value != ""
-        _fechaNacimientoIsValid.value = res
-        return res
-    }
-
-    fun checkMunicipioIsValid():Boolean {
-        val res = _municipios.value!!.contains(_municipio.value)
-        _municipioIsValid.value = res
-        return res
-    }
-
-    fun checkAllValid(): Boolean {
-        val res = _nombreIsValid.value!! && _correoIsValid.value!! && _apellidosIsValid.value!! && _contrasenaIsValid.value!! && _repContrasenaIsValid.value!! && _fechaNacimientoIsValid.value!! && _municipioIsValid.value!!
-        _allIsValid.value = res
-        return res
-    }
-
-    suspend fun registrarse() {
-        var successfullRegistry = false
-        var foundExistingUser = true
-
-        try{
-            db.getUsuarioByCorreo(_correo.value!!) != null
-        } catch (e: NoSuchElementException){
-            foundExistingUser = false
-            successfullRegistry = db.registerUsuario(_correo.value!!, _nombre.value!!, _apellidos.value!!, _contrasena.value!!, _fechaNacimiento.value!!,_municipio.value!!)
-            if (successfullRegistry) {
-                _registryFinalized.value = true
-            }
-
-        }
-
-        if(foundExistingUser) throw Exception("User already registered")
-
-
+    fun registrarse() {
+        model.registrarse()
     }
 
 }

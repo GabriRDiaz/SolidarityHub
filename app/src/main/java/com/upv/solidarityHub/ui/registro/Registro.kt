@@ -135,7 +135,7 @@ class Registro : AppCompatActivity(), DatePickerHandler {
 
         correoField.editText!!.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
-                if(!viewModel.checkCorreoIsValid())  {
+                if(!viewModel.correoIsValid.value!!)  {
                     correoField.isErrorEnabled = true
                     correoField.editText!!.error = "Correo no válido"
 
@@ -153,7 +153,7 @@ class Registro : AppCompatActivity(), DatePickerHandler {
 
         contrasenaField.editText!!.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
-              if(!viewModel.checkContrasenaIsValid())  {
+              if(!viewModel.contrasenaIsValid.value!!)  {
                   contrasenaField.isErrorEnabled = true
                   contrasenaField.editText!!.error = "Debe contener más de 8 caracteres, una mayúscula, un número y un caracter especial (,.-:;)"
 
@@ -171,7 +171,7 @@ class Registro : AppCompatActivity(), DatePickerHandler {
 
         repContrasenaField.editText!!.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
-                if(!viewModel.checkRepContrasenaIsValid())  {
+                if(!viewModel.repContrasenaIsValid.value!!)  {
                     repContrasenaField.isErrorEnabled = true
                     repContrasenaField.editText!!.error = "Las contraseñas no coinciden"
 
@@ -233,13 +233,7 @@ class Registro : AppCompatActivity(), DatePickerHandler {
         }
 
         registrarseButton.setOnClickListener {
-            Log.d(TAG, "Click")
-            runBlocking {
-                val deferred1 = async {
-                viewModel.registrarse()
-                }
-                deferred1.await()
-            }
+            viewModel.registrarse()
         }
 
         botonIrLogearse.setOnClickListener {
@@ -297,7 +291,6 @@ class Registro : AppCompatActivity(), DatePickerHandler {
             registrarseButton.isEnabled = newAllIsValid
         })
     }
-
 
     private fun initializeSearchView() {
         recyclerView = findViewById(R.id.recyclerMunicipio)
