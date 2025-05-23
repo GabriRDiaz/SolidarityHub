@@ -9,6 +9,7 @@
     android:background="@android:color/white"
     android:padding="16dp">
 
+    <!-- Filtro -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/filterCard"
         android:layout_width="match_parent"
@@ -18,6 +19,7 @@
         app:cardElevation="4dp"
         android:layout_marginBottom="16dp">
 
+        <!-- Contenido filtro municipio -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,25 +65,30 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Lista de grupos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listaGruposAyuda"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="450dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="16dp"
         android:clipToPadding="false"
         android:paddingBottom="88dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonBar"
+        app:layout_constraintBottom_toTopOf="@+id/actionsGroupCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/filterCard" />
 
+    <!-- Acciones sobre el grupo seleccionado -->
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/buttonBar"
+        android:id="@+id/actionsGroupCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="16dp"
-        app:cardBackgroundColor="@android:color/white"
-        app:cardElevation="8dp">
+        app:layout_constraintBottom_toTopOf="@+id/actionsGeneralCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:cardElevation="8dp"
+        android:layout_marginBottom="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Detalles"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_marginEnd="4dp"/>
 
             <com.google.android.material.button.MaterialButton
@@ -105,9 +112,28 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Unirse"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"/>
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_marginStart="4dp"/>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Acciones generales -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/actionsGeneralCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:cardElevation="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="8dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/botonVerGrupos"
@@ -115,18 +141,20 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Mis Grupos"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_marginStart="4dp"/>
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_marginEnd="4dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/botonCrearGrupo"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Crear"
-                style="@style/Widget.MaterialComponents.Button"
                 android:layout_marginStart="4dp"
-                android:icon="@drawable/baseline_add_24"/>
+                android:layout_weight="1"
+                android:icon="@drawable/baseline_add_24"
+                android:text="Crear"
+                app:iconGravity="textTop" />
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

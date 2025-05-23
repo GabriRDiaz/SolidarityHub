@@ -560,5 +560,29 @@ class SupabaseAPI : DatabaseAPI {
         return !error
     }
 
+    public override suspend fun getAllTareas(): List<taskDB>? {
+        initializeDatabase()
+        val tareas = supabase?.from("Task")?.select(Columns.ALL)?.decodeList<taskDB>()
+        return tareas;
+    }
+
+    public suspend override fun eliminarTarea(id: Int): Boolean {
+        return try {
+            initializeDatabase()
+            supabase?.from("Task")?.delete {
+                filter { eq("id", id) }
+            }
+            true
+        } catch (e: Exception) {
+            Log.e("Supabase", "Error eliminando tarea", e)
+            false
+        }
+    }
+
+    public override suspend fun getAllSolicitudes(): List<reqDB>? {
+        initializeDatabase()
+        val solicitudes = supabase?.from("Solicituddeayuda")?.select(Columns.ALL)?.decodeList<reqDB>()
+        return solicitudes;
+    }
 
 }
