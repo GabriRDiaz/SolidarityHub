@@ -71,8 +71,6 @@ class SupabaseAPI : DatabaseAPI {
 
     @Serializable
     data class assignedDB(
-        val id: Int?,
-        val created_at: String? = null,
         val id_user : String?,
         val id_task: Int?,
         val estado: String
@@ -356,8 +354,9 @@ class SupabaseAPI : DatabaseAPI {
     public override suspend fun registrarTask(task : taskReq, req : reqDB): taskDB? {
         initializeDatabase()
         try{
-            val date = task.calendarToDateString(task.date)
-            val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,date, date, "10:00")
+            val initialDate = task.calendarToDateString(task.initialDate)
+            val finalDate = task.calendarToDateString(task.finalDate)
+            val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,initialDate, finalDate, task.calendarToDateString(task.initialDate))
 
             try{
                 supabase?.from("Task")?.insert(taskDB)
@@ -406,8 +405,15 @@ class SupabaseAPI : DatabaseAPI {
     }
 
     public override suspend fun createIsAssigned(idTask: Int, user: Usuario){
-        val res = assignedDB(getLastId("tieneAsignado")?.plus(1),null,user.correo,idTask,"pendiente")
-        supabase?.from("tieneAsignado")?.insert(res)
+        initializeDatabase()
+        try{
+            val res = assignedDB(user.correo,idTask,"pendiente")
+            supabase?.from("tieneAsignado")?.insert(res)
+        }
+        catch (e: Exception) {
+            Log.e("SupabaseAPI", "Error al crear asignación", e)
+            false
+        }
     }
 
     public override suspend fun getTaskById(id: Int): taskDB? {
@@ -529,6 +535,47 @@ class SupabaseAPI : DatabaseAPI {
         }
         return result
     }
+
+    public override suspend fun getUsersWithAbility(categoria: String): List<String>? {
+        initializeDatabase()
+        val users = supabase
+            ?.from("Habilidad")
+            ?.select(columns = Columns.list("correo_usuario")) {
+                filter {
+                    eq("nombre_habilidad", categoria)
+                }
+            }
+            ?.decodeList<Map<String, String>>()
+            ?.mapNotNull { it["correo_usuario"] }
+
+        return users
+    }
+
+    public override suspend fun getUsersTown(town: String): List<String>? {
+        initializeDatabase()
+        val users = supabase
+            ?.from("Usuario")
+            ?.select(columns = Columns.list("correo")) {
+                filter {
+                    eq("municipio", town)
+                }
+            }
+            ?.decodeList<Map<String, String>>()
+            ?.mapNotNull { it["municipio"] }
+
+        return users
+    }
+
+    public override suspend fun deleteTask(id: Int): Boolean {
+        initializeDatabase()
+        supabase?.from("Task")?.delete {
+            filter {
+                eq("id", id)
+            }
+        }
+        return true
+    }
+
 
 
     public override fun updateUsuario(usuario: Usuario, habilidades: List<Habilidad>?): Boolean {

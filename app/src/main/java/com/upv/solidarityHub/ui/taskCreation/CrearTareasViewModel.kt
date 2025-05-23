@@ -1,8 +1,12 @@
 package com.upv.solidarityHub.ui.taskCreation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.upv.solidarityHub.assignationAlgorythm
+import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.taskReq
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -17,16 +21,35 @@ class CrearTareasViewModel : ViewModel(){
     var schedule : String = "Cualquiera"
     var localTown : String = ""
 
+    private val requiredHabilityList = listOf(
+        "Reconstrucción",
+        "Primeros auxilios",
+        "Asistencia a mayores",
+        "Asistencia a discapacitados",
+        "Transporte"
+    )
+
     var townInList : Boolean = false
 
     private lateinit var localCoord : String
-    lateinit var localCalendar : Calendar
+    lateinit var localStartCalendar : Calendar
+    lateinit var localEndCalendar : Calendar
 
     private var req: taskReq? = null
 
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    private val db = SupabaseAPI()
+
+    var currentTaskIndex = 0
+    var isEditing = false
+    lateinit var taskIdList: List<Int>
+
+    private val _failedAssignments = mutableListOf<Int>()
+    val failedAssignments: List<Int> get() = _failedAssignments
+
 
     fun updateCat(newCat: String){
         cat = newCat
@@ -44,8 +67,9 @@ class CrearTareasViewModel : ViewModel(){
         schedule = newSchedule
     }
 
-    fun updateCalendar(calendar: Calendar){
-        localCalendar = calendar
+    fun updateStartAndEndCalendar(startCalendar: Calendar, endCalendar: Calendar){
+        localStartCalendar = startCalendar
+        localEndCalendar = endCalendar
     }
 
     fun validCoordinates(lat: Double?, long: Double?):Boolean{
@@ -138,7 +162,8 @@ class CrearTareasViewModel : ViewModel(){
             size,
             unwrappedLat,
             unwrappedLong,
-            localCalendar,
+            localStartCalendar,
+            localEndCalendar,
             null
         )
         if(req != null){
@@ -206,12 +231,20 @@ class CrearTareasViewModel : ViewModel(){
         localCoord = coord
     }
 
-    fun dateInitialized(): Boolean{
-        return ::localCalendar.isInitialized
+    fun startDateInitialized(): Boolean{
+        return ::localStartCalendar.isInitialized
+    }
+
+    fun finalDateInitialized(): Boolean{
+        return ::localEndCalendar.isInitialized
     }
 
     fun coordInitialized(): Boolean{
         return ::localCoord.isInitialized
+    }
+
+    fun dateInitialized(): Boolean{
+        return finalDateInitialized() && startDateInitialized()
     }
 
     public fun buttonConditions():Boolean{
@@ -222,15 +255,105 @@ class CrearTareasViewModel : ViewModel(){
         return localCoord
     }
 
-    public fun getCal() : Calendar{
-        return localCalendar
+    public fun getStartingCal() : Calendar{
+        return localStartCalendar
     }
+
+    public fun getFinishingCal() : Calendar{
+        return localStartCalendar
+    }
+
+    suspend fun prepareAssignment(taskID: Int): Pair<assignationAlgorythm, List<Usuario>>? {
+        val alg = assignationAlgorythm.create(taskID)
+        val users = alg?.getSelectedUsers().orEmpty()
+
+        return if (users.isNotEmpty() && alg != null) {
+            Pair(alg, users)
+        } else {
+            deleteTask(taskID)
+            null
+        }
+    }
+
+    private suspend fun deleteTask(taskID: Int) {
+        try {
+            SupabaseAPI().deleteTask(taskID) // Add this function in SupabaseAPI
+            _eventFlow.emit(UiEvent.ShowToast("Task deleted (no volunteers available)"))
+        } catch (e: Exception) {
+            Log.e("TaskDeletion", "Failed to delete task $taskID", e)
+            _eventFlow.emit(UiEvent.ShowToast("Failed to clean up task"))
+        }
+    }
+
+    public suspend fun IDToTaskName(taskID: Int): String?{
+        var task = db.getTaskById(taskID)
+        var helpReq = task?.og_req?.let { db.getHelpReqById(it) }
+        if (helpReq != null) {
+            return helpReq.titulo
+        }
+        return null
+    }
+
+    public suspend fun columnNumber(taskID: Int): Int {
+        val task = db.getTaskById(taskID) ?: return -1
+        val helpReq = task.og_req?.let { db.getHelpReqById(it) } ?: return -1
+
+        return if (helpReq.categoria in requiredHabilityList) {
+            3
+        } else {
+            2
+        }
+    }
+
+    public suspend fun IDToTaskCat(taskID: Int): String?{
+        var task = db.getTaskById(taskID)
+        var helpReq = task?.og_req?.let { db.getHelpReqById(it) }
+        if (helpReq != null) {
+            return helpReq.categoria
+        }
+        return null
+    }
+
+    fun initializeTaskFlow(taskReq: taskReq?){
+        taskReq?.taskIDList?.let{
+            taskIdList = it
+            currentTaskIndex = 0
+            isEditing = false
+        }
+    }
+
+    fun getNextTask(): Int?{
+        return if (!haveAllTasksBeenAssigned() && !isEditing){
+            taskIdList[currentTaskIndex]
+        }
+        else{
+            null
+        }
+    }
+
+    fun onTaskCompleted(){
+        currentTaskIndex++
+    }
+
+    fun onEditStarted(){
+        isEditing = true
+    }
+
+    fun onEditFinished(){
+        isEditing = false
+        onTaskCompleted()
+    }
+
+    fun haveAllTasksBeenAssigned(): Boolean{
+        return currentTaskIndex >= taskIdList.size
+    }
+
+    fun clearFailedAssignments(){
+        _failedAssignments.clear()
+    }
+
 
     sealed class UiEvent {
         data class ShowToast(val message: String) : UiEvent()
     }
-
-
-
-
 }

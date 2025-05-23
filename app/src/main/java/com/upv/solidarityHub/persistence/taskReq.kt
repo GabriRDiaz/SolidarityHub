@@ -19,7 +19,8 @@ class taskReq private constructor(
     val size : String? = null,
     val lat : Double,
     val long : Double,
-    val date : Calendar,
+    val initialDate : Calendar,
+    val finalDate: Calendar,
     var taskIDList: List<Int>?
 ){
     companion object{
@@ -31,11 +32,11 @@ class taskReq private constructor(
             size : String?,
             lat : Double,
             long : Double,
-            date : Calendar,
+            initialDate : Calendar,
+            finalDate: Calendar,
             taskIDList: List<Int>?
         ): taskReq? {
-            val instance = taskReq(id = null, cat, town, priority,schedule,size,lat,long,date, null)
-            System.out.println("$cat, $town, $priority, $schedule, $size, $lat, $long, $date")
+            val instance = taskReq(id = null, cat, town, priority,schedule,size,lat,long,initialDate,finalDate,null)
             val list = db.helpReqsToTasks(instance)
             if(list != null && list.isNotEmpty()){
                 instance.taskIDList = getIDsFromTaskList(list)
@@ -51,6 +52,11 @@ class taskReq private constructor(
     }
 
     fun calendarToDateString(calendar: Calendar, format: String = "dd/MM/yyyy"): String {
+        val sdf = SimpleDateFormat(format, Locale.getDefault())
+        return sdf.format(calendar.time)
+    }
+
+    fun calendarToHourMinuteString(calendar: Calendar, format: String = "HH:mm"): String {
         val sdf = SimpleDateFormat(format, Locale.getDefault())
         return sdf.format(calendar.time)
     }

@@ -2,6 +2,7 @@ package com.upv.solidarityHub.ui.taskCreation
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -14,6 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.SearchView
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,17 +24,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.upv.solidarityHub.R
+import com.upv.solidarityHub.assignationAlgorythm
 import com.upv.solidarityHub.persistence.FileReader
+import com.upv.solidarityHub.persistence.MultiColumnAdapter
+import com.upv.solidarityHub.persistence.Usuario
+import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.taskReq
 import com.upv.solidarityHub.utils.municipioSpinner.SuggestionAdapter
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.IOException
 import java.util.Calendar
 
 /**
  * A simple [Fragment] subclass.
  * Use the [CrearTareasFragment.newInstance] factory method to
- * create an instance of this fragment.
  */
 class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
     private lateinit var viewModel: CrearTareasViewModel
@@ -65,39 +71,25 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_crear_tareas, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.fragment_crear_tareas, container, false)
+    }
 
-        viewModel = ViewModelProvider(requireActivity()).get(CrearTareasViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        findComponents(rootView)
-
+        viewModel = ViewModelProvider(this).get(CrearTareasViewModel::class.java)
+        findComponents(view)
         setListeners()
-
         setSpinners()
-
         setLocationUI()
 
-        okButton.isEnabled = false
-
-        resetSpinners()
-
-        lifecycleScope.launchWhenStarted {
-            viewModel.eventFlow.collect { event ->
-                when (event) {
-                    is CrearTareasViewModel.UiEvent.ShowToast -> {
-                        Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
+        parentFragmentManager.setFragmentResultListener("task_edit_complete", viewLifecycleOwner) { _, _ ->
+            onEditComplete()
         }
-
-        return rootView
-
     }
+
+
 
     companion object {
     }
@@ -206,7 +198,7 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
 
     private fun setListeners() {
         dateButton.setOnClickListener {
-            openDatePicker()
+            openDateTimeRangePicker()
         }
 
         locationButton.setOnClickListener {
@@ -284,11 +276,13 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
         okButton.setOnClickListener {
             lifecycleScope.launch {
                 val r = viewModel.createTaskReq()
-                var lat = viewModel.extractLatitude(coord)
-                var long = viewModel.extractLongitude(coord)
+                val lat = viewModel.extractLatitude(coord)
+                val long = viewModel.extractLongitude(coord)
+
                 if (r != null) {
-                    goToTemp(r)
-                } else if (viewModel.validCoordinates(lat,long)) {
+                    viewModel.initializeTaskFlow(r)
+                    processTasks()
+                } else if (viewModel.validCoordinates(lat, long)) {
                     Toast.makeText(
                         requireContext(),
                         "No se han encontrado solicitudes que cumplan los criterios",
@@ -308,50 +302,57 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
         findNavController().navigate(R.id.action_crearTareasFragment_to_adminMenu)
     }
 
-    private fun goToTemp(r: taskReq) {
-        val bundle = Bundle()
-        bundle.putSerializable("list", ArrayList(r.taskIDList))
-        findNavController().navigate(R.id.action_crearTareasFragment_to_tempTaskFragment, bundle)
-    }
-
-    private fun openDatePicker(){
-
-        val year: Int
-        val month: Int
-        val day: Int
-
-        if(!viewModel.dateInitialized()){
-            val c = Calendar.getInstance()
-            year = c.get(Calendar.YEAR)
-            month = c.get(Calendar.MONTH)
-            day = c.get(Calendar.DAY_OF_MONTH)
-        }
-        else{
-            var cal = viewModel.getCal()
-            year = cal.get(Calendar.YEAR)
-            month = cal.get(Calendar.MONTH)
-            day = cal.get(Calendar.DAY_OF_MONTH)
-        }
-
-
-        val dialog = DatePickerDialog(
-            requireContext(),
-            { view, year, monthOfYear, dayOfMonth ->
-            }, year, month, day
+    private fun goToTemp(taskID: Int, userList: List<Usuario>) {
+        findNavController().navigate(
+            R.id.action_crearTareasFragment_to_tempTaskFragment,
+            tempTaskFragment.newInstance(ArrayList(userList), taskID).arguments
         )
-
-        dialog.setOnDateSetListener { view, year, month, dayOfMonth ->
-            var cal = Calendar.getInstance().apply {
-                set(year,month,dayOfMonth)
-            }
-            viewModel.updateCalendar(cal)
-            buttonConditions()
-        }
-
-        dialog.show()
-
-
     }
+
+    private fun openDateTimeRangePicker() {
+        val c = Calendar.getInstance()
+
+        val startYear = c.get(Calendar.YEAR)
+        val startMonth = c.get(Calendar.MONTH)
+        val startDay = c.get(Calendar.DAY_OF_MONTH)
+
+        val startDatePicker = DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+            val startCal = Calendar.getInstance().apply {
+                set(year, month, dayOfMonth)
+            }
+
+            val startTimePicker = TimePickerDialog(requireContext(), { _, hourOfDay, minute ->
+                startCal.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                startCal.set(Calendar.MINUTE, minute)
+
+                val endDatePicker = DatePickerDialog(requireContext(), { _, endYear, endMonth, endDay ->
+                    val endCal = Calendar.getInstance().apply {
+                        set(endYear, endMonth, endDay) }
+
+                    if (endCal.before(startCal)) {
+                        Toast.makeText(requireContext(), "La fecha final debe ser posterior a la fecha de inicio", Toast.LENGTH_SHORT).show()
+                    } else {
+                        viewModel.updateStartAndEndCalendar(startCal, endCal)
+                        buttonConditions()
+                    }
+
+                }, year, month, dayOfMonth)
+
+                endDatePicker.datePicker.minDate = startCal.timeInMillis
+                endDatePicker.setTitle("Selecciona una fecha final")
+                endDatePicker.show()
+
+            }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true)
+
+            startTimePicker.setTitle("Seleccione una hora de inicio")
+            startTimePicker.show()
+
+        }, startYear, startMonth, startDay)
+
+        startDatePicker.setTitle("Seleccione una fecha de inicio")
+        startDatePicker.show()
+    }
+
 
     private fun openCoordDialog(){
         val editText = EditText(requireContext())
@@ -383,7 +384,112 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
         scheduleSpinner.setSelection(0) // Reset to "Cualquiera"
     }
 
+    suspend fun Fragment.showMultiColumnPopupSuspend(
+        users: List<Usuario>,
+        columnsCount: Int,
+        taskName: String,
+        taskCat: String
+    ): String? = suspendCancellableCoroutine { cont ->
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.custom_popup, null)
+        val titleText = dialogView.findViewById<TextView>(R.id.taskNamePopup)
+        titleText.text = taskName
+        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recyclerViewPopup)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        System.out.println("User list size: ${users.size}")
+        users.forEach { System.out.println("User: ${it.nombre}, ${it.municipio}") }
+        recyclerView.adapter = MultiColumnAdapter(users, columnsCount, taskCat )
 
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setPositiveButton("OK") { _, _ ->
+                cont.resume("OK", null)
+            }
+            .setNeutralButton("Editar") { _, _ ->
+                cont.resume("Editar", null)
+            }
+            .setOnCancelListener {
+                cont.resume(null, null)
+            }
+            .create().show()
+    }
+
+    private suspend fun processTasks() {
+        var taskId: Int?
+        while (true) {
+            taskId = viewModel.getNextTask() ?: break
+
+            val prepared = viewModel.prepareAssignment(taskId)
+
+            if(prepared == null){
+                showNoUsersLeftPopUp()
+                viewModel.onTaskCompleted()
+                continue
+            }
+            val (alg, users) = prepared
+
+            when (showTaskPopup(alg, users, taskId)) {
+                "OK" -> {
+                    assignUsers(alg, users)
+                    viewModel.onTaskCompleted()
+                }
+                "Editar" -> {
+                    viewModel.onEditStarted()
+                    goToTemp(taskId, users)
+                    break
+                }
+            }
+        }
+        if(viewModel.haveAllTasksBeenAssigned()){
+            Toast.makeText(
+                requireContext(),
+                "Se han asignado usuarios a todas las tareas",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+    }
+
+
+    private suspend fun assignUsers(alg: assignationAlgorythm, users: List<Usuario>) {
+        val taskId = alg.getCurrentTask().id
+        users.forEach { user ->
+            try {
+                if (taskId != null) {
+                    SupabaseAPI().createIsAssigned(taskId, user)
+                }
+            } catch (e: Exception) {
+                Log.e("AssignError", "Failed to assign user ${user.correo}", e)
+            }
+        }
+    }
+
+    private suspend fun showTaskPopup(
+        alg: assignationAlgorythm,
+        users: List<Usuario>,
+        taskId: Int
+    ): String? {
+        return viewModel.IDToTaskName(taskId)?.let { taskName ->
+            showMultiColumnPopupSuspend(
+                users,
+                viewModel.columnNumber(taskId),
+                taskName,
+                viewModel.IDToTaskCat(taskId)!!
+            )
+        }
+    }
+
+    private fun onEditComplete() {
+        viewModel.onEditFinished()
+        lifecycleScope.launch { processTasks() }
+    }
+
+    private fun showNoUsersLeftPopUp() {
+        Toast.makeText(
+            requireContext(),
+            "Tarea eliminada (no se han encontrado usuarios suficientes). Intente recrearla más tarde.",
+            Toast.LENGTH_LONG
+        ).show()
+    }
 
 
 }

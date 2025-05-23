@@ -2,6 +2,7 @@ package com.upv.solidarityHub.ui.taskCreation
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,7 +20,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.upv.solidarityHub.R
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
 
 // TODO: Rename parameter arguments, choose names that match
@@ -24,7 +31,7 @@ import kotlin.properties.Delegates
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-private var UserAdapter: tempTaskFragment.userAdapter? = null
+private var UserAdapter: tempTaskFragment.UserAdapter? = null
 
 private lateinit var tempRecycler : RecyclerView
 private lateinit var buttonOK: Button
@@ -32,7 +39,6 @@ private lateinit var textTask: TextView
 
 private val db: SupabaseAPI = SupabaseAPI()
 
-private var currentTask by Delegates.notNull<Int>()
 
 /**
  * A simple [Fragment] subclass.
@@ -40,216 +46,252 @@ private var currentTask by Delegates.notNull<Int>()
  * create an instance of this fragment.
  */
 class tempTaskFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var userList: List<Usuario>
+    private lateinit var listAllUsers: List<Usuario>
+    private var currentMaxSize by Delegates.notNull<Int>()
+    private var currentMinSize by Delegates.notNull<Int>()
+    private var taskId by Delegates.notNull<Int>()
+    private lateinit var userAdapter: UserAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var currentTask: SupabaseAPI.taskDB? = null
+    private var currentHelpReq: SupabaseAPI.reqDB? = null
 
-    private lateinit var taskIDList: List<Int>
-    private var currentSize by Delegates.notNull<Int>()
+    private val requiredHabilityList = listOf(
+        "Reconstrucción",
+        "Primeros auxilios",
+        "Asistencia a mayores",
+        "Asistencia a discapacitados",
+        "Transporte"
+    )
 
-
+    private val viewModel: TempTaskViewModel by viewModels()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val rootView = inflater.inflate(R.layout.fragment_temp_task, container, false)
-
-        taskIDList = arguments?.getSerializable("list") as? ArrayList<Int> ?: emptyList()
-
-        currentTask = taskIDList.first()
-
-        lifecycleScope.launch{
-            try{
-                setSize()
-                findComponents(rootView)
-                setText()
-            }
-            catch(e: Exception){
-                println("Error loading users: ${e.message}")
-            }
-        }
-
-
-
-        return rootView
+    ): View {
+        return inflater.inflate(R.layout.fragment_temp_task, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment tempTaskFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            tempTaskFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        userList = arguments?.getSerializable("list") as? ArrayList<Usuario> ?: emptyList()
+        taskId = arguments?.getInt("taskID") ?: -1
+
+
+        lifecycleScope.launch {
+            try {
+                currentTask = getCurrentTask()
+                currentHelpReq = getCurrentReq()
+                initializeViews(view)
+                listAllUsers = viewModel.getAllAvailableUsers()
+                setupRecyclerView()
+                setupButton()
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error loading data", Toast.LENGTH_SHORT).show()
+                Log.e("TempTaskFragment", "Error: ${e.message}")
+            }
+        }
+    }
+
+
+    private suspend fun initializeViews(view: View) {
+        currentMaxSize = when (currentHelpReq?.envergadura) {
+            "Pequeña (5 voluntarios máx.)" -> 5
+            "Media (15 voluntarios máx.)" -> 15
+            "Grande (15+ voluntarios)" -> 50
+            else -> 0
+        }
+
+        currentMinSize = when (currentHelpReq?.envergadura) {
+            "Pequeña (5 voluntarios máx.)" -> 1
+            "Media (15 voluntarios máx.)" -> 6
+            "Grande (15+ voluntarios)" -> 16
+            else -> 0
+        }
+
+        view.findViewById<TextView>(R.id.textTaskTemp).text = "Tarea: ${currentHelpReq?.titulo}"
+    }
+
+
+    private suspend fun getCurrentTask(): SupabaseAPI.taskDB? {
+        return SupabaseAPI().getTaskById(taskId)
+    }
+
+    private suspend fun getCurrentReq(): SupabaseAPI.reqDB? {
+        return currentTask?.og_req?.let { SupabaseAPI().getHelpReqById(it) }
+    }
+
+    private fun setupRecyclerView() {
+        val requiresAbility = viewModel.taskRequiresAbility()
+        userAdapter = currentHelpReq?.let {
+            UserAdapter(
+                context = requireContext(),
+                maxSize = currentMaxSize,
+                minSize = currentMinSize,
+                users = listAllUsers,
+                requiresAbility = requiresAbility,
+                taskCat = it.categoria,
+                onSelectionChanged = { buttonconditions() },
+                coroutineScope = viewLifecycleOwner.lifecycleScope
+            )
+        }!!
+
+        view?.findViewById<RecyclerView>(R.id.tempRecycler)?.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = userAdapter
+            post {
+                (adapter as? UserAdapter)?.setInitialSelections(userList)
+                buttonconditions()
+            }
+        }
+    }
+
+    private fun setupButton() {
+        view?.findViewById<Button>(R.id.buttonAcceptTemp)?.apply {
+            isEnabled = false
+            setOnClickListener {
+                lifecycleScope.launch {
+                    currentTask?.id?.let { it1 -> viewModel.assignSelectedUsers(it1) }
+                    navigateBackWithResult()
                 }
             }
+        }
     }
 
-    class userAdapter(
+
+    private fun navigateBackWithResult() {
+        setFragmentResult("task_edit_complete", Bundle())
+        findNavController().popBackStack()
+    }
+
+    private fun buttonconditions() {
+        view?.findViewById<Button>(R.id.buttonAcceptTemp)?.isEnabled =
+            userAdapter.getSelectedItems()
+                .isNotEmpty() && userAdapter.getSelectedItems().size >= currentMinSize
+    }
+
+    class UserAdapter(
         private val context: Context,
         private val maxSize: Int,
+        private val minSize: Int,
         private val users: List<Usuario>,
-        private val onItemSelected: (position: Int, isSelected: Boolean) -> Unit
-    ) : RecyclerView.Adapter<userAdapter.UserViewHolder>(){
+        private val requiresAbility: Boolean,
+        private val taskCat: String,
+        private val onSelectionChanged: () -> Unit,
+        private val coroutineScope: CoroutineScope
+    ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
         private val selectedItems = mutableSetOf<Int>()
 
-        fun toggleSelection(position: Int){
-            if(selectedItems.contains(position)){
-                selectedItems.remove(position)
-            }
-            else{
-                if(selectedItems.size < maxSize){
-                    selectedItems.add(position)
-                }
-                else{
-                    Toast.makeText(context, "Número de usuarios máximos alcanzado", Toast.LENGTH_SHORT).show()
-                }
+        fun getSelectedItems(): List<Usuario> = selectedItems.map { users[it] }
 
+        private fun toggleSelection(position: Int) {
+            if (selectedItems.contains(position)) {
+                selectedItems.remove(position)
+            } else if (selectedItems.size < maxSize) {
+                selectedItems.add(position)
+            } else {
+                Toast.makeText(context, "Número de usuarios máximos alcanzado", Toast.LENGTH_SHORT)
+                    .show()
             }
             notifyItemChanged(position)
-            onItemSelected(position, selectedItems.contains(position))
-        }
-
-        fun getSelectedItems(): List<Usuario>{
-            return selectedItems.map {users[it]}
-        }
-
-        fun clearSelections(){
-            selectedItems.clear()
-            notifyDataSetChanged()
-        }
-
-        class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-            val name: TextView = itemView.findViewById(R.id.nameText)
-            val town: TextView = itemView.findViewById(R.id.townText)
+            onSelectionChanged()
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.user_layout, parent,false)
-            return UserViewHolder(view)
+            val layout = if (requiresAbility) R.layout.user_layoutability else R.layout.user_layout
+            val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
+
+            return UserViewHolder(
+                view,
+                { position -> toggleSelection(position) },
+                requiresAbility,
+                taskCat,
+                coroutineScope
+            )
         }
 
         override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
             val user = users[position]
-            holder.name.text = user.nombre
-            holder.town.text = user.municipio
-
-            holder.itemView.isActivated = selectedItems.contains(position)
-
-            holder.itemView.setOnClickListener{
-                toggleSelection(position)
-            }
+            holder.bind(user, selectedItems.contains(position))
         }
 
+        override fun getItemCount(): Int = users.size
 
-
-        override fun getItemCount() = users.size
-
-    }
-
-    private suspend fun findComponents(rootView: View){
-        tempRecycler = rootView.findViewById(R.id.tempRecycler)
-        tempRecycler.layoutManager = LinearLayoutManager(requireContext())
-        val users = getAllUsers()
-
-        UserAdapter = users?.let { userAdapter(requireContext(), currentSize, it) { position, isSelected ->
-            buttonconditions()
-        }
-        }
-
-        tempRecycler.adapter = UserAdapter
-        buttonOK = rootView.findViewById(R.id.buttonAcceptTemp)
-
-        buttonOK.setOnClickListener {
-            lifecycleScope.launch {
-                val selectedUsers = UserAdapter?.getSelectedItems() ?: emptyList()
-                selectedUsers.forEach { user ->
-                    db.getUsuarioByCorreo(user.correo)
-                        ?.let { it1 -> db.createIsAssigned(currentTask, it1) }
+        fun setInitialSelections(assignedUsers: List<Usuario>) {
+            selectedItems.clear()
+            val assignedEmails = assignedUsers.map { it.correo }.toSet()
+            users.forEachIndexed { index, user ->
+                if (assignedEmails.contains(user.correo)) {
+                    selectedItems.add(index)
                 }
-                taskIDList = taskIDList.drop(1)
-                if(taskIDList.isNotEmpty()){
-                    currentTask = taskIDList.first()
-                    UserAdapter?.clearSelections()
-                    setText()
-                    setSize()
+            }
+            notifyDataSetChanged()
+            onSelectionChanged()
+        }
 
-                    val users = getAllUsers() ?: emptyList()
-                    UserAdapter = userAdapter(requireContext(), currentSize, users) { position, isSelected ->
-                        buttonconditions()
+        inner class UserViewHolder(
+            itemView: View,
+            private val onItemClick: (Int) -> Unit,
+            private val requiresAbility: Boolean,
+            private val taskCat: String,
+            private val coroutineScope: CoroutineScope
+        ) : RecyclerView.ViewHolder(itemView) {
+            private val name: TextView = itemView.findViewById(R.id.nameText)
+            private val town: TextView = itemView.findViewById(R.id.townText)
+            private val ability: TextView? =
+                if (requiresAbility) itemView.findViewById(R.id.userAbilityText) else null
+            private var currentUser: Usuario? = null
+
+            init {
+                itemView.setOnClickListener { onItemClick(adapterPosition) }
+            }
+
+            fun bind(user: Usuario, isSelected: Boolean) {
+                currentUser = user
+                name.text = user.nombre
+                town.text = user.municipio
+                itemView.isActivated = isSelected
+
+                if (requiresAbility) {
+                    ability?.text = "Cargando..."
+                    loadUserAbility()
+                }
+            }
+
+            private fun loadUserAbility() {
+                coroutineScope.launch {
+                    try {
+                        val hasAbility = checkUserAbility(currentUser?.correo)
+                        ability?.text = if (hasAbility) taskCat else "N/A"
+                    } catch (e: Exception) {
+                        ability?.text = "Error"
                     }
-                    tempRecycler.adapter = UserAdapter
-                    buttonconditions()
-
                 }
-                else{
-                    Toast.makeText(requireContext(), "Se han asignado usuarios a todas las tareas", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_tempTaskFragment_to_crearTareasFragment)
+            }
+
+            private suspend fun checkUserAbility(email: String?): Boolean {
+                if (email == null) return false
+                val usersWithAbility = SupabaseAPI().getUsersWithAbility(taskCat)
+                return usersWithAbility?.contains(email) ?: false
+            }
+        }
+    }
+
+    companion object {
+        fun newInstance(userList: ArrayList<Usuario>, taskId: Int): tempTaskFragment {
+            return tempTaskFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable("list", userList)
+                    putInt("taskID", taskId)
                 }
             }
         }
-         buttonOK.isEnabled = false
-
-        textTask = rootView.findViewById(R.id.textTaskTemp)
-
-
     }
 
-    private suspend fun getAllUsers():List<Usuario>?{
-        return db.getAllUsers()
-    }
-
-    private suspend fun getCurrenTask():SupabaseAPI.taskDB?{
-        return db.getTaskById(currentTask)
-    }
-
-    private suspend fun getCurrentReq():SupabaseAPI.reqDB?{
-        var task = getCurrenTask()
-        return task?.og_req?.let { db.getHelpReqById(it) }
-    }
-    private suspend fun setText(){
-        var request = getCurrentReq()
-        if (request != null) {
-            textTask.setText("Tarea: ${request.titulo}")
-        }
-
-    }
-
-    private suspend fun setSize(){
-        var req = getCurrentReq()
-        val size = req?.envergadura
-        when(size){
-            "Pequeña (5 voluntarios máx.)" -> currentSize = 5
-            "Media (15 voluntarios máx.)" -> currentSize = 15
-            "Grande (15+ voluntarios)" -> currentSize = 50
-        }
-
-    }
-
-    private fun buttonconditions(){
-        buttonOK.isEnabled = UserAdapter?.getSelectedItems()?.isNotEmpty() ?: false
-    }
-
-    }
+}
 
 
 
