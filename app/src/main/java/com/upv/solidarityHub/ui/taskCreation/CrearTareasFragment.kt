@@ -420,13 +420,24 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
 
             val prepared = viewModel.prepareAssignment(taskId)
 
-            if(prepared == null){
+            if (prepared == null) {
+                // No users available - show error and skip to next task
                 showNoUsersLeftPopUp()
-                viewModel.onTaskCompleted()
+                viewModel.onTaskFailed(taskId)
                 continue
             }
+
             val (alg, users) = prepared
 
+            // Check if we have at least the minimum required users
+            if (users.size < alg.getMin()) {
+                showNoUsersLeftPopUp()
+                viewModel.deleteTask(taskId)
+                viewModel.onTaskFailed(taskId)
+                continue
+            }
+
+            // Only show popup if we have enough users
             when (showTaskPopup(alg, users, taskId)) {
                 "OK" -> {
                     assignUsers(alg, users)
@@ -439,14 +450,14 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
                 }
             }
         }
-        if(viewModel.haveAllTasksBeenAssigned()){
+
+        if (viewModel.haveAllTasksBeenAssigned()) {
             Toast.makeText(
                 requireContext(),
                 "Se han asignado usuarios a todas las tareas",
                 Toast.LENGTH_SHORT
             ).show()
         }
-
     }
 
 
@@ -486,7 +497,7 @@ class CrearTareasFragment : Fragment(R.layout.fragment_crear_tareas) {
     private fun showNoUsersLeftPopUp() {
         Toast.makeText(
             requireContext(),
-            "Tarea eliminada (no se han encontrado usuarios suficientes). Intente recrearla más tarde.",
+            "No hay suficientes voluntarios. La tarea no se ha creado.",
             Toast.LENGTH_LONG
         ).show()
     }

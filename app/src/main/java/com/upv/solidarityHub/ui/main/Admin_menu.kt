@@ -51,7 +51,6 @@ class admin_menu : Fragment() {
     private fun setListeners() {
         createTaskButton.setOnClickListener {
             findNavController().navigate(R.id.action_adminMenu_to_CrearTareas, null)
-            findNavController().navigate(R.id.action_adminMenu_to_listaTareasFragment, null)
         }
 
         listTaskButton.setOnClickListener {

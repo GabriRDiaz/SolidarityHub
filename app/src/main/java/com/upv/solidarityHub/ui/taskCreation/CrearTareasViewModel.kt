@@ -264,24 +264,19 @@ class CrearTareasViewModel : ViewModel(){
     }
 
     suspend fun prepareAssignment(taskID: Int): Pair<assignationAlgorythm, List<Usuario>>? {
-        val alg = assignationAlgorythm.create(taskID)
-        val users = alg?.getSelectedUsers().orEmpty()
+        val alg = assignationAlgorythm.create(taskID) ?: return null
+        val users = alg.getSelectedUsers()
 
-        return if (users.isNotEmpty() && alg != null) {
-            Pair(alg, users)
-        } else {
-            deleteTask(taskID)
-            null
-        }
+        return Pair(alg, users)
     }
 
-    private suspend fun deleteTask(taskID: Int) {
+    suspend fun deleteTask(taskID: Int) {
         try {
-            SupabaseAPI().deleteTask(taskID) // Add this function in SupabaseAPI
-            _eventFlow.emit(UiEvent.ShowToast("Task deleted (no volunteers available)"))
+            SupabaseAPI().eliminarTarea(taskID)
+            _eventFlow.emit(UiEvent.ShowToast("Tarea eliminada por falta de voluntarios"))
         } catch (e: Exception) {
             Log.e("TaskDeletion", "Failed to delete task $taskID", e)
-            _eventFlow.emit(UiEvent.ShowToast("Failed to clean up task"))
+            _eventFlow.emit(UiEvent.ShowToast("Error al eliminar la tarea"))
         }
     }
 
@@ -350,6 +345,11 @@ class CrearTareasViewModel : ViewModel(){
 
     fun clearFailedAssignments(){
         _failedAssignments.clear()
+    }
+
+    fun onTaskFailed(taskId: Int) {
+        _failedAssignments.add(taskId)
+        currentTaskIndex++
     }
 
 

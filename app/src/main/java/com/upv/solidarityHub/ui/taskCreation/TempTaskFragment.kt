@@ -10,9 +10,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,9 +21,7 @@ import com.upv.solidarityHub.R
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
 
 // TODO: Rename parameter arguments, choose names that match
@@ -51,7 +49,7 @@ class tempTaskFragment : Fragment() {
     private var currentMaxSize by Delegates.notNull<Int>()
     private var currentMinSize by Delegates.notNull<Int>()
     private var taskId by Delegates.notNull<Int>()
-    private lateinit var userAdapter: UserAdapter
+    private var userAdapter: UserAdapter? = null
 
     private var currentTask: SupabaseAPI.taskDB? = null
     private var currentHelpReq: SupabaseAPI.reqDB? = null
@@ -84,10 +82,15 @@ class tempTaskFragment : Fragment() {
             try {
                 currentTask = getCurrentTask()
                 currentHelpReq = getCurrentReq()
-                initializeViews(view)
-                listAllUsers = viewModel.getAllAvailableUsers()
-                setupRecyclerView()
-                setupButton()
+                if (currentTask != null && currentHelpReq != null) {
+                    initializeViews(view)
+                    listAllUsers = viewModel.getAllAvailableUsers(currentTask) ?: emptyList()
+                    setupRecyclerView()
+                    setupButton()
+                } else {
+                    Toast.makeText(requireContext(), "Task data not found", Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
+                }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Error loading data", Toast.LENGTH_SHORT).show()
                 Log.e("TempTaskFragment", "Error: ${e.message}")
@@ -124,27 +127,26 @@ class tempTaskFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        val requiresAbility = viewModel.taskRequiresAbility()
-        userAdapter = currentHelpReq?.let {
+        val requiresAbility = currentHelpReq?.let { viewModel.taskRequiresAbility(it) } ?: false
+        userAdapter = currentHelpReq?.let { helpReq ->
             UserAdapter(
                 context = requireContext(),
                 maxSize = currentMaxSize,
                 minSize = currentMinSize,
                 users = listAllUsers,
                 requiresAbility = requiresAbility,
-                taskCat = it.categoria,
+                taskCat = helpReq.categoria,
                 onSelectionChanged = { buttonconditions() },
                 coroutineScope = viewLifecycleOwner.lifecycleScope
-            )
-        }!!
+            ).apply {
+                setInitialSelections(userList)
+            }
+        }
 
         view?.findViewById<RecyclerView>(R.id.tempRecycler)?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = userAdapter
-            post {
-                (adapter as? UserAdapter)?.setInitialSelections(userList)
-                buttonconditions()
-            }
+            post{buttonconditions()}
         }
     }
 
@@ -153,7 +155,11 @@ class tempTaskFragment : Fragment() {
             isEnabled = false
             setOnClickListener {
                 lifecycleScope.launch {
-                    currentTask?.id?.let { it1 -> viewModel.assignSelectedUsers(it1) }
+                    currentTask?.id?.let { taskId ->
+                        userAdapter?.getSelectedItems()?.let { selectedUsers ->
+                            viewModel.assignSelectedUsers(taskId, selectedUsers)
+                        }
+                    }
                     navigateBackWithResult()
                 }
             }
@@ -168,8 +174,9 @@ class tempTaskFragment : Fragment() {
 
     private fun buttonconditions() {
         view?.findViewById<Button>(R.id.buttonAcceptTemp)?.isEnabled =
-            userAdapter.getSelectedItems()
-                .isNotEmpty() && userAdapter.getSelectedItems().size >= currentMinSize
+            userAdapter?.getSelectedItems()?.let { selectedItems ->
+                selectedItems.isNotEmpty() && selectedItems.size >= currentMinSize
+            } ?: false
     }
 
     class UserAdapter(
@@ -254,6 +261,14 @@ class tempTaskFragment : Fragment() {
                 name.text = user.nombre
                 town.text = user.municipio
                 itemView.isActivated = isSelected
+
+                itemView.setBackgroundColor(
+                    if (isSelected) {
+                        ContextCompat.getColor(context, R.color.purple_200)
+                    } else {
+                        ContextCompat.getColor(context, R.color.white)
+                    }
+                )
 
                 if (requiresAbility) {
                     ability?.text = "Cargando..."
