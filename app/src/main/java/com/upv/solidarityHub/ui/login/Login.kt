@@ -48,6 +48,7 @@ class Login : AppCompatActivity() {
         initializeButtons()
         initializeListeners()
         initializeObservers()
+        viewModel.setContext(applicationContext)
     }
 
     private fun initializeFields() {
@@ -76,7 +77,7 @@ class Login : AppCompatActivity() {
 
         inputCorreo.editText!!.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
-                if(!viewModel.checkCorreoIsValid())  {
+                if(!viewModel.correoIsValid.value!!)  {
                     inputCorreo.isErrorEnabled = true
                     inputCorreo.editText!!.error = "Las contraseñas no coinciden"
                 }
@@ -93,7 +94,7 @@ class Login : AppCompatActivity() {
 
         inputContrasena.editText!!.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus) {
-                if(!viewModel.checkCorreoIsValid())  {
+                if(!viewModel.contrasenaIsValid.value!!)  {
                     inputContrasena.isErrorEnabled = true
                     inputContrasena.editText!!.error = "Las contraseñas no coinciden"
                 }
@@ -118,29 +119,9 @@ class Login : AppCompatActivity() {
         irHaciaRegistroButton.setOnClickListener {
             goToRegister()
         }
-        //TODO: Pasar esto al ViewModel
         logearseButton.setOnClickListener {
-            var usuario: Usuario? = null
-            var db = SupabaseAPI()
-            try {
-                runBlocking {
-                    db.loginUsuario(inputCorreo.editText!!.text.toString(), inputContrasena.editText!!.text.toString())
-                    db.setLogedUserCorreo(inputCorreo.editText!!.text.toString())
-                    usuario = db.getLogedUser()
-                }
+            viewModel.login()
 
-                if(usuario != null) {Toast.makeText(getApplicationContext(), usuario!!.correo.toString() + "  " + usuario!!.nombre.toString(), Toast.LENGTH_SHORT).show()
-                    goToMain()
-                } else {Toast.makeText(getApplicationContext(), "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()}
-
-            } catch (e:NoSuchElementException) {
-                Toast.makeText(getApplicationContext(), "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show()
-                Log.d("Debug", e.toString())
-
-            } catch (e:Exception) {
-                Toast.makeText(getApplicationContext(),"Hubo un error, porfavor inténtelo más tarde", Toast.LENGTH_SHORT).show()
-                Log.d("Debug", e.toString())
-            }
         }
     }
 
@@ -162,7 +143,14 @@ class Login : AppCompatActivity() {
         viewModel.allIsValid.observe(this, Observer { newAllIsValid ->
             logearseButton.isEnabled = newAllIsValid
         })
+
+        viewModel.goToMain.observe(this, Observer { newGoToMain ->
+            if(newGoToMain) {
+                goToMain()
+            }
+        })
     }
+
 
     fun goToRegister() {
         val intent = Intent(this, Registro::class.java)

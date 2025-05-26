@@ -22,6 +22,8 @@ interface DatabaseAPI {
     public suspend fun getAllBalizas(): List<Baliza>?
     public suspend fun addBaliza(id: Int, latitud: Double,longitud: Double, nombre:String,tipo: String,descripcion:String,tipoRecurso:String?): Boolean
     public suspend fun registerUsuario(correo: String, nombre: String, apellidos: String, password: String, nacimiento:String, municipio: String):Boolean
+    public fun registerUsuario(usuario: Usuario):Boolean
+    public fun eliminarUsuario(correo: String):Boolean
     public suspend fun getGrupoById(id:Int): GrupoDeAyuda?
     public suspend fun registrarGrupo(id:Int, descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: Int): Boolean
     public suspend fun getAllGrupos(): List<GrupoDeAyuda>?
@@ -46,4 +48,13 @@ interface DatabaseAPI {
     public suspend fun salirDelGrupo(usuario: String, grupo: Int): Boolean
     public fun getHabilidadesOfUser(correo: String): List<Habilidad>?
     public fun updateUsuario(usuario: Usuario, habilidades: List<Habilidad>?): Boolean
-}
+    public suspend fun getUsersWithAbility(categoria: String): List<String>?
+    public suspend fun getUsersTown(categoria: String): List<String>?
+    public suspend fun deleteTask(id: Int): Boolean
+    public suspend fun getAllTareas() : List<taskDB>?
+    public suspend fun eliminarTarea(id: Int) : Boolean
+    public suspend fun getAllSolicitudes() : List<reqDB>?
+    public suspend fun getReqsUser(user: String): List<reqDB>?
+    public suspend fun deleteReq(id: Int): Boolean
+
+    }

@@ -27,7 +27,7 @@ class ModificarPerfilModel {
         val _contrasenaIsValid: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
         val _municipioIsValid: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
         val _oldContrasenaIsValid: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
-        val _fechaNacimientoIsValid: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+        val _fechaNacimientoIsValid: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
         val _allIsValid: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
 
 
@@ -69,22 +69,21 @@ class ModificarPerfilModel {
 
         private fun checkNombreIsValid(): Boolean {
             val nombre = _nombre.value
-            if(nombre != null){
-                val validate = FormField("nombre",nombre, NameValidator())
-                _nombreIsValid.value = validate.isValid()
-                return validate.isValid()
-            }
-            return false
+            val isValid = FormField("nombre",nombre!!, NameValidator()).isValid()
+            Log.d("DEBUG", "model checked nombre, value is: " + isValid.toString())
+            _nombreIsValid.value = isValid
+            checkAllValid()
+            return isValid
         }
 
         private fun checkMunicipioIsValid(): Boolean {
             val municipio = _municipio.value
-            if(municipio != null){
-                val found = _municipios.value!!.contains(municipio)
-                _municipioIsValid.value = found
-                return found
-            }
-            return false
+            val found = _municipios.value!!.contains(municipio)
+            _municipioIsValid.value = found
+
+            checkAllValid()
+            return found
+
         }
 
         private fun checkApellidosIsValid(): Boolean {
@@ -94,6 +93,7 @@ class ModificarPerfilModel {
                 _apellidosIsValid.value = validate.isValid()
                 return validate.isValid()
             }
+            _apellidosIsValid.value = false
             return false
         }
 
@@ -102,29 +102,46 @@ class ModificarPerfilModel {
             if(contrasena != null){
                 val validate = FormField("password",contrasena, PasswordValidator())
                 _contrasenaIsValid.value = validate.isValid()
+                checkAllValid()
                 return validate.isValid()
             }
+            _contrasenaIsValid.value = false
             return false
         }
 
         private fun checkFechaNacimientoIsValid(): Boolean {
             val fecha = _fechaNacimiento.value
+            var res = false
             if(fecha != null){
-                return fecha != ""
+                res = fecha != ""
             }
-            return false
+            _fechaNacimientoIsValid.value = res
+            checkAllValid()
+            return res
         }
 
         private fun checkOldContrasenaIsValid(): Boolean {
             val contrasena = _oldContrasena.value
+            var res = false
             if(contrasena != null) {
-                return contrasena != ""
+                res = contrasena != ""
             }
-            return false
+            _oldContrasenaIsValid.value = res
+            checkAllValid()
+            return res
         }
 
         private fun checkAllValid(): Boolean {
             val allGood = _nombreIsValid.value!! && _apellidosIsValid.value!! && _contrasenaIsValid.value!! && _oldContrasenaIsValid.value!! && _fechaNacimientoIsValid.value!! && _municipioIsValid.value!!
+            Log.d("Debug", _nombreIsValid.value!!.toString() )
+            Log.d("Debug", _apellidosIsValid.value!!.toString() )
+            Log.d("Debug", _contrasenaIsValid.value!!.toString() )
+            Log.d("Debug", _municipioIsValid.value!!.toString() )
+            Log.d("Debug", _fechaNacimientoIsValid.value!!.toString() )
+            Log.d("Debug", _oldContrasenaIsValid.value!!.toString() )
+
+
+
             _allIsValid.value = allGood
             return allGood
         }

@@ -75,15 +75,6 @@ class GruposAyuda() : AppCompatActivity() {
 
         findViewById<ListView>(R.id.listaGruposAyuda).setOnItemClickListener { _, _, position, _ ->
             //TODO: SOLUCIÓN MUY ESTÚPIDA PARA SALIR DEL PASO POR AHORA, REFACTORIZAR!!!!
-            var grupo = binding.listaGruposAyuda.adapter.getItem(position)
-            runBlocking {
-                val deferred1 = async {
-                    Log.d("DEBUG",parseInt((grupo as String).substring(6,7)).toString())
-                    grupoSeleccionado = db.getGrupoById(parseInt((grupo as String).substring(6,7)))
-
-                }
-                deferred1.await()
-            }
 
         }
 
@@ -102,8 +93,6 @@ class GruposAyuda() : AppCompatActivity() {
                     android.R.layout.simple_list_item_1, // Layout simple de una línea
                     nombresGrupos // Lista de nombres de los grupos
                 )
-
-                binding.listaGruposAyuda.adapter = adapter
             }
         }
     }
@@ -125,8 +114,6 @@ class GruposAyuda() : AppCompatActivity() {
                         android.R.layout.simple_list_item_1,
                         nombresGruposInscritos
                     )
-
-                    binding.listaGruposAyuda.adapter = adapter
                 }
             } else {
                 Toast.makeText(this@GruposAyuda, "No hay usuario logueado", Toast.LENGTH_SHORT).show()

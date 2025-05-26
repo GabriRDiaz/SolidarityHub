@@ -18,27 +18,25 @@ import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import kotlinx.coroutines.launch
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.upv.solidarityHub.ui.gruposDeAyuda.detallesGrupoVoluntarios.DetallesGrupoVoluntarios
 import com.upv.solidarityHub.R
+import com.upv.solidarityHub.databinding.ContentDetallesGrupoVoluntariosBinding
 import com.upv.solidarityHub.ui.gruposDeAyuda.crearGrupoAyuda.CrearGrupoAyuda
 
 
 class GruposAyudaFragment : Fragment() {
     private var _binding: FragmentGruposAyuda2Binding? = null
     private val binding get() = _binding!!
-
     private lateinit var contentBinding: ContentGruposAyuda2Binding
 
     private val db: SupabaseAPI = SupabaseAPI()
-    private var grupoSeleccionado: GrupoDeAyuda? = null
     private lateinit var usuario: Usuario
+    private var grupoSeleccionado: GrupoDeAyuda? = null
+    private var gruposTotales: List<GrupoDeAyuda> = emptyList()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentGruposAyuda2Binding.inflate(inflater, container, false)
-        // Aquí se accede al layout incluido
         contentBinding = ContentGruposAyuda2Binding.bind(binding.root.findViewById(R.id.contentGrupoAyuda))
         return binding.root
     }
@@ -47,12 +45,11 @@ class GruposAyudaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         usuario = db.getLogedUser()
-
-        obtenerGrupos()
+        contentBinding.listaGruposAyuda.layoutManager = LinearLayoutManager(requireContext())
 
         contentBinding.botonVerDetalles2.setOnClickListener {
-            grupoSeleccionado?.let { grupo ->
-                val action = GruposAyudaFragmentDirections.actionGruposAyudaFragmentToDetallesGruposFragment(grupo.id)
+            grupoSeleccionado?.let {
+                val action = GruposAyudaFragmentDirections.actionGruposAyudaFragmentToDetallesGruposFragment(it.id)
                 findNavController().navigate(action)
             } ?: Toast.makeText(requireContext(), "Selecciona un grupo primero", Toast.LENGTH_SHORT).show()
         }
@@ -76,107 +73,50 @@ class GruposAyudaFragment : Fragment() {
         }
 
         contentBinding.botonVerGrupos.setOnClickListener {
-            val bundle = Bundle()
-            findNavController().navigate(R.id.action_gruposAyudaFragment_to_misGruposFragment, bundle)
-        }
-
-        contentBinding.listaGruposAyuda.setOnItemClickListener { _, _, position, _ ->
-            val grupo = contentBinding.listaGruposAyuda.adapter.getItem(position) as GrupoDeAyuda
-            val id = grupo.id
-
-            if (id != null) {
-                lifecycleScope.launch {
-                    grupoSeleccionado = db.getGrupoById(id)
-                    contentBinding.listaGruposAyuda.setItemChecked(position, true)
-
-                    // Actualiza la vista de los items
-                    (contentBinding.listaGruposAyuda.adapter as ArrayAdapter<*>).notifyDataSetChanged()
-                }
-            }
+            findNavController().navigate(R.id.action_gruposAyudaFragment_to_misGruposFragment)
         }
 
         contentBinding.botonFiltrar.setOnClickListener {
-            val municipioSeleccionado = contentBinding.spinnerMunicipio.selectedItem as String
-            obtenerGrupos(municipioSeleccionado)
+            val municipioSeleccionado = contentBinding.spinnerMunicipio.text.toString()
+            filtrarGrupos(municipioSeleccionado)
         }
+
+        obtenerGrupos()
     }
 
-    private fun obtenerGrupos(municipioFiltro: String? = null) {
+    private fun obtenerGrupos() {
         lifecycleScope.launch {
-            val grupos = db.getAllGrupos()
-            if (grupos.isNullOrEmpty()) {
+            gruposTotales = db.getAllGrupos() ?: emptyList()
+            if (gruposTotales.isEmpty()) {
                 Toast.makeText(requireContext(), "No hay grupos disponibles", Toast.LENGTH_SHORT).show()
-            } else {
-                val gruposFiltrados = if (municipioFiltro != null && municipioFiltro != "Todos") {
-                    grupos.filter { it.ubicacion == municipioFiltro }
-                } else {
-                    grupos
-                }
-
-                val municipiosUnicos = grupos.mapNotNull { it.ubicacion }.distinct().sorted()
-                val listaMunicipios = listOf("Todos") + municipiosUnicos
-                val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listaMunicipios)
-                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                contentBinding.spinnerMunicipio.adapter = spinnerAdapter
-
-                val adapter = object : ArrayAdapter<GrupoDeAyuda>(
-                    requireContext(),
-                    R.layout.item_grupo_ayuda,
-                    gruposFiltrados
-                ) {
-                    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                        val grupo = getItem(position)
-                        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_grupo_ayuda, parent, false)
-
-                        val nombreGrupo = view.findViewById<TextView>(R.id.tvNombreGrupo)
-                        val municipioGrupo = view.findViewById<TextView>(R.id.tvMunicipioGrupo)
-
-                        nombreGrupo.text = "Grupo ${grupo?.id} - ${grupo?.sesion}"
-                        municipioGrupo.text = grupo?.ubicacion ?: "Municipio no disponible"
-
-                        val isSelected = (parent as ListView).isItemChecked(position)
-                        if (isSelected) {
-                            view.setBackgroundResource(android.R.color.darker_gray)
-                        } else {
-                            view.setBackgroundResource(android.R.color.transparent)
-                        }
-
-                        return view
-                    }
-                }
-
-                contentBinding.listaGruposAyuda.choiceMode = ListView.CHOICE_MODE_SINGLE
-                contentBinding.listaGruposAyuda.adapter = adapter
             }
+            val municipios = gruposTotales.mapNotNull { it.ubicacion }.distinct().sorted()
+            val listaMunicipios = listOf("Todos") + municipios
+            val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listaMunicipios)
+            contentBinding.spinnerMunicipio.setAdapter(spinnerAdapter)
+
+            actualizarRecycler(gruposTotales)
         }
     }
 
-    private fun mostrarGruposInscritos() {
-        lifecycleScope.launch {
-            val usuarioId = usuario.correo
-            if (usuarioId != null) {
-                val gruposInscritos = db.getGruposusuario(usuarioId)
-                if (gruposInscritos.isNullOrEmpty()) {
-                    Toast.makeText(requireContext(), "No estás inscrito en ningún grupo", Toast.LENGTH_SHORT).show()
-                } else {
-                    val nombresGrupos = gruposInscritos.map { "Grupo ${it.id} - ${it.sesion}" }
-                    val adapter = ArrayAdapter(
-                        requireContext(),
-                        android.R.layout.simple_list_item_activated_1,
-                        nombresGrupos
-                    )
-                    contentBinding.listaGruposAyuda.choiceMode = android.widget.ListView.CHOICE_MODE_SINGLE
-                    contentBinding.listaGruposAyuda.adapter = adapter
-                }
-            } else {
-                Toast.makeText(requireContext(), "No hay usuario logueado", Toast.LENGTH_SHORT).show()
-            }
+    private fun filtrarGrupos(municipio: String) {
+        val filtrados = if (municipio == "Todos" || municipio.isBlank()) {
+            gruposTotales
+        } else {
+            gruposTotales.filter { it.ubicacion == municipio }
         }
+        actualizarRecycler(filtrados)
+    }
+
+    private fun actualizarRecycler(lista: List<GrupoDeAyuda>) {
+        val adapter = GruposAdapter(lista) {
+            grupoSeleccionado = it
+        }
+        contentBinding.listaGruposAyuda.adapter = adapter
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

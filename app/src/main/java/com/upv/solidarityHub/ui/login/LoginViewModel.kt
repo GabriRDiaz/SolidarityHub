@@ -1,5 +1,6 @@
 package com.upv.solidarityHub.ui.login
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,48 +11,34 @@ import kotlinx.coroutines.runBlocking
 
 class LoginViewModel : ViewModel() {
 
-    private val _correo = MutableLiveData<String>()
-    private val _contrasena = MutableLiveData<String>()
+    val model:LoginModel = LoginModel()
 
-    private val _correoIsValid = MutableLiveData<Boolean>(true)
-    private val _contrasenaIsValid = MutableLiveData<Boolean>(true)
-    private val _allIsValid = MutableLiveData<Boolean>(false)
+    val correo: LiveData<String> get() = model._correo
+    val contrasena: LiveData<String> get() = model._contrasena
 
-    val correo: LiveData<String> get() = _correo
-    val contrasena: LiveData<String> get() = _contrasena
+    val correoIsValid: LiveData<Boolean> get() = model._correoIsValid
+    val contrasenaIsValid: LiveData<Boolean> get() = model._contrasenaIsValid
+    val allIsValid: LiveData<Boolean> get() = model._allIsValid
 
-    val correoIsValid: LiveData<Boolean> get() = _correoIsValid
-    val contrasenaIsValid: LiveData<Boolean> get() = _contrasenaIsValid
-    val allIsValid: LiveData<Boolean> get() = _allIsValid
+    val goToMain: LiveData<Boolean> get() = model._goToMain
 
-
-    fun updateCorreo(newCorreo: String) {
-        _correo.value = newCorreo
-        checkCorreoIsValid()
-        checkAllValid()
+    fun updateCorreo(correo: String) {
+        model.updateCorreo(correo)
     }
 
-    fun updateContrasena(newContrasena: String) {
-        _contrasena.value = newContrasena
-        checkContrasenaIsValid()
-        checkAllValid()
+    fun updateContrasena(contrasena: String) {
+        model.updateContrasena(contrasena)
     }
 
-    fun checkCorreoIsValid(): Boolean {
-        var res = _correo.value != null && _correo.value != ""
-        _correoIsValid.value = res
-        return res
+    fun login() {
+        model.login()
     }
 
-    fun checkContrasenaIsValid(): Boolean {
-        var res = _contrasena.value != null && _contrasena.value != ""
-        _contrasenaIsValid.value = res
-        return res
+    fun setContext(context: Context) {
+        model.setContext(context)
     }
 
-    fun checkAllValid(): Boolean {
-        val res = _correoIsValid.value!! && _contrasenaIsValid.value!!
-        _allIsValid.value = res
-        return res
-    }
+
+
+
 }

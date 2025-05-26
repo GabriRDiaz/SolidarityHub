@@ -52,16 +52,6 @@ class SelectUbiMapDialogFragment : DialogFragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_mapa_generico, container, false)
-
-        // Set up the view
-        //enableEdgeToEdge()
-//        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main)) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-//            insets
-//        }
-
-        // Initialize the map
         loadMap(view)
 
         return view
@@ -91,22 +81,6 @@ class SelectUbiMapDialogFragment : DialogFragment() {
     override fun onPause() {
         super.onPause()
         map.onPause()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val permissionsToRequest = ArrayList<String>()
-        var i = 0
-        while (i < grantResults.size) {
-            permissionsToRequest.add(permissions[i])
-            i++
-        }
-        if (permissionsToRequest.size > 0) {
-            requestPermissions(
-                permissionsToRequest.toTypedArray(),
-                REQUEST_PERMISSIONS_REQUEST_CODE
-            )
-        }
     }
 
     private fun loadMap(view: View) {

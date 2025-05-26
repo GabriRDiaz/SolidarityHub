@@ -62,22 +62,6 @@ class MapaDesaparecidos : DialogFragment() {
         mapa.getMap().onPause()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val permissionsToRequest = ArrayList<String>()
-        var i = 0
-        while (i < grantResults.size) {
-            permissionsToRequest.add(permissions[i])
-            i++
-        }
-        if (permissionsToRequest.size > 0) {
-            requestPermissions(
-                permissionsToRequest.toTypedArray(),
-                REQUEST_PERMISSIONS_REQUEST_CODE
-            )
-        }
-    }
-
     private fun loadMap(view: View) {
         try {
             mapa.setMap(view.findViewById(R.id.mapView))

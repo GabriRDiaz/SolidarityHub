@@ -38,6 +38,10 @@
             android:id="@+id/action_affectedmenu_to_registrarDesaparecido"
             app:destination="@+id/RegistrarDesaparecidoFragment" />
 
+        <action
+            android:id="@+id/action_affectedmenu_to_myHelpReqs"
+            app:destination="@+id/fragment_mis_solicitudes" />
+
     </fragment>
 
     <fragment
@@ -89,6 +93,9 @@
         <action
         android:id="@+id/action_adminMenu_to_CrearTareas"
         app:destination="@id/CrearTareasFragment" />
+        <action
+            android:id="@+id/action_adminMenu_to_listaTareasFragment"
+            app:destination="@id/listaTareasFragment" />
     </fragment>
 
     <fragment
@@ -116,6 +123,12 @@
         android:id="@+id/RegistrarDesaparecidoFragment"
         android:name="com.upv.solidarityHub.ui.registrarDesaparecido.RegistrarDesaparecidoFragment"
         android:label="Registrar desaparecido"
+        />
+
+    <fragment
+        android:id="@+id/fragment_mis_solicitudes"
+        android:name="com.upv.solidarityHub.ui.createHelpReq.MyHelpReqsFragment"
+        android:label="Mis solicitudes de ayuda"
         />
 
     <fragment
@@ -181,6 +194,26 @@
         <action
             android:id="@+id/action_donacionExitosa_to_volunteermenu"
             app:destination="@id/nav_gallery" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/listaTareasFragment"
+        android:name="com.upv.solidarityHub.ui.taskCreation.ListaTask.ListaTareas"
+        android:label="Lista Tareas"
+        tools:layout="@layout/fragment_lista_tareas" >
+        <action
+            android:id="@+id/action_listaTareasFragment_to_DetallesTareasFragment"
+            app:destination="@id/DetallesTareasFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/DetallesTareasFragment"
+        android:name="com.upv.solidarityHub.ui.taskCreation.ListaTask.DetallesTask"
+        android:label="Detalles Tareas"
+        tools:layout="@layout/fragment_detalles_task">
+    <argument
+        android:name="idTarea"
+        app:argType="integer"/>
     </fragment>
 
 </navigation>
