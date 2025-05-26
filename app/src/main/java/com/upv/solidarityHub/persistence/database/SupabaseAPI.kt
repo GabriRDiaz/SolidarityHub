@@ -81,7 +81,7 @@ class SupabaseAPI : DatabaseAPI {
         if (supabase == null) {
             supabase = createSupabaseClient(supabaseUrl, supabaseKey) {
                 install(Postgrest)
-                install(Auth)
+                //install(Auth)
             }
         }
 
@@ -151,6 +151,14 @@ class SupabaseAPI : DatabaseAPI {
             supabase?.from("Usuario")?.insert(Usuario)
             return true
          } catch(e:Exception) {return false}
+    }
+
+    public override fun registerUsuario(usuario: Usuario): Boolean {
+        var success = false
+        runBlocking {
+            success = registerUsuario(usuario.correo, usuario.nombre, usuario.apellidos, usuario.password, usuario.nacimiento, usuario.municipio)
+        }
+        return success
     }
 
     public override suspend fun getGrupoById(id: Int): GrupoDeAyuda? {
@@ -583,14 +591,8 @@ class SupabaseAPI : DatabaseAPI {
         var error = false
         try {
             runBlocking {
-                supabase?.from("Usuario")?.update({
-                    set("nombre", usuario.nombre)
-                    set("apellidos", usuario.apellidos)
-                    set("password", usuario.password)
-                    set("municipio", usuario.municipio)
-                    set("nacimiento", usuario.nacimiento)
-                }) {
-                    filter { eq("correo", usuario.correo) }
+                supabase!!.from("Usuario").upsert(usuario) {
+                    onConflict = "correo"
                 }
 
                 if(habilidades != null) {
@@ -630,6 +632,18 @@ class SupabaseAPI : DatabaseAPI {
         initializeDatabase()
         val solicitudes = supabase?.from("Solicituddeayuda")?.select(Columns.ALL)?.decodeList<reqDB>()
         return solicitudes;
+    }
+
+    public override fun eliminarUsuario(correo: String): Boolean {
+        initializeDatabase()
+        try {
+            runBlocking {
+                supabase?.from("Usuario")?.delete {
+                    filter { eq("correo", correo) }
+                }
+            }
+        } catch (e: Exception) {return false}
+        return true
     }
 
 }

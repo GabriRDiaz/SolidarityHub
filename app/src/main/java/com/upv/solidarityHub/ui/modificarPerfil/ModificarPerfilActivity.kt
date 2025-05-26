@@ -24,6 +24,7 @@ import com.upv.solidarityHub.databinding.ActivityRegistroBinding
 import com.upv.solidarityHub.persistence.FileReader
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.model.Habilidad
+import com.upv.solidarityHub.ui.components.DatePicker.DatePickerFragment
 import com.upv.solidarityHub.ui.components.DatePicker.DatePickerHandler
 import com.upv.solidarityHub.ui.habilidades.HabilidadesFragment
 import com.upv.solidarityHub.utils.TextInputLayoutUtils
@@ -42,6 +43,8 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
     private lateinit var cancelarButton: Button
     private lateinit var confirmarButton: Button
     private lateinit var habilidadesButton: Button
+    private lateinit var nacimientoButton: Button
+
 
     private lateinit var nombreField: TextInputLayout
     private lateinit var apellidosField: TextInputLayout
@@ -84,6 +87,7 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
         confirmarButton = findViewById(R.id.mod_confirmarButton)
         cancelarButton = findViewById(R.id.mod_cancelarButton)
         habilidadesButton = findViewById(R.id.mod_HabilidadesButton)
+        nacimientoButton = findViewById(R.id.mod_nacimientoInput)
     }
 
     private fun initializeListeners() {
@@ -129,6 +133,11 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
         showPassButton.setOnClickListener {
             contrasenaField.editText!!.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
 
+        }
+
+        nacimientoButton.setOnClickListener {
+            val dialogFragment: DatePickerFragment = DatePickerFragment()
+            dialogFragment.show(supportFragmentManager, "Introduzca su fecha de nacimiento")
         }
 
         confirmarButton.setOnClickListener {

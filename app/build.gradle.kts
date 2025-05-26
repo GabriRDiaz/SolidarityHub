@@ -54,6 +54,8 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material:material")
     implementation("androidx.compose.material3:material3")
+    implementation(libs.firebase.firestore)
+
     //implementation(libs.androidx.ui)
     //implementation(libs.androidx.ui.graphics)
     //implementation(libs.androidx.ui.tooling.preview)
@@ -76,7 +78,7 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.media3.common.ktx)
 
-    testImplementation(libs.junit)
+    implementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -98,4 +100,5 @@ dependencies {
     //SEARCH-VIEW
     implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation(kotlin("test"))
 }
