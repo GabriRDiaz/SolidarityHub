@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Adapter
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -121,7 +124,7 @@ class SelectUbiMapDialogFragment : DialogFragment() {
                     deferred1.await()
                 }
                 var id = balizas?.size?.plus(1) as Int
-                var baliza = Baliza(id,map.getMapCenter().latitude,map.getMapCenter().longitude,"","","")
+                var baliza = Baliza(id,map.getMapCenter().latitude,map.getMapCenter().longitude,"","","",null)
                 listener!!.onDialogUbi(baliza)
                 Toast.makeText(activity,"Ubicación añadida", Toast.LENGTH_LONG).show()
 
@@ -142,7 +145,7 @@ class SelectUbiMapDialogFragment : DialogFragment() {
     private fun addBaliza(baliza: Baliza?) {
         runBlocking {
             val deferred1 = async {
-                baliza?.let { supabaseAPI.addBaliza(it.id, baliza.latitud, baliza.longitud, baliza.nombre, baliza.tipo, baliza.descripcion) }
+                baliza?.let { supabaseAPI.addBaliza(it.id, baliza.latitud, baliza.longitud, baliza.nombre, baliza.tipo, baliza.descripcion, baliza.tipo_recurso) }
             }
             deferred1.await()
         }
@@ -209,7 +212,7 @@ class SelectUbiMapDialogFragment : DialogFragment() {
                         deferred1.await()
                     }
                     var id = balizas?.size?.plus(1) as Int
-                    var baliza= Baliza(id,map.getMapCenter().latitude,map.getMapCenter().longitude,name,tipo,description)
+                    var baliza= Baliza(id,map.getMapCenter().latitude,map.getMapCenter().longitude,name,tipo,description,null)
                     addBaliza(baliza)
                     Toast.makeText(activity, "Localización añadida: $name - $description", Toast.LENGTH_SHORT).show()
                 } else {

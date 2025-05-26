@@ -24,8 +24,7 @@ import org.osmdroid.views.overlay.*
 
 class MapaDesaparecidos : DialogFragment() {
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-    private lateinit var map: MapView
-    private lateinit var mapController: MapController
+    private var mapa: Mapa = Mapa()
     private lateinit var overlayBalizas: ArrayList<OverlayItem>
     private lateinit var overlayBalizasItemized: ItemizedOverlay<OverlayItem>
     private var supabaseAPI: SupabaseAPI = SupabaseAPI()
@@ -55,12 +54,12 @@ class MapaDesaparecidos : DialogFragment() {
     }
     override fun onResume() {
         super.onResume()
-        map.onResume()
+        mapa.getMap().onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        map.onPause()
+        mapa.getMap().onPause()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -81,15 +80,10 @@ class MapaDesaparecidos : DialogFragment() {
 
     private fun loadMap(view: View) {
         try {
-            map = view.findViewById(R.id.mapView)
+            mapa.setMap(view.findViewById(R.id.mapView))
             overlayBalizas = ArrayList()
-            mapController = map.controller as MapController
+            mapa.setMapController(mapa.getMap().controller as MapController)
             updateOverlay()
-            map.setTileSource(TileSourceFactory.MAPNIK)
-            map.setMultiTouchControls(true)
-            mapController.setZoom(20.0)
-            mapController.setCenter(GeoPoint(39.4703606, -0.3836834))
-
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(requireContext(), "Error en loadMap: ${e.message}", Toast.LENGTH_LONG).show()
@@ -99,7 +93,7 @@ class MapaDesaparecidos : DialogFragment() {
     private fun addBaliza(baliza: Baliza?) {
         runBlocking {
             val deferred1 = async {
-                baliza?.let { supabaseAPI.addBaliza(it.id, baliza.latitud, baliza.longitud, baliza.nombre, baliza.tipo, baliza.descripcion) }
+                baliza?.let { supabaseAPI.addBaliza(it.id, baliza.latitud, baliza.longitud, baliza.nombre, baliza.tipo, baliza.descripcion, baliza.tipo_recurso) }
             }
             deferred1.await()
         }
@@ -121,7 +115,7 @@ class MapaDesaparecidos : DialogFragment() {
             if (baliza.tipo == "Desaparecido") overlayBalizas.add(balizaOverlay)
         }
 
-        map.overlays.clear()
+        mapa.getMap().overlays.clear()
         overlayBalizasItemized = ItemizedIconOverlay(overlayBalizas, object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
             override fun onItemSingleTapUp(index: Int, item: OverlayItem?): Boolean {
                 item?.let {
@@ -154,8 +148,8 @@ class MapaDesaparecidos : DialogFragment() {
                 return false
             }
         }, requireContext())
-        map.overlays.add(overlayBalizasItemized)
-        map.invalidate()
+        mapa.getMap().overlays.add(overlayBalizasItemized)
+        mapa.getMap().invalidate()
     }
 
 }

@@ -1,14 +1,17 @@
 package com.upv.solidarityHub.ui.mapa
 
 import android.app.AlertDialog
+import android.content.Context
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -95,7 +98,7 @@ class MapaGenericoFragment : Fragment() {
     private fun addBaliza(baliza: Baliza?) {
         runBlocking {
             val deferred1 = async {
-                baliza?.let { supabaseAPI.addBaliza(it.id, baliza.latitud, baliza.longitud, baliza.nombre, baliza.tipo, baliza.descripcion) }
+                baliza?.let { supabaseAPI.addBaliza(it.id, baliza.latitud, baliza.longitud, baliza.nombre, baliza.tipo, baliza.descripcion, baliza.tipo_recurso) }
             }
             deferred1.await()
         }
@@ -156,7 +159,7 @@ class MapaGenericoFragment : Fragment() {
     private fun addAllBalizasToOverlay(balizas: List<Baliza>?) {
         balizas?.forEach { baliza ->
             val balizaOverlay = OverlayItem(
-                "${baliza.nombre} (${baliza.tipo})",
+                "${baliza.nombre} (${baliza.tipo} - ${baliza.tipo_recurso})",
                 baliza.descripcion,
                 GeoPoint(baliza.latitud, baliza.longitud)
             )
@@ -165,18 +168,20 @@ class MapaGenericoFragment : Fragment() {
     }
 
     private fun showAddRecursoDialog() {
-        val (layout, nameEditText, descriptionEditText) = createLayout()
+        val layoutAddRecurso  = createLayout()
+
         val dialog = AlertDialog.Builder(activity)
             .setTitle("Añadir recurso")
             .setMessage("Ingresa el título y la descripción del recurso")
-            .setView(layout)
+            .setView(layoutAddRecurso.layout)
             .setPositiveButton("Aceptar") { _, _ ->
-                val name = nameEditText.text.toString()
+                val name = layoutAddRecurso.nameEditText.text.toString()
                 val tipo = "Recurso"
-                val description = descriptionEditText.text.toString()
+                val description = layoutAddRecurso.descriptionEditText.text.toString()
+                val tipoRecurso = layoutAddRecurso.comboBoxTipoRecurso.selectedItem.toString()
                 if (name.isNotEmpty() && description.isNotEmpty()) {
-                    addBalizaFromDialog(name, tipo, description)
-                    Toast.makeText(activity, "Localización añadida: $name - $description", Toast.LENGTH_SHORT).show()
+                    addBalizaFromDialog(name, tipo, description, tipoRecurso)
+                    Toast.makeText(activity, "Localización añadida: $name - $description - $tipoRecurso", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(activity, "Por favor, ingresa ambos campos.", Toast.LENGTH_SHORT).show()
                 }
@@ -187,19 +192,25 @@ class MapaGenericoFragment : Fragment() {
         dialog.show()
     }
 
-    private fun createLayout(): Triple<LinearLayout, EditText, EditText> {
-        val layout = LinearLayout(activity)
-        layout.orientation = LinearLayout.VERTICAL
-        val nameEditText = EditText(activity)
-        nameEditText.hint = "Título del recurso"
-        layout.addView(nameEditText)
-        val descriptionEditText = EditText(activity)
-        descriptionEditText.hint = "Descripción del recurso"
-        layout.addView(descriptionEditText)
-        return Triple(layout, nameEditText, descriptionEditText)
+    private fun createLayout(): LayoutAddRecurso{
+        val layoutAddRecurso = LayoutAddRecurso()
+        layoutAddRecurso.layout = LinearLayout(activity)
+        layoutAddRecurso.layout.orientation = LinearLayout.VERTICAL
+        layoutAddRecurso.nameEditText = EditText(activity)
+        layoutAddRecurso.nameEditText.hint = "Título del recurso"
+        layoutAddRecurso.layout.addView(layoutAddRecurso.nameEditText)
+        layoutAddRecurso.descriptionEditText = EditText(activity)
+        layoutAddRecurso.descriptionEditText.hint = "Descripción del recurso"
+        layoutAddRecurso.layout.addView(layoutAddRecurso.descriptionEditText)
+        layoutAddRecurso.comboBoxTipoRecurso = Spinner(activity)
+        val opcionTiposRecurso = listOf("Producto de limpieza","Comida","Material médico","Artículos para bebés","Artículos de primera necesidad")
+        val adapter = ArrayAdapter(activity as Context, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, opcionTiposRecurso)
+        layoutAddRecurso.comboBoxTipoRecurso.adapter = adapter
+        layoutAddRecurso.layout.addView(layoutAddRecurso.comboBoxTipoRecurso)
+        return layoutAddRecurso
     }
 
-    private fun addBalizaFromDialog(name: String, tipo: String, description: String) {
+    private fun addBalizaFromDialog(name: String, tipo: String, description: String, tipoRecurso: String) {
         var balizas: List<Baliza>? = null
         runBlocking {
             val deferred1 = async {
@@ -214,7 +225,8 @@ class MapaGenericoFragment : Fragment() {
             mapa.getMap().getMapCenter().longitude,
             name,
             tipo,
-            description
+            description,
+            tipoRecurso
         )
         addBaliza(baliza)
     }

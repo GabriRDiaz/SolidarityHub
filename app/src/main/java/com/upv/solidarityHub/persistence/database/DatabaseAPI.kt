@@ -18,9 +18,9 @@ interface DatabaseAPI {
 
     public suspend fun getUsuarioByCorreo(correo: String): Usuario?
     public suspend fun getBalizaByName(name: String): Baliza?
-    public suspend fun deleteBaliza(name: String): Boolean
+    public suspend fun deleteBaliza(name: String): Int?
     public suspend fun getAllBalizas(): List<Baliza>?
-    public suspend fun addBaliza(id: Int, latitud: Double,longitud: Double, nombre:String,tipo: String,descripcion:String): Boolean
+    public suspend fun addBaliza(id: Int, latitud: Double,longitud: Double, nombre:String,tipo: String,descripcion:String,tipoRecurso:String?): Boolean
     public suspend fun registerUsuario(correo: String, nombre: String, apellidos: String, password: String, nacimiento:String, municipio: String):Boolean
     public suspend fun getGrupoById(id:Int): GrupoDeAyuda?
     public suspend fun registrarGrupo(id:Int, descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: Int): Boolean

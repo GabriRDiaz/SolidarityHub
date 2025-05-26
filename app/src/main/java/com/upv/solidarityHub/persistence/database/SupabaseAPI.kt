@@ -123,25 +123,43 @@ class SupabaseAPI : DatabaseAPI {
         return baliza;
     }
 
-    public override suspend fun deleteBaliza(name: String): Boolean {
+    public override suspend fun deleteBaliza(name: String): Int? {
         initializeDatabase()
+        val idBaliza = supabase?.from("Baliza")?.select() {
+                filter{
+                    eq("nombre", name)
+                }
+        }?.decodeSingle<Baliza>()?.id
         supabase?.from("Baliza")?.delete {
             filter {
                 eq("nombre", name)
             }
         }
-        return true
+        val ultimaBaliza = supabase?.from("Baliza")?.select {
+            order("id", Order.DESCENDING)
+            limit(1)
+        }?.decodeSingle<Baliza>()?.id
+        if (ultimaBaliza!=null){
+            supabase?.from("Baliza")?.update(mapOf("id" to idBaliza)) {
+                filter {
+                    eq("id", ultimaBaliza)
+                }
+            }
+        }
+        return idBaliza
     }
+
     public override suspend fun getAllBalizas(): List<Baliza>? {
         initializeDatabase()
         val baliza = supabase?.from("Baliza")?.select(Columns.ALL)?.decodeList<Baliza>()
         return baliza;
     }
 
-    public override suspend fun addBaliza(id: Int, latitud: Double, longitud: Double, nombre: String, tipo: String, descripcion: String): Boolean {
+    public override suspend fun addBaliza(id: Int, latitud: Double, longitud: Double, nombre: String, tipo: String, descripcion: String, tipoRecurso:String?): Boolean {
         initializeDatabase()
         try{
-            val baliza =  Baliza(id,latitud,longitud,nombre,tipo,descripcion)
+            val baliza =  Baliza(id,latitud,longitud,nombre,tipo,descripcion,tipoRecurso)
+            println( baliza.tipo_recurso)
             supabase?.from("Baliza")?.insert(baliza)
             return true
         } catch(e:Exception) {return false}
@@ -436,7 +454,7 @@ class SupabaseAPI : DatabaseAPI {
         initializeDatabase()
         //TODO: Un poco tinkie winkie que desaparecido pille id y luego aquí pasar la ultimaUbi por separado, veré como lo pongo mas bonito más adelante
         if(ultimaUbi != null) {
-            addBaliza(ultimaUbi.id,ultimaUbi.latitud,ultimaUbi.longitud,ultimaUbi.nombre,ultimaUbi.tipo,ultimaUbi.descripcion)
+            addBaliza(ultimaUbi.id,ultimaUbi.latitud,ultimaUbi.longitud,ultimaUbi.nombre,ultimaUbi.tipo,ultimaUbi.descripcion,null)
         }
         supabase?.from("Desaparecido")?.insert(desaparecido)
 
