@@ -234,10 +234,10 @@ class SupabaseAPI : DatabaseAPI {
                     order(column = "id", order = Order.DESCENDING)
                     limit(1)
                 }
-                ?.decodeSingle<JsonObject>()  // Decode as single object
+                ?.decodeSingle<JsonObject>()
                 ?.get("id")?.jsonPrimitive?.int
         } catch (e: Exception) {
-            return -1  // Return null if there's any error or no records
+            return -1
         }
     }
 
@@ -584,6 +584,16 @@ class SupabaseAPI : DatabaseAPI {
         return true
     }
 
+    public override suspend fun deleteReq(id: Int): Boolean {
+        initializeDatabase()
+        supabase?.from("Solicituddeayuda")?.delete {
+            filter {
+                eq("id", id)
+            }
+        }
+        return true
+    }
+
 
 
     public override fun updateUsuario(usuario: Usuario, habilidades: List<Habilidad>?): Boolean {
@@ -644,6 +654,16 @@ class SupabaseAPI : DatabaseAPI {
             }
         } catch (e: Exception) {return false}
         return true
+    }
+
+    public override suspend fun getReqsUser(user: String): List<reqDB>? {
+        initializeDatabase()
+        val response = supabase?.from("Solicituddeayuda")?.select(){
+            filter{
+                eq("generado_por", user)
+            }
+        }?.decodeList<reqDB>()
+        return response
     }
 
 }

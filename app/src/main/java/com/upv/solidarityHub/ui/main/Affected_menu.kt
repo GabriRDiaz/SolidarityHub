@@ -16,6 +16,7 @@ private const val ARG_PARAM2 = "param2"
 
 private lateinit var reqButton: Button
 private lateinit var missingButton: Button
+private lateinit var myHelReqsButton: Button
 
 
 /**
@@ -50,6 +51,7 @@ class affected_menu : Fragment() {
         if (rootView != null) {
             reqButton = rootView.findViewById(R.id.menuhelpReqButton)
             missingButton = rootView.findViewById(R.id.menuMissingButton)
+            myHelReqsButton = rootView.findViewById(R.id.menumyHelpReqsButton)
         }
 
     }
@@ -61,6 +63,10 @@ class affected_menu : Fragment() {
 
         missingButton.setOnClickListener {
             findNavController().navigate(R.id.action_affectedmenu_to_registrarDesaparecido)
+        }
+
+        myHelReqsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_affectedmenu_to_myHelpReqs)
         }
 
     }

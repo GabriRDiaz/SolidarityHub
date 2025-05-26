@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/item_selection_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/helpReqTitleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="Title Placeholder" />
+
+    <TextView
+        android:id="@+id/helpReqCatText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Category Placeholder"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/helpReqLocationText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Town Placeholder"
+        android:textSize="14sp" />
+</LinearLayout>

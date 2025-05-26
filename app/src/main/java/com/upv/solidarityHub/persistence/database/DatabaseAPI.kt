@@ -54,4 +54,7 @@ interface DatabaseAPI {
     public suspend fun getAllTareas() : List<taskDB>?
     public suspend fun eliminarTarea(id: Int) : Boolean
     public suspend fun getAllSolicitudes() : List<reqDB>?
-}
+    public suspend fun getReqsUser(user: String): List<reqDB>?
+    public suspend fun deleteReq(id: Int): Boolean
+
+    }
