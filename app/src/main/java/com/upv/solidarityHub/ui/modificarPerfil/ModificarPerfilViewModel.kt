@@ -1,5 +1,6 @@
 package com.upv.solidarityHub.ui.modificarPerfil
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.upv.solidarityHub.persistence.Baliza
@@ -32,27 +33,28 @@ class ModificarPerfilViewModel : ViewModel() {
     }
 
     fun updateNombre(newNombre: String) {
-        model._nombre.value = newNombre
+        model.updateNombre(newNombre)
+        Log.d("DEBUG", "viewmodel tries to update model to: " + newNombre)
     }
 
     fun updateApellidos(newApellidos: String) {
-        model._apellidos.value = newApellidos
+        model.updateApellidos(newApellidos)
     }
 
     fun updateContrasena(newContrasena: String) {
-        model._contrasena.value = newContrasena
+        model.updateContrasena(newContrasena)
     }
 
     fun updateMunicipio(newMunicipio: String) {
-        model._municipio.value = newMunicipio
+        model.updateMunicipio(newMunicipio)
     }
 
     fun updateOldContrasena(newOldContrasena: String) {
-        model._oldContrasena.value = newOldContrasena
+        model.updateOldContrasena(newOldContrasena)
     }
 
     fun updateFechaNacimiento(newFechaNacimiento: String) {
-        model._fechaNacimiento.value = newFechaNacimiento
+        model.updateFechaNacimiento(newFechaNacimiento)
     }
 
     fun updateHabilidades(newHabilidades: List<Habilidad>) {

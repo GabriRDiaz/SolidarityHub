@@ -22,12 +22,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TableLayout
-        android:layout_width="325dp"
-        android:layout_height="597dp"
+        android:id="@+id/marg"
+        android:layout_width="322dp"
+        android:layout_height="627dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView36">
+        app:layout_constraintTop_toBottomOf="@+id/textView36"
+        app:layout_constraintVertical_bias="0.16">
 
         <TableRow
             android:layout_width="match_parent"
@@ -197,12 +199,12 @@
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recyclerModMunicipio"
-                            android:layout_width="54dp"
+                            android:layout_width="85dp"
                             android:layout_height="86dp" />
 
                         <SearchView
                             android:id="@+id/buscadorModMunicipio"
-                            android:layout_width="133dp"
+                            android:layout_width="101dp"
                             android:layout_height="wrap_content">
 
                         </SearchView>

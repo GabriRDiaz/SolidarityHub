@@ -109,7 +109,7 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                viewModel.updateApellidos(contrasenaField.editText!!.text.toString())
+                viewModel.updateContrasena(contrasenaField.editText!!.text.toString())
             }
         })
 
@@ -124,6 +124,11 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
         habilidadesButton.setOnClickListener {
             val dialogFragment: HabilidadesFragment = HabilidadesFragment(viewModel.habilidades.value!!)
             dialogFragment.show(supportFragmentManager, "Introduzca sus habilidades")
+        }
+
+        showPassButton.setOnClickListener {
+            contrasenaField.editText!!.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+
         }
 
         confirmarButton.setOnClickListener {
@@ -153,6 +158,7 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
     private fun initializeObservers() {
         viewModel.nombreIsValid.observe(this, Observer { newNombreIsValid ->
             nombreField.setErrorTo("Nombre no válido", !newNombreIsValid)
+            Log.d("DEBUG", "NAME IS VALID: " + newNombreIsValid.toString())
         })
 
         viewModel.apellidosIsValid.observe(this, Observer { newApellidosIsValid ->
@@ -234,6 +240,7 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
 
     override fun handleDate(date: String) {
         viewModel.updateFechaNacimiento(date)
+        displayNacimiento.text = date
     }
 
 }
