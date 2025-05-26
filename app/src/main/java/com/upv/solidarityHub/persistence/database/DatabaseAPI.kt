@@ -46,4 +46,10 @@ interface DatabaseAPI {
     public suspend fun salirDelGrupo(usuario: String, grupo: Int): Boolean
     public fun getHabilidadesOfUser(correo: String): List<Habilidad>?
     public fun updateUsuario(usuario: Usuario, habilidades: List<Habilidad>?): Boolean
+    public suspend fun getUsersWithAbility(categoria: String): List<String>?
+    public suspend fun getUsersTown(categoria: String): List<String>?
+    public suspend fun deleteTask(id: Int): Boolean
+    public suspend fun getAllTareas() : List<taskDB>?
+    public suspend fun eliminarTarea(id: Int) : Boolean
+    public suspend fun getAllSolicitudes() : List<reqDB>?
 }

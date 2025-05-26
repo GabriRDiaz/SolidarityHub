@@ -89,6 +89,9 @@
         <action
         android:id="@+id/action_adminMenu_to_CrearTareas"
         app:destination="@id/CrearTareasFragment" />
+        <action
+            android:id="@+id/action_adminMenu_to_listaTareasFragment"
+            app:destination="@id/listaTareasFragment" />
     </fragment>
 
     <fragment
@@ -181,6 +184,26 @@
         <action
             android:id="@+id/action_donacionExitosa_to_volunteermenu"
             app:destination="@id/nav_gallery" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/listaTareasFragment"
+        android:name="com.upv.solidarityHub.ui.taskCreation.ListaTask.ListaTareas"
+        android:label="Lista Tareas"
+        tools:layout="@layout/fragment_lista_tareas" >
+        <action
+            android:id="@+id/action_listaTareasFragment_to_DetallesTareasFragment"
+            app:destination="@id/DetallesTareasFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/DetallesTareasFragment"
+        android:name="com.upv.solidarityHub.ui.taskCreation.ListaTask.DetallesTask"
+        android:label="Detalles Tareas"
+        tools:layout="@layout/fragment_detalles_task">
+    <argument
+        android:name="idTarea"
+        app:argType="integer"/>
     </fragment>
 
 </navigation>
