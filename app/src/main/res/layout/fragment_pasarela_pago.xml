@@ -154,7 +154,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@android:drawable/editbox_background"
-            android:hint="+34 123 456 789"
+            android:hint="123 456 789"
             android:importantForAccessibility="yes"
             android:inputType="phone"
             android:minHeight="48dp"
