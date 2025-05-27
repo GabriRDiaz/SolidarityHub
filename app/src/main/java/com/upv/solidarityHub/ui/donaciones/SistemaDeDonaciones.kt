@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -73,16 +74,20 @@ class SistemaDeDonaciones : Fragment() {
     }
 
     private fun navigateToPayment() {
-        // Crear Bundle para los argumentos
-        val bundle = bundleOf(
-            "amount" to (viewModel.donationAmount.value ?: 10),
-            "paymentMethod" to (viewModel.selectedPaymentMethod.value ?: getString(R.string.card_payment))
-        )
+        if(viewModel.donationAmount.value!=0){
+            val bundle = bundleOf(
+                "amount" to (viewModel.donationAmount.value ?: 10),
+                "paymentMethod" to (viewModel.selectedPaymentMethod.value ?: getString(R.string.card_payment))
+            )
 
-        findNavController().navigate(
-            R.id.action_sistemaDeDonaciones_to_pasarelaPago,
-            bundle
-        )
+            findNavController().navigate(
+                R.id.action_sistemaDeDonaciones_to_pasarelaPago,
+                bundle
+            )
+        }else{
+            Toast.makeText(requireContext(), "Cantidad inválida, no puedes donar 0€", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     override fun onDestroyView() {
