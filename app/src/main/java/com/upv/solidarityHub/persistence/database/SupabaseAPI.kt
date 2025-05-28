@@ -684,4 +684,25 @@ class SupabaseAPI : DatabaseAPI {
         return response
     }
 
+    public override suspend fun getAllDesaparecidos(): List<Desaparecido>? {
+        initializeDatabase()
+        val desaparecidos = supabase?.from("Desaparecido")?.select(Columns.ALL)?.decodeList<Desaparecido>()
+        return desaparecidos;
+    }
+
+    public override suspend fun eliminarDesaparecido(nombre: String, apellidos: String): Boolean {
+        return try {
+            initializeDatabase()
+            supabase?.from("Desaparecido")?.delete {
+                filter {
+                    eq("nombre", nombre)
+                    eq("apellidos", apellidos)
+                }
+            }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
 }

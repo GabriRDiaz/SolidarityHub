@@ -16,6 +16,7 @@ private const val ARG_PARAM2 = "param2"
 
 private lateinit var createTaskButton: Button
 private lateinit var listTaskButton: Button
+private lateinit var listDesaparecidosButton: Button
 
 
 /**
@@ -56,6 +57,9 @@ class admin_menu : Fragment() {
         listTaskButton.setOnClickListener {
             findNavController().navigate(R.id.action_adminMenu_to_listaTareasFragment, null)
         }
+        listDesaparecidosButton.setOnClickListener {
+            findNavController().navigate(R.id.action_adminMenu_to_listaDesaparecidos, null)
+        }
 
     }
 
@@ -63,6 +67,7 @@ class admin_menu : Fragment() {
         if (rootView != null) {
             createTaskButton = rootView.findViewById(R.id.menuTaskCreationButton)
             listTaskButton = rootView.findViewById(R.id.menuTaskListButton)
+            listDesaparecidosButton = rootView.findViewById(R.id.menuDesaparecidosListButton)
         }
 
     }

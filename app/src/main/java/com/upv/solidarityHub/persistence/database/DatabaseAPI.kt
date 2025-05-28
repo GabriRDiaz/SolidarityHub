@@ -56,5 +56,7 @@ interface DatabaseAPI {
     public suspend fun getAllSolicitudes() : List<reqDB>?
     public suspend fun getReqsUser(user: String): List<reqDB>?
     public suspend fun deleteReq(id: Int): Boolean
+    public suspend fun getAllDesaparecidos() : List<Desaparecido>?
+    public suspend fun eliminarDesaparecido(nombre: String, apellidos: String) : Boolean
 
     }
