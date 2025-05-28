@@ -2,6 +2,10 @@ package com.upv.solidarityHub.ui.mapa
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -163,6 +167,18 @@ class MapaGenericoFragment : Fragment() {
                 baliza.descripcion,
                 GeoPoint(baliza.latitud, baliza.longitud)
             )
+            val balizaDrawable = activity?.getDrawable(R.drawable.ic_marker_default)?.mutate()
+            val color = when (baliza.tipo_recurso?.lowercase()) {
+                "comida" -> Color.GREEN
+                "producto de limpieza" -> Color.BLUE
+                "material médico" -> Color.RED
+                "artículos para bebés" -> Color.MAGENTA
+                "artículos de primera necesidad" -> Color.YELLOW
+                else -> Color.GRAY
+            }
+            balizaDrawable?.setTint(color)
+            balizaDrawable?.setBounds(0,0,32,32)
+            balizaOverlay.setMarker(balizaDrawable)
             overlayBalizas.add(balizaOverlay)
         }
     }
