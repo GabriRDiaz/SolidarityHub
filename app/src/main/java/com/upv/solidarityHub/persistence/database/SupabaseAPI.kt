@@ -233,7 +233,7 @@ class SupabaseAPI : DatabaseAPI {
     public override suspend fun registrarReq(req : SolicitudAyuda): Boolean {
         initializeDatabase()
         try{
-            val reqDB =reqDB(getLastId("Solicituddeayuda")?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,null,req.horario,req.tamanyo, req.urgencia)
+            val reqDB =reqDB(getLastId("Solicituddeayuda")?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,getLogedUser().correo ,req.horario,req.tamanyo, req.urgencia)
             supabase?.from("Solicituddeayuda")?.insert(reqDB)
             System.out.println("Todo bien")
             return true
