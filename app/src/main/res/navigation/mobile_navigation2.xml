@@ -67,6 +67,9 @@
         <action
             android:id="@+id/action_gruposAyudaFragment_to_DetallesGruposFragment"
             app:destination="@id/DetallesGrupoFragment" />
+        <action
+            android:id="@+id/action_gruposAyudaFragment_to_CrearGrupoAyudaFragment"
+            app:destination="@id/CrearGrupoAyudaFragment" />
     </fragment>
 
     <fragment
@@ -233,4 +236,10 @@
         android:name="com.upv.solidarityHub.ui.listaRecursos.ListaRecursos"
         android:label="Lista de recursos"
         tools:layout="@layout/fragment_lista_recursos" />
+
+    <fragment
+        android:id="@+id/CrearGrupoAyudaFragment"
+        android:name="com.upv.solidarityHub.ui.gruposDeAyuda.crearGrupoAyuda.CrearGrupoAyudaFragment"
+        android:label="Crear Grupo de ayuda"
+        tools:layout="@layout/fragment_crear_grupo_ayuda" />
 </navigation>
