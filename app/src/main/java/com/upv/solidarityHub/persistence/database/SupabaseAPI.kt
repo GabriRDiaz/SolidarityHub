@@ -387,7 +387,7 @@ class SupabaseAPI : DatabaseAPI {
         try{
             val initialDate = task.calendarToDateString(task.initialDate)
             val finalDate = task.calendarToDateString(task.finalDate)
-            val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,initialDate, finalDate, task.calendarToDateString(task.initialDate))
+            val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,initialDate, finalDate, task.calendarToHourMinuteString(task.initialDate))
 
             try{
                 supabase?.from("Task")?.insert(taskDB)
