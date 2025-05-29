@@ -56,7 +56,7 @@ class DesaparecidoAdapter(
 
         // Cambiar el fondo si está seleccionado
         if (selectedPosition == position) {
-            holder.container.setBackgroundColor(Color.parseColor("#E3F2FD")) // Azul claro
+            holder.container.setBackgroundColor(Color.parseColor("#E3F2FD"))
         } else {
             holder.container.setBackgroundColor(Color.TRANSPARENT)
         }

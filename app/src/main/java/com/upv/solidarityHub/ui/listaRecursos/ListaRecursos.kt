@@ -1,4 +1,4 @@
-package com.upv.solidarityHub.ui.listaDesaparecidos
+package com.upv.solidarityHub.ui.listaRecursos
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -7,24 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import com.upv.solidarityHub.databinding.FragmentListaRecursosBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import com.upv.solidarityHub.databinding.FragmentListaDesaparecidosBinding
 
-class ListaDesaparecidos : Fragment() {
-    private var _binding: FragmentListaDesaparecidosBinding? = null
+class ListaRecursos : Fragment() {
+    private var _binding: FragmentListaRecursosBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ListaDesaparecidosViewModel by viewModels()
-    private lateinit var adapter: DesaparecidoAdapter
+    private val viewModel: ListaRecursosViewModel by viewModels()
+    private lateinit var adapter: RecursosAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentListaDesaparecidosBinding.inflate(inflater, container, false)
+        _binding = FragmentListaRecursosBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -37,39 +37,35 @@ class ListaDesaparecidos : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        adapter = DesaparecidoAdapter(emptyList()) { desaparecido ->
-            viewModel.seleccionarDesaparecido(desaparecido)
+        adapter = RecursosAdapter(emptyList()) { baliza ->
+            viewModel.seleccionarBaliza(baliza)
         }
 
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@ListaDesaparecidos.adapter
+            adapter = this@ListaRecursos.adapter
         }
     }
 
     private fun setupObservers() {
-        // Observar desaparecidos
-        viewModel.desaparecidos.onEach { desaparecidos ->
-            adapter = DesaparecidoAdapter(desaparecidos) { desaparecido ->
-                viewModel.seleccionarDesaparecido(desaparecido)
+        // Observar balizas
+        viewModel.balizas.onEach { balizas ->
+            adapter = RecursosAdapter(balizas) { baliza ->
+                viewModel.seleccionarBaliza(baliza)
             }
             binding.recyclerView.adapter = adapter
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         // Observar selección y estado de carga
         combine(
-            viewModel.selectedDesaparecido,
+            viewModel.selectedBaliza,
             viewModel.isLoading
         ) { selected, isLoading ->
             Pair(selected, isLoading)
         }.onEach { (selected, isLoading) ->
-            // Actualizar visibilidad del botón
             binding.btnEliminar.isEnabled = selected != null
-
-            // Actualizar estado de carga
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
 
-            // Limpiar selección si se eliminó
             if (selected == null) {
                 adapter.clearSelection()
             }
@@ -78,7 +74,7 @@ class ListaDesaparecidos : Fragment() {
 
     private fun setupButtons() {
         binding.btnEliminar.setOnClickListener {
-            viewModel.eliminarDesaparecidoSeleccionado()
+            viewModel.eliminarBalizaSeleccionada()
         }
     }
 

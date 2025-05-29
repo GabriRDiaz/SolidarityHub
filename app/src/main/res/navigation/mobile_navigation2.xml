@@ -99,6 +99,9 @@
         <action
             android:id="@+id/action_adminMenu_to_listaDesaparecidos"
             app:destination="@id/ListaDesaparecidos" />
+        <action
+            android:id="@+id/action_adminMenu_to_listaRecursos"
+            app:destination="@id/ListaRecursos" />
     </fragment>
 
     <fragment
@@ -225,4 +228,9 @@
         android:label="Lista de desaparecidos"
         tools:layout="@layout/fragment_lista_desaparecidos" />
 
+    <fragment
+        android:id="@+id/ListaRecursos"
+        android:name="com.upv.solidarityHub.ui.listaRecursos.ListaRecursos"
+        android:label="Lista de recursos"
+        tools:layout="@layout/fragment_lista_recursos" />
 </navigation>
