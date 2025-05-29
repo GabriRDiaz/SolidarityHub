@@ -25,7 +25,7 @@ interface DatabaseAPI {
     public fun registerUsuario(usuario: Usuario):Boolean
     public fun eliminarUsuario(correo: String):Boolean
     public suspend fun getGrupoById(id:Int): GrupoDeAyuda?
-    public suspend fun registrarGrupo(id:Int, descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: Int): Boolean
+    public suspend fun registrarGrupo(descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: Int): Boolean
     public suspend fun getAllGrupos(): List<GrupoDeAyuda>?
     public suspend fun getGruposusuario(usuario: String): List<GrupoDeAyuda>?
     public suspend fun loginUsuario(correo: String, contrasena: String): Usuario?
@@ -58,5 +58,6 @@ interface DatabaseAPI {
     public suspend fun deleteReq(id: Int): Boolean
     public suspend fun getAllDesaparecidos() : List<Desaparecido>?
     public suspend fun eliminarDesaparecido(nombre: String, apellidos: String) : Boolean
+    public suspend fun eliminarBaliza(id: Int) : Boolean
 
     }

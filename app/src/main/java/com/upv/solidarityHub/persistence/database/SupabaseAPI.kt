@@ -190,12 +190,17 @@ class SupabaseAPI : DatabaseAPI {
         return grupo;
     }
 
-    public override suspend fun registrarGrupo(id: Int, descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: Int): Boolean {
+    public override suspend fun registrarGrupo(descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: Int): Boolean {
         initializeDatabase()
         try{
-            val grupo = GrupoDeAyuda(id, descripcion, ubicacion, fecha_creacion, sesion, tamanyo)
-            supabase?.from("GrupoDeAyuda")?.insert(grupo)
-            return true
+            val id= getLastId("GrupoDeAyuda")?.plus(1)
+            if(id!=null){
+                val grupo = GrupoDeAyuda(id, descripcion, ubicacion, fecha_creacion, sesion, tamanyo)
+                supabase?.from("GrupoDeAyuda")?.insert(grupo)
+                return true
+            }else{
+                return false
+            }
         } catch(e:Exception) {return false}
     }
 
@@ -703,6 +708,18 @@ class SupabaseAPI : DatabaseAPI {
         } catch (e: Exception) {
             false
         }
+    }
+
+    public override suspend fun eliminarBaliza(id: Int): Boolean {
+        initializeDatabase()
+        try {
+            runBlocking {
+                supabase?.from("Baliza")?.delete {
+                    filter { eq("id", id) }
+                }
+            }
+        } catch (e: Exception) {return false}
+        return true
     }
 
 }

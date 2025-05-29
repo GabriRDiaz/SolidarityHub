@@ -53,9 +53,7 @@ class CrearGrupoAyuda : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
-                    val id = Random.nextInt(0, 9999)
                     val success = db.registrarGrupo(
-                        id = id,
                         descripcion = descripcion,
                         ubicacion = ubicacion,
                         fecha_creacion = Date().toString(),
