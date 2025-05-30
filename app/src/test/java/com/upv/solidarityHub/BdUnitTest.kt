@@ -7,6 +7,7 @@ import com.upv.solidarityHub.persistence.factory.habilidad.HabilidadFactoryProvi
 import com.upv.solidarityHub.persistence.model.Habilidad
 import com.upv.solidarityHub.ui.modificarPerfil.ModificarPerfilViewModel
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -83,6 +84,52 @@ class BdUnitTest {
 
         eliminarTestUsuariosRegistrados()
     }
+    @Test
+    fun usuariosNoValidosNoModificados() {
+        eliminarTestUsuariosRegistrados()
+
+        testUsuarios = registrarTestUsuariosNoValidos()
+        var usuariosModificados = mutableListOf<UsuarioYHabilidad>()
+        var encontradoUnoQueNoFalla = false
+
+        for(tuplaUsuario in testUsuarios) {
+            val usuario = tuplaUsuario.usuario
+
+            val usuarioModificado = Usuario(
+                tuplaUsuario.usuario.correo,
+                usuario.nombre + "Modificado",
+                usuario.apellidos + "Modificado",
+                usuario.password + "Modificado",
+                "2-2-2004",
+                "Pedreguer")
+
+            val factory = HabilidadFactoryProvider.getFactory()
+
+            var habilidadesModificadas = mutableListOf<Habilidad>()
+            habilidadesModificadas.add(factory.createHabilidad("Veterinaria", 2, 2))
+            habilidadesModificadas.add(factory.createHabilidad("Medicina", 2, 2))
+            habilidadesModificadas.add(factory.createHabilidad("Conducción", 2, 2))
+
+            usuariosModificados.add(UsuarioYHabilidad(usuarioModificado, habilidadesModificadas))
+
+            val usuarioViewModel = ModificarPerfilViewModel()
+            usuarioViewModel.setOriginalUsuario(usuario)
+            usuarioViewModel.setOriginalUserValues()
+            usuarioViewModel.updateMunicipiosList(arrayOf("Pedreguer", "Alaquas"))
+
+            usuarioViewModel.updateHabilidades(habilidadesModificadas)
+            usuarioViewModel.updateNombre(usuarioModificado.nombre)
+            usuarioViewModel.updateApellidos(usuarioModificado.apellidos)
+            usuarioViewModel.updateOldContrasena(usuario.password)
+            usuarioViewModel.updateContrasena(usuarioModificado.password)
+            usuarioViewModel.updateFechaNacimiento(usuarioModificado.nacimiento)
+            usuarioViewModel.updateMunicipio(usuarioModificado.municipio)
+
+            encontradoUnoQueNoFalla = encontradoUnoQueNoFalla || usuarioViewModel.confirmar()
+        }
+        assertFalse(encontradoUnoQueNoFalla)
+        //eliminarTestUsuariosRegistrados()
+    }
 
 
 
@@ -136,6 +183,45 @@ class BdUnitTest {
             var nombre = "nombreTest" + numUsuario
             var apellidos = "apellidosTest" + numUsuario
             var password = "contraseñaTest." + numUsuario
+            var nacimiento = "1-1-2004"
+            var municipio = "Alaquas"
+
+            var usuario = Usuario(correo,nombre, apellidos, password, nacimiento, municipio)
+
+            val factory = HabilidadFactoryProvider.getFactory()
+            var habilidades = mutableListOf<Habilidad>()
+            habilidades.add(factory.createHabilidad("Veterinaria", 1, 1))
+            habilidades.add(factory.createHabilidad("Medicina", 1, 1))
+            habilidades.add(factory.createHabilidad("Conducción", 1, 1))
+
+            SupabaseAPI().eliminarUsuario(correo)
+            SupabaseAPI().registerUsuario(usuario)
+
+            runBlocking {
+                SupabaseAPI().registrarHabilidades(habilidades,usuario)
+            }
+
+            res.add(UsuarioYHabilidad(usuario,habilidades))
+        }
+        return res
+    }
+
+    private fun registrarTestUsuariosNoValidos(): List<UsuarioYHabilidad> {
+        var res = mutableListOf<UsuarioYHabilidad>()
+        var numUsuario = ""
+        for(i in 0..<numTestUsuarios) {
+            numUsuario += "I"
+
+            var correo = "correoTest" + numUsuario + "gmail.com"
+            var nombre = "nombreTest" + numUsuario
+            if(i == 0) nombre += "."
+
+            var apellidos = "apellidosTest" + numUsuario
+            if(i == 1) apellidos += "6"
+
+            var password = "contraseñaTest." + numUsuario
+            if(i == 2) password = "contrasenaenminusculas"
+
             var nacimiento = "1-1-2004"
             var municipio = "Alaquas"
 
