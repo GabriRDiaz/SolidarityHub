@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TableLayout
-        android:layout_width="325dp"
+        android:layout_width="370dp"
         android:layout_height="597dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -127,7 +127,7 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:layout_width="175dp"
+                android:layout_width="242dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
@@ -144,9 +144,19 @@
 
                 <Button
                     android:id="@+id/showPassButton"
-                    android:layout_width="22dp"
-                    android:layout_height="34dp"
-                    android:text="Button" />
+
+                    android:layout_width="53dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#673AB7"
+
+                    app:icon="@drawable/eye_svgrepo_com"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="24dp"
+                    app:iconTint="#FFFFFF" />
+                />
             </LinearLayout>
 
         </TableRow>
@@ -181,9 +191,17 @@
 
                 <Button
                     android:id="@+id/showRepPassButton"
-                    android:layout_width="22dp"
-                    android:layout_height="34dp"
-                    android:text="Button" />
+                    android:layout_width="53dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#673AB7"
+
+                    app:icon="@drawable/eye_svgrepo_com"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="24dp"
+                    app:iconTint="#FFFFFF" />
             </LinearLayout>
 
         </TableRow>
@@ -217,11 +235,16 @@
 
                 <Button
                     android:id="@+id/fechaPickerButton"
-                    android:layout_width="25dp"
-                    android:layout_height="match_parent"
-                    android:width="2dp"
-                    android:minWidth="8dip"
-                    android:text="Button" />
+                    android:layout_width="53dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#673AB7"
+                    app:icon="@drawable/baseline_date_range_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="24dp"
+                    app:iconTint="#FFFFFF" />
             </LinearLayout>
 
         </TableRow>
