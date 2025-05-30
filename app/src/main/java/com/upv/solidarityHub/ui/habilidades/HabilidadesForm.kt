@@ -16,6 +16,7 @@ import com.upv.solidarityHub.persistence.database.DatabaseAPI
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.factory.habilidad.HabilidadFactoryProvider
 import com.upv.solidarityHub.persistence.model.Habilidad
+import com.upv.solidarityHub.utils.template.HabilidadesFinalizeForm
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 
@@ -133,14 +134,17 @@ fun HabilidadesForm(usuario: Usuario, parent: HabilidadesActivity) {
                     }
 
                     Button(onClick = {
-                        Toast.makeText(context, "Habilidades guardadas", Toast.LENGTH_SHORT).show()
-                        runBlocking {
-                            val deferred1 = async {
-                                db.registrarHabilidades(skillList, usuario)
-                            }
-                            deferred1.await()
-                        }
-                        parent.goToMain()
+                        if(skillList.isNotEmpty()){
+                            val form = HabilidadesFinalizeForm(
+                                context = context,
+                                db = db,
+                                usuario = usuario,
+                                habilidades = skillList,
+                                onFinishedCallback = { parent.goToMain() },
+                                parent = parent
+                            )
+                            form.finalize()
+                        } else{Toast.makeText(context, "Debes añadir al menos una habilidad", Toast.LENGTH_SHORT).show()}
                     }) {
                         Text("Finalizar")
                     }
