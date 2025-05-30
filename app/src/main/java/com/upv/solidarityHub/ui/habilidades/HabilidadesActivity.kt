@@ -11,7 +11,7 @@ import com.upv.solidarityHub.ui.main.Main
 class HabilidadesActivity() : ComponentActivity() {
     private lateinit var usr:Usuario
     override fun onCreate(savedInstanceState: Bundle?) {
-        usr = SupabaseAPI().getLogedUser()
+        usr = SupabaseAPI().getLogedUser()!!
         super.onCreate(savedInstanceState)
         setContent {
                 HabilidadesForm(usr,this)

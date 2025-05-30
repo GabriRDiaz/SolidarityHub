@@ -15,7 +15,7 @@ class MyHelpReqsViewModel : ViewModel() {
     suspend fun loadData(): List<Pair<SupabaseAPI.reqDB, Boolean>> {
         ogReqs = db.getTaskOGReqs() ?: emptyList()
         val user = db.getLogedUser()
-        val helpRequests = db.getReqsUser(user.correo) ?: return emptyList()
+        val helpRequests = db.getReqsUser(user!!.correo) ?: return emptyList()
         return helpRequests.map { req ->
             req to (req.id?.let { isAlreadyATask(it) } ?: false)
         }

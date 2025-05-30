@@ -55,7 +55,7 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
 
     private var searchSuggestions = arrayOfNulls<String>(FileReader.numMunicipios)
 
-    private lateinit var viewModel: ModificarPerfilViewModel
+    lateinit var viewModel: ModificarPerfilViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -231,7 +231,7 @@ class ModificarPerfilActivity : AppCompatActivity(), HabilidadesFragment.Habilid
             }
         }
 
-        suggestionAdapter.updateSuggestions(listOf(SupabaseAPI().getLogedUser().municipio))
+        suggestionAdapter.updateSuggestions(listOf(SupabaseAPI().getLogedUser()!!.municipio))
 
     }
 

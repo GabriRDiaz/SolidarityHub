@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.upv.solidarityHub.persistence.Baliza
+import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.model.Habilidad
 
 class ModificarPerfilViewModel : ViewModel() {
@@ -34,7 +35,6 @@ class ModificarPerfilViewModel : ViewModel() {
 
     fun updateNombre(newNombre: String) {
         model.updateNombre(newNombre)
-        Log.d("DEBUG", "viewmodel tries to update model to: " + newNombre)
     }
 
     fun updateApellidos(newApellidos: String) {
@@ -67,6 +67,10 @@ class ModificarPerfilViewModel : ViewModel() {
 
     fun setOriginalUserValues() {
         model.setOriginalUsuarioValues()
+    }
+
+    fun setOriginalUsuario(usuario: Usuario) {
+        model.setOriginalUsuario(usuario)
     }
 
 

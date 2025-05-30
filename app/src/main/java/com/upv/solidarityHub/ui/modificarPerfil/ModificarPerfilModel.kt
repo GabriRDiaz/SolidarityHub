@@ -11,7 +11,7 @@ import com.upv.solidarityHub.utils.strategy.PasswordValidator
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 
 class ModificarPerfilModel {
-        val usuario: Usuario = SupabaseAPI().getLogedUser()
+        var usuario: Usuario? = SupabaseAPI().getLogedUser()
         val _nombre: MutableLiveData<String> = MutableLiveData<String>("")
         val _apellidos: MutableLiveData<String> = MutableLiveData<String>("")
         val _contrasena: MutableLiveData<String> = MutableLiveData<String>("")
@@ -70,7 +70,6 @@ class ModificarPerfilModel {
         private fun checkNombreIsValid(): Boolean {
             val nombre = _nombre.value
             val isValid = FormField("nombre",nombre!!, NameValidator()).isValid()
-            Log.d("DEBUG", "model checked nombre, value is: " + isValid.toString())
             _nombreIsValid.value = isValid
             checkAllValid()
             return isValid
@@ -133,21 +132,12 @@ class ModificarPerfilModel {
 
         private fun checkAllValid(): Boolean {
             val allGood = _nombreIsValid.value!! && _apellidosIsValid.value!! && _contrasenaIsValid.value!! && _oldContrasenaIsValid.value!! && _fechaNacimientoIsValid.value!! && _municipioIsValid.value!!
-            Log.d("Debug", _nombreIsValid.value!!.toString() )
-            Log.d("Debug", _apellidosIsValid.value!!.toString() )
-            Log.d("Debug", _contrasenaIsValid.value!!.toString() )
-            Log.d("Debug", _municipioIsValid.value!!.toString() )
-            Log.d("Debug", _fechaNacimientoIsValid.value!!.toString() )
-            Log.d("Debug", _oldContrasenaIsValid.value!!.toString() )
-
-
-
             _allIsValid.value = allGood
             return allGood
         }
 
         private fun getOriginalHabilidades(): MutableLiveData<List<Habilidad>> {
-            val habilidades = SupabaseAPI().getHabilidadesOfUser(SupabaseAPI().getLogedUser().correo)
+            val habilidades = SupabaseAPI().getHabilidadesOfUser(usuario!!.correo)
             if(habilidades != null) {
             return MutableLiveData<List<Habilidad>>(habilidades)
             } else return MutableLiveData<List<Habilidad>>(listOf<Habilidad>())
@@ -157,8 +147,8 @@ class ModificarPerfilModel {
         public fun confirmarModificacion(): Boolean {
             val db = SupabaseAPI()
 
-            val nuevoUser: Usuario = Usuario(usuario.correo, _nombre.value!!, _apellidos.value!!, _contrasena.value!!, _fechaNacimiento.value!!, _municipio.value!!)
-            if (usuario.password == _oldContrasena.value) {
+            val nuevoUser: Usuario = Usuario(usuario!!.correo, _nombre.value!!, _apellidos.value!!, _contrasena.value!!, _fechaNacimiento.value!!, _municipio.value!!)
+            if (_allIsValid.value!! && usuario!!.password == _oldContrasena.value) {
                     if (!db.updateUsuario(nuevoUser, _habilidades.value)) throw Exception("unknown error")
             }   else return false
 
@@ -166,12 +156,17 @@ class ModificarPerfilModel {
         }
 
         public fun setOriginalUsuarioValues() {
-            _nombre.value = usuario.nombre
-            _apellidos.value = usuario.apellidos
-            _municipio.value = usuario.municipio
-            _fechaNacimiento.value = usuario.nacimiento
-            _contrasena.value = usuario.password
+
+            _nombre.value = usuario!!.nombre
+            _apellidos.value = usuario!!.apellidos
+            _municipio.value = usuario!!.municipio
+            _fechaNacimiento.value = usuario!!.nacimiento
+            _contrasena.value = usuario!!.password
             _habilidades = getOriginalHabilidades()
+        }
+
+        public fun setOriginalUsuario(usuario: Usuario) {
+            this.usuario = usuario
         }
 
 }

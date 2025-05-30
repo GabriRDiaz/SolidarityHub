@@ -1,13 +1,16 @@
 package com.upv.solidarityHub
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.persistence.factory.habilidad.HabilidadFactoryProvider
 import com.upv.solidarityHub.persistence.model.Habilidad
+import com.upv.solidarityHub.ui.modificarPerfil.ModificarPerfilViewModel
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
-
-import org.junit.Assert.*
+import org.junit.rules.TestRule
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -15,18 +18,20 @@ import org.junit.Assert.*
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class BdUnitTest {
-    private val numTestUsuarios = 9
+    @get:Rule var rule: TestRule = InstantTaskExecutorRule()
+    private val numTestUsuarios = 3
     private var testUsuarios = registrarTestUsuarios()
 
     data class UsuarioYHabilidad(val usuario: Usuario, val habilidades: List<Habilidad>)
+
 
     @Test
     fun testUsuariosRegistradosCorrectamente() {
         eliminarTestUsuariosRegistrados()
 
         testUsuarios = registrarTestUsuarios()
+        kotlin.test.assertEquals(testUsuarios.size, numTestUsuarios)
         kotlin.test.assertTrue(usuariosEnBD(testUsuarios))
-
         eliminarTestUsuariosRegistrados()
     }
 
@@ -38,6 +43,7 @@ class BdUnitTest {
         var usuariosModificados = mutableListOf<UsuarioYHabilidad>()
         for(tuplaUsuario in testUsuarios) {
             val usuario = tuplaUsuario.usuario
+
             val usuarioModificado = Usuario(
                 tuplaUsuario.usuario.correo,
                 usuario.nombre + "Modificado",
@@ -55,9 +61,23 @@ class BdUnitTest {
 
             usuariosModificados.add(UsuarioYHabilidad(usuarioModificado, habilidadesModificadas))
 
-            SupabaseAPI().updateUsuario(usuarioModificado, habilidadesModificadas)
+            val usuarioViewModel = ModificarPerfilViewModel()
+            usuarioViewModel.setOriginalUsuario(usuario)
+            usuarioViewModel.setOriginalUserValues()
+            usuarioViewModel.updateMunicipiosList(arrayOf("Pedreguer", "Alaquas"))
 
+            usuarioViewModel.updateHabilidades(habilidadesModificadas)
+            usuarioViewModel.updateNombre(usuarioModificado.nombre)
+            usuarioViewModel.updateApellidos(usuarioModificado.apellidos)
+            usuarioViewModel.updateOldContrasena(usuario.password)
+            usuarioViewModel.updateContrasena(usuarioModificado.password)
+            usuarioViewModel.updateFechaNacimiento(usuarioModificado.nacimiento)
+            usuarioViewModel.updateMunicipio(usuarioModificado.municipio)
+
+            if(!usuarioViewModel.confirmar()) throw Exception(
+                "El ViewModel ha rechazado la modificación, probablemente hay campos que considera no válidos")
         }
+
         assertTrue(usuariosEnBD(usuariosModificados))
         assertTrue(usuariosNOEnBD(testUsuarios))
 
@@ -108,9 +128,9 @@ class BdUnitTest {
 
     private fun registrarTestUsuarios(): List<UsuarioYHabilidad> {
         var res = mutableListOf<UsuarioYHabilidad>()
-
+        var numUsuario = ""
         for(i in 0..<numTestUsuarios) {
-            var numUsuario = i + 1
+            numUsuario += "I"
 
             var correo = "correoTest" + numUsuario + "gmail.com"
             var nombre = "nombreTest" + numUsuario

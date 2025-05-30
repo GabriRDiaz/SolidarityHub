@@ -37,7 +37,7 @@ import java.util.Calendar
 //public var supabase: SupabaseClient? = null;
 private const val supabaseUrl = "https://jjmkaouvmwcakqusbabw.supabase.co"
 private const val supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpqbWthb3V2bXdjYWtxdXNiYWJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA0Nzg0MTIsImV4cCI6MjA1NjA1NDQxMn0.FwI-6QCb12bth5DnIJUARbZ74LDbxZ7g7Hls7D9xJcE"
-private lateinit var logedUserCorreo: String
+private var logedUserCorreo: String = ""
 
 class SupabaseAPI : DatabaseAPI {
 
@@ -91,11 +91,15 @@ class SupabaseAPI : DatabaseAPI {
         logedUserCorreo = usr
     }
 
-    public fun getLogedUser(): Usuario {
-        var res:Usuario
-        runBlocking{
-            res = getUsuarioByCorreo(logedUserCorreo)!!
-        }
+    public fun getLogedUser(): Usuario? {
+        var res:Usuario? = null
+
+        try {
+            runBlocking {
+                res = getUsuarioByCorreo(logedUserCorreo)!!
+            }
+        } catch (e: Exception) {}
+
         return res
     }
 
@@ -238,7 +242,7 @@ class SupabaseAPI : DatabaseAPI {
     public override suspend fun registrarReq(req : SolicitudAyuda): Boolean {
         initializeDatabase()
         try{
-            val reqDB =reqDB(getLastId("Solicituddeayuda")?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,getLogedUser().correo ,req.horario,req.tamanyo, req.urgencia)
+            val reqDB =reqDB(getLastId("Solicituddeayuda")?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,getLogedUser()!!.correo ,req.horario,req.tamanyo, req.urgencia)
             supabase?.from("Solicituddeayuda")?.insert(reqDB)
             System.out.println("Todo bien")
             return true
