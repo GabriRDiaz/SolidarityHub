@@ -190,12 +190,17 @@ class SupabaseAPI : DatabaseAPI {
         return grupo;
     }
 
-    public override suspend fun registrarGrupo(id: Int, descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: Int): Boolean {
+    public override suspend fun registrarGrupo(descripcion: String, ubicacion: String, fecha_creacion: String, sesion: String, tamanyo: Int): Boolean {
         initializeDatabase()
         try{
-            val grupo = GrupoDeAyuda(id, descripcion, ubicacion, fecha_creacion, sesion, tamanyo)
-            supabase?.from("GrupoDeAyuda")?.insert(grupo)
-            return true
+            val id= getLastId("GrupoDeAyuda")?.plus(1)
+            if(id!=null){
+                val grupo = GrupoDeAyuda(id, descripcion, ubicacion, fecha_creacion, sesion, tamanyo)
+                supabase?.from("GrupoDeAyuda")?.insert(grupo)
+                return true
+            }else{
+                return false
+            }
         } catch(e:Exception) {return false}
     }
 
@@ -233,7 +238,7 @@ class SupabaseAPI : DatabaseAPI {
     public override suspend fun registrarReq(req : SolicitudAyuda): Boolean {
         initializeDatabase()
         try{
-            val reqDB =reqDB(getLastId("Solicituddeayuda")?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,null,req.horario,req.tamanyo, req.urgencia)
+            val reqDB =reqDB(getLastId("Solicituddeayuda")?.plus(1),null,req.titulo,req.desc,req.categoria,req.ubicacion,getLogedUser().correo ,req.horario,req.tamanyo, req.urgencia)
             supabase?.from("Solicituddeayuda")?.insert(reqDB)
             System.out.println("Todo bien")
             return true
@@ -382,7 +387,7 @@ class SupabaseAPI : DatabaseAPI {
         try{
             val initialDate = task.calendarToDateString(task.initialDate)
             val finalDate = task.calendarToDateString(task.finalDate)
-            val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,initialDate, finalDate, task.calendarToDateString(task.initialDate))
+            val taskDB =taskDB(getLastId("Task")?.plus(1),null,req.id,task.lat,task.long,initialDate, finalDate, task.calendarToHourMinuteString(task.initialDate))
 
             try{
                 supabase?.from("Task")?.insert(taskDB)
@@ -682,6 +687,39 @@ class SupabaseAPI : DatabaseAPI {
             }
         }?.decodeList<reqDB>()
         return response
+    }
+
+    public override suspend fun getAllDesaparecidos(): List<Desaparecido>? {
+        initializeDatabase()
+        val desaparecidos = supabase?.from("Desaparecido")?.select(Columns.ALL)?.decodeList<Desaparecido>()
+        return desaparecidos;
+    }
+
+    public override suspend fun eliminarDesaparecido(nombre: String, apellidos: String): Boolean {
+        return try {
+            initializeDatabase()
+            supabase?.from("Desaparecido")?.delete {
+                filter {
+                    eq("nombre", nombre)
+                    eq("apellidos", apellidos)
+                }
+            }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    public override suspend fun eliminarBaliza(id: Int): Boolean {
+        initializeDatabase()
+        try {
+            runBlocking {
+                supabase?.from("Baliza")?.delete {
+                    filter { eq("id", id) }
+                }
+            }
+        } catch (e: Exception) {return false}
+        return true
     }
 
 }

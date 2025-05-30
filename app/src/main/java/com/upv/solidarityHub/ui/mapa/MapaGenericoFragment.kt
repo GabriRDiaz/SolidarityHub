@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import com.upv.solidarityHub.R
 import com.upv.solidarityHub.persistence.Baliza
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
+import com.upv.solidarityHub.utils.builder.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -130,6 +131,7 @@ class MapaGenericoFragment : Fragment() {
                         .setNegativeButton("Eliminar") { _, _ ->
 
                             deleteBaliza(it)
+
                             Toast.makeText(
                                     activity,
                                     "Recurso eliminado correctamente",
@@ -197,7 +199,13 @@ class MapaGenericoFragment : Fragment() {
                 val tipoRecurso = layoutAddRecurso.comboBoxTipoRecurso.selectedItem.toString()
                 if (name.isNotEmpty() && description.isNotEmpty()) {
                     addBalizaFromDialog(name, tipo, description, tipoRecurso)
-                    Toast.makeText(activity, "Localización añadida: $name - $description - $tipoRecurso", Toast.LENGTH_SHORT).show()
+                    val director = DialogDirector(SuccessDialogBuilder(requireContext()))
+                    val dialog = director.constructDialog(
+                        "Baliza añadida",
+                        "La baliza se ha añadido correctamente"
+                    )
+                    dialog.show()
+                //Toast.makeText(activity, "Localización añadida: $name - $description - $tipoRecurso", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(activity, "Por favor, ingresa ambos campos.", Toast.LENGTH_SHORT).show()
                 }

@@ -67,6 +67,9 @@
         <action
             android:id="@+id/action_gruposAyudaFragment_to_DetallesGruposFragment"
             app:destination="@id/DetallesGrupoFragment" />
+        <action
+            android:id="@+id/action_gruposAyudaFragment_to_CrearGrupoAyudaFragment"
+            app:destination="@id/CrearGrupoAyudaFragment" />
     </fragment>
 
     <fragment
@@ -96,6 +99,12 @@
         <action
             android:id="@+id/action_adminMenu_to_listaTareasFragment"
             app:destination="@id/listaTareasFragment" />
+        <action
+            android:id="@+id/action_adminMenu_to_listaDesaparecidos"
+            app:destination="@id/ListaDesaparecidos" />
+        <action
+            android:id="@+id/action_adminMenu_to_listaRecursos"
+            app:destination="@id/ListaRecursos" />
     </fragment>
 
     <fragment
@@ -216,4 +225,21 @@
         app:argType="integer"/>
     </fragment>
 
+    <fragment
+        android:id="@+id/ListaDesaparecidos"
+        android:name="com.upv.solidarityHub.ui.listaDesaparecidos.ListaDesaparecidos"
+        android:label="Lista de desaparecidos"
+        tools:layout="@layout/fragment_lista_desaparecidos" />
+
+    <fragment
+        android:id="@+id/ListaRecursos"
+        android:name="com.upv.solidarityHub.ui.listaRecursos.ListaRecursos"
+        android:label="Lista de recursos"
+        tools:layout="@layout/fragment_lista_recursos" />
+
+    <fragment
+        android:id="@+id/CrearGrupoAyudaFragment"
+        android:name="com.upv.solidarityHub.ui.gruposDeAyuda.crearGrupoAyuda.CrearGrupoAyudaFragment"
+        android:label="Crear Grupo de ayuda"
+        tools:layout="@layout/fragment_crear_grupo_ayuda" />
 </navigation>

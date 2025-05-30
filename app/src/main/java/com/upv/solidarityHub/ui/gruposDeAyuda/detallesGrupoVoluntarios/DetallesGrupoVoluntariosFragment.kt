@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import com.upv.solidarityHub.R
 import com.upv.solidarityHub.databinding.ContentDetallesGrupoVoluntariosBinding
 import com.upv.solidarityHub.databinding.FragmentDetallesGrupoVoluntariosBinding
+import com.upv.solidarityHub.persistence.Usuario
 import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import kotlinx.coroutines.launch
 
@@ -24,7 +24,7 @@ class DetallesGrupoVoluntariosFragment : Fragment() {
     private val db: SupabaseAPI = SupabaseAPI()
     private var grupoId: Int = -1
     private val args: DetallesGrupoVoluntariosFragmentArgs by navArgs()
-    private var usuario: String? = null
+    val usuario: Usuario = SupabaseAPI().getLogedUser()
 
     override fun onCreateView(
         inflater : LayoutInflater,
@@ -38,8 +38,6 @@ class DetallesGrupoVoluntariosFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val sharedPref = requireActivity().getSharedPreferences("usuario", AppCompatActivity.MODE_PRIVATE)
-        usuario = sharedPref.getString("usuarioCorreo", null)
         grupoId = args.grupoId
 
         cargarDatosGrupo(grupoId)
@@ -79,7 +77,7 @@ class DetallesGrupoVoluntariosFragment : Fragment() {
         contentBinding.botonUnirse.setOnClickListener {
             lifecycleScope.launch {
                 if(usuario!= null){
-                    val resultado = db.unirseAGrupo(usuario!!, grupoId)
+                    val resultado = db.unirseAGrupo(usuario.correo, grupoId)
                     if (resultado) {
                         Toast.makeText(
                             requireContext(), "Te has unido al grupo $grupoId", Toast.LENGTH_SHORT).show()

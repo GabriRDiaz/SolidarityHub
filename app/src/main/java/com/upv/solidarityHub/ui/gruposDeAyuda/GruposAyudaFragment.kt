@@ -3,13 +3,11 @@ package com.upv.solidarityHub.ui.gruposDeAyuda
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import android.content.Intent
 import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.upv.solidarityHub.databinding.FragmentGruposAyuda2Binding
 import com.upv.solidarityHub.databinding.ContentGruposAyuda2Binding
@@ -19,10 +17,8 @@ import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import kotlinx.coroutines.launch
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.upv.solidarityHub.ui.gruposDeAyuda.detallesGrupoVoluntarios.DetallesGrupoVoluntarios
 import com.upv.solidarityHub.R
-import com.upv.solidarityHub.databinding.ContentDetallesGrupoVoluntariosBinding
-import com.upv.solidarityHub.ui.gruposDeAyuda.crearGrupoAyuda.CrearGrupoAyuda
+import kotlinx.coroutines.flow.collectLatest
 
 
 class GruposAyudaFragment : Fragment() {
@@ -35,6 +31,8 @@ class GruposAyudaFragment : Fragment() {
     private var grupoSeleccionado: GrupoDeAyuda? = null
     private var gruposTotales: List<GrupoDeAyuda> = emptyList()
 
+    private val viewModel: GruposViewModel by viewModels()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentGruposAyuda2Binding.inflate(inflater, container, false)
         contentBinding = ContentGruposAyuda2Binding.bind(binding.root.findViewById(R.id.contentGrupoAyuda))
@@ -43,6 +41,16 @@ class GruposAyudaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Observar si necesita refrescar
+        lifecycleScope.launch {
+            viewModel.needsRefresh.collectLatest { needsRefresh ->
+                if (needsRefresh) {
+                    obtenerGrupos()
+                    viewModel.setNeedsRefresh(false)
+                }
+            }
+        }
 
         usuario = db.getLogedUser()
         contentBinding.listaGruposAyuda.layoutManager = LinearLayoutManager(requireContext())
@@ -68,8 +76,7 @@ class GruposAyudaFragment : Fragment() {
         }
 
         contentBinding.botonCrearGrupo.setOnClickListener {
-            val intent = Intent(requireContext(), CrearGrupoAyuda::class.java)
-            startActivity(intent)
+            findNavController().navigate(R.id.action_gruposAyudaFragment_to_CrearGrupoAyudaFragment)
         }
 
         contentBinding.botonVerGrupos.setOnClickListener {

@@ -17,6 +17,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.upv.solidarityHub.R
 import com.upv.solidarityHub.databinding.ActivityMainBinding
+import com.upv.solidarityHub.persistence.database.SupabaseAPI
 import com.upv.solidarityHub.ui.modificarPerfil.ModificarPerfilActivity
 
 
@@ -49,6 +50,12 @@ class Main : AppCompatActivity() {
         val navigationView = findViewById<View>(R.id.nav_view) as NavigationView
         val hView = navigationView.getHeaderView(0)
         val nav_modButton = hView.findViewById<View>(R.id.modPerfilButton) as TextView
+        val nav_userWelcomeText = hView.findViewById<View>(R.id.userWelcomeText) as TextView
+
+        nav_modButton.text = "Modificar Perfil"
+        nav_userWelcomeText.text = "Bienvenido, " + SupabaseAPI().getLogedUser().nombre
+
+
         nav_modButton.setOnClickListener {
             intent = Intent(this, ModificarPerfilActivity()::class.java)
             startActivity(intent)
