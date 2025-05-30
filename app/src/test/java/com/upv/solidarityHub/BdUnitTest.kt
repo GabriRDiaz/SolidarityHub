@@ -20,7 +20,7 @@ import org.junit.rules.TestRule
  */
 class BdUnitTest {
     @get:Rule var rule: TestRule = InstantTaskExecutorRule()
-    private val numTestUsuarios = 3
+    private val numTestUsuarios = 9
     private var testUsuarios = registrarTestUsuarios()
 
     data class UsuarioYHabilidad(val usuario: Usuario, val habilidades: List<Habilidad>)
@@ -88,20 +88,31 @@ class BdUnitTest {
     fun usuariosNoValidosNoModificados() {
         eliminarTestUsuariosRegistrados()
 
-        testUsuarios = registrarTestUsuariosNoValidos()
+        testUsuarios = registrarTestUsuarios()
         var usuariosModificados = mutableListOf<UsuarioYHabilidad>()
         var encontradoUnoQueNoFalla = false
 
+        var orden = 0
         for(tuplaUsuario in testUsuarios) {
             val usuario = tuplaUsuario.usuario
 
-            val usuarioModificado = Usuario(
-                tuplaUsuario.usuario.correo,
-                usuario.nombre + "Modificado",
-                usuario.apellidos + "Modificado",
-                usuario.password + "Modificado",
-                "2-2-2004",
-                "Pedreguer")
+            var correo = tuplaUsuario.usuario.correo
+
+            var nombre = usuario.nombre + "Modificado"
+            if(orden == 0) nombre += "."
+
+            var apellidos = usuario.apellidos + "Modificado"
+            if(orden == 1) apellidos += "6"
+
+            var contrasena = usuario.password + "Modificado"
+            if(orden == 2) contrasena = "contrasenaenminusculas"
+
+            orden++
+            orden %= 3
+
+            var fecha = "2-2-2004"
+            var municipio = "Pedreguer"
+            val usuarioModificado = Usuario(correo,nombre,apellidos,contrasena,fecha,municipio)
 
             val factory = HabilidadFactoryProvider.getFactory()
 
@@ -127,8 +138,12 @@ class BdUnitTest {
 
             encontradoUnoQueNoFalla = encontradoUnoQueNoFalla || usuarioViewModel.confirmar()
         }
+
         assertFalse(encontradoUnoQueNoFalla)
-        //eliminarTestUsuariosRegistrados()
+        assertTrue(usuariosEnBD(testUsuarios))
+        assertTrue(usuariosNOEnBD(usuariosModificados))
+
+        eliminarTestUsuariosRegistrados()
     }
 
 
@@ -183,45 +198,6 @@ class BdUnitTest {
             var nombre = "nombreTest" + numUsuario
             var apellidos = "apellidosTest" + numUsuario
             var password = "contraseñaTest." + numUsuario
-            var nacimiento = "1-1-2004"
-            var municipio = "Alaquas"
-
-            var usuario = Usuario(correo,nombre, apellidos, password, nacimiento, municipio)
-
-            val factory = HabilidadFactoryProvider.getFactory()
-            var habilidades = mutableListOf<Habilidad>()
-            habilidades.add(factory.createHabilidad("Veterinaria", 1, 1))
-            habilidades.add(factory.createHabilidad("Medicina", 1, 1))
-            habilidades.add(factory.createHabilidad("Conducción", 1, 1))
-
-            SupabaseAPI().eliminarUsuario(correo)
-            SupabaseAPI().registerUsuario(usuario)
-
-            runBlocking {
-                SupabaseAPI().registrarHabilidades(habilidades,usuario)
-            }
-
-            res.add(UsuarioYHabilidad(usuario,habilidades))
-        }
-        return res
-    }
-
-    private fun registrarTestUsuariosNoValidos(): List<UsuarioYHabilidad> {
-        var res = mutableListOf<UsuarioYHabilidad>()
-        var numUsuario = ""
-        for(i in 0..<numTestUsuarios) {
-            numUsuario += "I"
-
-            var correo = "correoTest" + numUsuario + "gmail.com"
-            var nombre = "nombreTest" + numUsuario
-            if(i == 0) nombre += "."
-
-            var apellidos = "apellidosTest" + numUsuario
-            if(i == 1) apellidos += "6"
-
-            var password = "contraseñaTest." + numUsuario
-            if(i == 2) password = "contrasenaenminusculas"
-
             var nacimiento = "1-1-2004"
             var municipio = "Alaquas"
 
