@@ -107,8 +107,12 @@ class BdUnitTest {
             var contrasena = usuario.password + "Modificado"
             if(orden == 2) contrasena = "contrasenaenminusculas"
 
+            var oldContrasena = usuario.password
+            if(orden ==3) oldContrasena += "string que la hace inválida"
+
+
             orden++
-            orden %= 3
+            orden %= 4
 
             var fecha = "2-2-2004"
             var municipio = "Pedreguer"
@@ -131,7 +135,7 @@ class BdUnitTest {
             usuarioViewModel.updateHabilidades(habilidadesModificadas)
             usuarioViewModel.updateNombre(usuarioModificado.nombre)
             usuarioViewModel.updateApellidos(usuarioModificado.apellidos)
-            usuarioViewModel.updateOldContrasena(usuario.password)
+            usuarioViewModel.updateOldContrasena(oldContrasena)
             usuarioViewModel.updateContrasena(usuarioModificado.password)
             usuarioViewModel.updateFechaNacimiento(usuarioModificado.nacimiento)
             usuarioViewModel.updateMunicipio(usuarioModificado.municipio)
