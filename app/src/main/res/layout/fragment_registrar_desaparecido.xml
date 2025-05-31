@@ -127,7 +127,6 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="80dp"
                             android:layout_height="wrap_content"
-                            android:hint="nch@gmail.com"
                             android:inputType="number" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -152,7 +151,6 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="90dp"
                             android:layout_height="wrap_content"
-                            android:hint="nch@gmail.com"
                             android:inputType="number|numberDecimal" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -251,10 +249,17 @@
 
                 <Button
                     android:id="@+id/botonMapaDesaparecido"
-                    android:layout_width="74dp"
-                    android:layout_height="34dp"
-                    android:text="Mapa"
-                    android:textSize="10sp" />
+                    android:layout_width="53dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_gravity="center|left"
+                    android:backgroundTint="#673AB7"
+
+                    app:icon="@drawable/baseline_add_location_alt_24"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconSize="24dp"
+                    app:iconTint="#FFFFFF" />
 
             </LinearLayout>
 
