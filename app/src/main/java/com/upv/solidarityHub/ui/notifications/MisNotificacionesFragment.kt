@@ -49,7 +49,7 @@ class MisNotificacionesFragment : Fragment() {
         botonVolver = rootView.findViewById(R.id.botonVolverNotis)
         botonVer = rootView.findViewById(R.id.botonVerNoti)
 
-        val correo = SupabaseAPI().getLogedUser().correo
+        val correo = SupabaseAPI().getLogedUser()!!.correo
 
         botonVolver.setOnClickListener {
             findNavController().popBackStack()

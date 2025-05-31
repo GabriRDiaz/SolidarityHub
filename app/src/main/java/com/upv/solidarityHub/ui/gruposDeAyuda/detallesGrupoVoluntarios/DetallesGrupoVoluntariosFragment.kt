@@ -24,7 +24,7 @@ class DetallesGrupoVoluntariosFragment : Fragment() {
     private val db: SupabaseAPI = SupabaseAPI()
     private var grupoId: Int = -1
     private val args: DetallesGrupoVoluntariosFragmentArgs by navArgs()
-    val usuario: Usuario = SupabaseAPI().getLogedUser()
+    val usuario: Usuario = SupabaseAPI().getLogedUser()!!
 
     override fun onCreateView(
         inflater : LayoutInflater,

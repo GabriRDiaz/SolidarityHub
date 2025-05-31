@@ -52,7 +52,7 @@ class GruposAyudaFragment : Fragment() {
             }
         }
 
-        usuario = db.getLogedUser()
+        usuario = db.getLogedUser()!!
         contentBinding.listaGruposAyuda.layoutManager = LinearLayoutManager(requireContext())
 
         contentBinding.botonVerDetalles2.setOnClickListener {

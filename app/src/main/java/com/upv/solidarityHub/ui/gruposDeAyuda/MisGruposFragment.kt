@@ -56,12 +56,12 @@ class MisGruposFragment : Fragment() {
                 val grupoSeleccionado = gruposInscritos[selectedPosition]
                 lifecycleScope.launch {
                     try {
-                        val success = db.salirDelGrupo(usuario.correo, grupoSeleccionado.id)
+                        val success = db.salirDelGrupo(usuario!!.correo, grupoSeleccionado.id)
                         if (success) {
                             Toast.makeText(requireContext(), "Has salido del grupo", Toast.LENGTH_SHORT).show()
                             // Limpiar selección visual
                             binding.listaMisGrupos.clearChoices()
-                            cargarGrupos(usuario.correo)
+                            cargarGrupos(usuario!!.correo)
                         } else {
                             Toast.makeText(requireContext(), "Error al salir del grupo", Toast.LENGTH_SHORT).show()
                         }

@@ -53,7 +53,7 @@ class Main : AppCompatActivity() {
         val nav_userWelcomeText = hView.findViewById<View>(R.id.userWelcomeText) as TextView
 
         nav_modButton.text = "Modificar Perfil"
-        nav_userWelcomeText.text = "Bienvenido, " + SupabaseAPI().getLogedUser().nombre
+        nav_userWelcomeText.text = "Bienvenido, " + SupabaseAPI().getLogedUser()!!.nombre
 
 
         nav_modButton.setOnClickListener {

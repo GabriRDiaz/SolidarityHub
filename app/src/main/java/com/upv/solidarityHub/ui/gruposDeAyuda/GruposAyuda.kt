@@ -35,7 +35,7 @@ class GruposAyuda() : AppCompatActivity() {
     private lateinit var usuario: Usuario
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        usuario = db.getLogedUser()
+        usuario = db.getLogedUser()!!
 
         super.onCreate(savedInstanceState)
 
